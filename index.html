@@ -3,75 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Learning Hub - Welcome</title>
+    <title>Learning Hub - Final</title>
     <style>
+        /* --- STYLE QISMI (O'ZGARMADI) --- */
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body { width: 100%; overflow-x: hidden; font-family: 'Poppins', sans-serif; transition: background 0.5s ease; }
         
-        /* Mavzular */
+           /* Mavzular */
         body.light-theme { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
         body.dark-theme { background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%); }
         body.ocean-theme { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
         body.sunset-theme { background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%); }
 
-        /* --- WELCOME OVERLAY (YANGI) --- */
+        /* Welcome Overlay */
         #welcomeOverlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.85); backdrop-filter: blur(20px);
-            z-index: 9999; /* Eng ustida turadi */
-            display: flex; justify-content: center; align-items: center;
+            z-index: 9999; display: flex; justify-content: center; align-items: center;
             opacity: 1; transition: opacity 0.8s ease;
         }
-        #welcomeOverlay.hidden {
-            opacity: 0; pointer-events: none;
-        }
-
+        #welcomeOverlay.hidden { opacity: 0; pointer-events: none; }
         .welcome-box {
-            background: white; padding: 40px; border-radius: 20px;
-            text-align: center; max-width: 90%; width: 400px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            transform: scale(0.8); opacity: 0; animation: popIn 0.5s forwards 0.3s;
+            background: white; padding: 40px; border-radius: 20px; text-align: center; max-width: 90%; width: 400px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); transform: scale(0.8); opacity: 0; animation: popIn 0.5s forwards 0.3s;
         }
         @keyframes popIn { to { transform: scale(1); opacity: 1; } }
-
         .welcome-title { font-size: 24px; font-weight: 700; color: #333; margin-bottom: 10px; }
         .welcome-text { color: #666; margin-bottom: 25px; font-size: 14px; }
-        
-        .name-input {
-            width: 100%; padding: 15px; border: 2px solid #eee; border-radius: 12px;
-            font-size: 16px; margin-bottom: 20px; outline: none; transition: 0.3s;
-            font-family: 'Poppins', sans-serif; text-align: center;
-        }
+        .name-input { width: 100%; padding: 15px; border: 2px solid #eee; border-radius: 12px; font-size: 16px; margin-bottom: 20px; outline: none; transition: 0.3s; font-family: 'Poppins', sans-serif; text-align: center; }
         .name-input:focus { border-color: #667eea; box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1); }
+        .start-btn { width: 100%; padding: 15px; border: none; border-radius: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-weight: 600; font-size: 16px; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3); }
+        .start-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .start-btn {
-            width: 100%; padding: 15px; border: none; border-radius: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white; font-weight: 600; font-size: 16px; cursor: pointer;
-            transition: 0.3s; box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-        .start-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4); }
-        .start-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-        /* --- MAIN CONTENT --- */
+        /* Main UI */
         .bg-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; }
         .circle { position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.1); animation: float 20s infinite; }
         @keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-100px) rotate(180deg); } }
 
         header { padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); z-index: 100; position: relative; }
-        
-        .header-left { display: flex; align-items: center; gap: 15px; } /* Logo va User uchun */
+        .header-left { display: flex; align-items: center; gap: 15px; }
         .logo { font-size: clamp(20px, 5vw, 26px); font-weight: 700; color: white; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); }
-        
-        .user-greeting {
-            color: white; font-weight: 600; font-size: 14px;
-            padding: 5px 15px; background: rgba(255,255,255,0.2); border-radius: 20px;
-            display: none; /* JS orqali yoqiladi */
-            animation: fadeIn 1s ease;
-        }
+        .user-greeting { color: white; font-weight: 600; font-size: 14px; padding: 5px 15px; background: rgba(255,255,255,0.2); border-radius: 20px; display: none; animation: fadeIn 1s ease; }
         @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
-
         .theme-toggle { background: rgba(255, 255, 255, 0.2); border: none; padding: 8px 16px; border-radius: 50px; color: white; font-weight: 600; cursor: pointer; backdrop-filter: blur(10px); font-size: 14px; }
         
         .container { width: 100%; max-width: 1400px; margin: 20px auto; padding: 0 15px; }
@@ -111,6 +85,7 @@
         .lesson-description { font-size: 12px; color: rgba(255, 255, 255, 0.8); line-height: 1.4; }
         .visit-count { font-size: 11px; color: #43e97b; margin-top: 5px; font-weight: 600; display: inline-block; padding: 2px 8px; background: rgba(0,0,0,0.2); border-radius: 10px; }
 
+        /* Modal */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2000; justify-content: center; align-items: center; background: rgba(0, 0, 0, 0.2); backdrop-filter: blur(15px); overflow: hidden; }
         .modal.active { display: flex; animation: fadeInModal 0.4s ease-out; }
         @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
@@ -123,8 +98,10 @@
         .option-btn:hover { background: white; transform: translate(-50%, -50%) scale(1.15) !important; z-index: 20; }
         .option-btn.done { border-color: #43e97b; box-shadow: 0 0 15px #43e97b; }
         .option-btn.done::after { content: '✔'; position: absolute; top: 0; right: 0; background: #43e97b; color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; display: flex; align-items: center; justify-content: center; }
+        
         .option-btn .emoji { font-size: clamp(20px, 5vw, 26px); margin-bottom: 2px; }
         .option-btn .text { font-size: clamp(9px, 2.5vw, 11px); text-align: center; font-weight: 700; line-height: 1; }
+        
         .option-btn:nth-child(2) { background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); color: white; border: none; }
         .option-btn:nth-child(3) { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%); color: white; border: none; }
         .option-btn:nth-child(4) { background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%); color: white; border: none; }
@@ -182,50 +159,34 @@
     </div>
 
     <script>
-        // --- USER NAME MANAGER ---
+        // --- 1. USER MANAGER ---
         const UserManager = {
             checkUser() {
                 const name = localStorage.getItem('hub_username');
                 if (name) {
-                    // Agar ism bo'lsa, overlayni yashiramiz va salomlashamiz
                     document.getElementById('welcomeOverlay').style.display = 'none';
                     this.showGreeting(name);
                 } else {
-                    // Ism bo'lmasa overlay turadi
                     this.setupInputListener();
                 }
             },
-
             setupInputListener() {
                 const input = document.getElementById('userNameInput');
                 const btn = document.getElementById('startBtn');
-
                 input.addEventListener('input', (e) => {
-                    // Bo'sh joylarni olib tashlab tekshirish
-                    if (e.target.value.trim().length > 0) {
-                        btn.disabled = false;
-                    } else {
-                        btn.disabled = true;
-                    }
+                    btn.disabled = e.target.value.trim().length === 0;
                 });
-
                 btn.addEventListener('click', () => {
                     const name = input.value.trim();
                     if (name) {
                         localStorage.setItem('hub_username', name);
-                        
-                        // Overlayni silliq yo'qotish
                         const overlay = document.getElementById('welcomeOverlay');
                         overlay.classList.add('hidden');
-                        setTimeout(() => {
-                            overlay.style.display = 'none';
-                        }, 800);
-
+                        setTimeout(() => { overlay.style.display = 'none'; }, 800);
                         this.showGreeting(name);
                     }
                 });
             },
-
             showGreeting(name) {
                 const greetingEl = document.getElementById('userGreeting');
                 greetingEl.textContent = `Salom, ${name}!`;
@@ -233,7 +194,7 @@
             }
         };
 
-        // --- LOCAL STORAGE MANAGER (Progress) ---
+        // --- 2. PROGRESS MANAGER ---
         const ProgressManager = {
             storageKey: 'hub_progress_v1',
             totalLessons: 23,
@@ -243,22 +204,15 @@
                 if (!data) return this.initData();
                 return JSON.parse(data);
             },
-
             initData() {
                 const initialData = {};
                 for (let i = 1; i <= this.totalLessons; i++) {
-                    initialData[i] = {
-                        locked: i === 1 ? false : true,
-                        visits: 0,
-                        completedExercises: []
-                    };
+                    initialData[i] = { locked: i === 1 ? false : true, visits: 0, completedExercises: [] };
                 }
                 this.saveData(initialData);
                 return initialData;
             },
-
             saveData(data) { localStorage.setItem(this.storageKey, JSON.stringify(data)); },
-
             visitLesson(lessonId) {
                 const data = this.getAllData();
                 if (!data[lessonId].locked) {
@@ -266,28 +220,28 @@
                     this.saveData(data);
                 }
             },
-
             completeExercise(lessonId, exerciseType) {
                 const data = this.getAllData();
                 const lesson = data[lessonId];
                 if (!lesson.completedExercises.includes(exerciseType)) {
                     lesson.completedExercises.push(exerciseType);
-                    if (lesson.completedExercises.length >= 1) {
+                    if (lesson.completedExercises.length >= 1) { 
                         const nextId = parseInt(lessonId) + 1;
                         if (data[nextId]) data[nextId].locked = false;
                     }
                     this.saveData(data);
                 }
             },
-
             getLessonInfo(lessonId) { return this.getAllData()[lessonId]; }
         };
 
+        // --- 3. GENERATE LESSONS (DASTUR TUGMASI BILAN) ---
         function generateLessons() {
             const grid = document.getElementById('lessonsGrid');
             grid.innerHTML = '';
             const allData = ProgressManager.getAllData();
 
+            // 1 dan 23 gacha standart darslar
             for (let i = 1; i <= 23; i++) {
                 const lessonData = allData[i];
                 const card = document.createElement('div');
@@ -301,10 +255,7 @@
                     const percent = (lessonData.completedExercises.length / 8) * 100;
                     actionHtml = `
                         <div class="progress-circle" style="background: conic-gradient(#43e97b ${percent}%, rgba(255,255,255,0.1) 0);">
-                            <div class="progress-text">
-                                ${Math.round(percent)}%
-                                <span>${lessonData.completedExercises.length}/8</span>
-                            </div>
+                            <div class="progress-text">${Math.round(percent)}%<span>${lessonData.completedExercises.length}/8</span></div>
                         </div>
                     `;
                 }
@@ -315,9 +266,7 @@
                         <div class="lesson-title">Lesson ${i}</div>
                         ${!lessonData.locked ? `<div class="visit-count">Ko'rildi: ${lessonData.visits} marta</div>` : '<div class="lesson-description">Yopiq dars</div>'}
                     </div>
-                    <div class="lesson-action">
-                        ${actionHtml}
-                    </div>
+                    <div class="lesson-action">${actionHtml}</div>
                 `;
                 
                 if (!lessonData.locked) {
@@ -332,11 +281,39 @@
                 }
                 grid.appendChild(card);
             }
+
+            // --- MAXSUS DASTUR TUGMASI (23 dan keyin) ---
+            const aboutCard = document.createElement('div');
+            aboutCard.classList.add('lesson-card');
+            // Qulf ham, statistika ham yo'q. Shunchaki info icon.
+            aboutCard.innerHTML = `
+                <div class="lesson-info">
+                    <div class="lesson-number">Dastur</div>
+                    <div class="lesson-title">Ilova haqida</div>
+                    <div class="lesson-description">Dasturchi va ma'lumotlar</div>
+                </div>
+                <div class="lesson-action">
+                    <div style="font-size: 28px; background: rgba(255,255,255,0.2); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">ℹ️</div>
+                </div>
+            `;
+            
+            // To'g'ridan-to'g'ri o'tish
+            aboutCard.onclick = () => {
+                // Bosish effekti
+                aboutCard.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    window.location.href = 'dastur.html';
+                }, 150);
+            };
+            
+            grid.appendChild(aboutCard);
+
             setupScrollAnimations();
         }
 
-        // --- MODAL & LOGIC ---
+        // --- 4. MODAL & LINK LOGIC ---
         let selectedLesson = 1;
+
         function openModal(lessonNumber) {
             selectedLesson = lessonNumber;
             ProgressManager.visitLesson(lessonNumber);
@@ -363,12 +340,39 @@
             });
         }
 
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const type = this.getAttribute('data-type');
+                ProgressManager.completeExercise(selectedLesson, type);
+                this.classList.add('done');
+                this.classList.add('selected');
+                
+                setTimeout(() => {
+                    let suffix = "";
+                    switch(type) {
+                        case 'reading': suffix = "read.html"; break;
+                        case 'definition': suffix = "def.html"; break;
+                        case 'listening': suffix = "pod.html"; break;
+                        case 'reading-words': suffix = "words.html"; break;
+                        case 'definition-write': suffix = "defwrite.html"; break;
+                        case 'words-write': suffix = "wordswrite.html"; break;
+                        case 'grammar': suffix = "gramm.html"; break;
+                        case 'mini-test': suffix = "test.html"; break;
+                        default: suffix = ".html";
+                    }
+                    const url = selectedLesson + suffix; 
+                    window.location.href = url;
+                    generateLessons();
+                }, 300);
+            });
+        });
+
+        // --- QOLGANLAR ---
         function closeModal() {
             scatterButtonsAway();
             setTimeout(() => { document.getElementById('modal').classList.remove('active'); generateLessons(); }, 500);
         }
 
-        // --- HELPERS & ANIMATIONS ---
         function setupScrollAnimations() {
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach((entry) => {
@@ -417,8 +421,7 @@
         function gatherButtonsToCircle() {
             const buttons = document.querySelectorAll('.option-btn');
             const minDim = Math.min(window.innerWidth, window.innerHeight);
-            let radius = minDim * 0.38; 
-            if (radius > 220) radius = 220; if (radius < 125) radius = 125; 
+            let radius = minDim * 0.38; if (radius > 220) radius = 220; if (radius < 125) radius = 125; 
             buttons.forEach((btn, index) => {
                 const angle = (index * 360 / buttons.length) - 90;
                 const radian = angle * Math.PI / 180;
@@ -438,26 +441,12 @@
             });
         }
 
-        document.querySelectorAll('.option-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const type = this.getAttribute('data-type');
-                ProgressManager.completeExercise(selectedLesson, type);
-                this.classList.add('done');
-                this.classList.add('selected');
-                setTimeout(() => {
-                   console.log(`Going to: ${selectedLesson}${type}.html`);
-                   generateLessons();
-                }, 300);
-            });
-        });
-
         window.addEventListener('resize', () => { if (document.getElementById('modal').classList.contains('active')) { gatherButtonsToCircle(); } });
         document.getElementById('modal').addEventListener('click', (e) => { if (e.target.id === 'modal') closeModal(); });
         
-        // --- INITIALIZATION ---
         createBackgroundCircles();
         generateLessons();
-        UserManager.checkUser(); // Ismni tekshirish
+        UserManager.checkUser();
     </script>
 </body>
 </html>
