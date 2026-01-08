@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Hub</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            transition: background 0.5s ease;
+        }
+
+        /* Theme backgrounds */
+        body.light-theme {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        body.dark-theme {
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+        }
+
+        body.ocean-theme {
+            background: linear-gradient(135deg, #2E3192 0%, #1BFFFF 100%);
+        }
+
+        body.sunset-theme {
+            background: linear-gradient(135deg, #FF512F 0%, #F09819 100%);
+        }
+
+        /* Animated background particles */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 20s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-100px) rotate(180deg); }
+        }
+
+        /* Header */
+        header {
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            font-size: clamp(20px, 5vw, 28px);
+            font-weight: 700;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            font-size: clamp(12px, 3vw, 16px);
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        /* Main container */
+        .container {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 5%;
+        }
+
+        .page-title {
+            text-align: center;
+            color: white;
+            font-size: clamp(28px, 6vw, 48px);
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .page-subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: clamp(14px, 3vw, 18px);
+            margin-bottom: 40px;
+            padding: 0 10px;
+        }
+
+        /* Lessons grid */
+        .lessons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .lesson-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: clamp(20px, 4vw, 30px);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            min-height: 150px;
+        }
+
+        .lesson-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s ease;
+        }
+
+        .lesson-card:hover::before {
+            left: 100%;
+        }
+
+        .lesson-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .lesson-number {
+            font-size: clamp(32px, 6vw, 48px);
+            font-weight: 700;
+            color: white;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .lesson-title {
+            font-size: clamp(18px, 4vw, 24px);
+            font-weight: 600;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .lesson-description {
+            font-size: clamp(12px, 2.5vw, 14px);
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.5;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: clamp(25px, 5vw, 40px);
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.3s ease;
+            margin: auto;
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .modal-title {
+            font-size: clamp(22px, 5vw, 32px);
+            font-weight: 700;
+            color: #333;
+            text-align: center;
+            margin-bottom: 25px;
+            line-height: 1.3;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .option-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: clamp(15px, 3vw, 20px);
+            border-radius: 12px;
+            color: white;
+            font-size: clamp(13px, 2.5vw, 16px);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 50px;
+        }
+
+        .option-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .option-btn:nth-child(1) { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .option-btn:nth-child(2) { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .option-btn:nth-child(3) { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .option-btn:nth-child(4) { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .option-btn:nth-child(5) { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .option-btn:nth-child(6) { background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); }
+        .option-btn:nth-child(7) { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #333; }
+        .option-btn:nth-child(8) { background: linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%); }
+
+        .close-modal {
+            background: linear-gradient(135deg, #868f96 0%, #596164 100%);
+            border: none;
+            padding: clamp(12px, 3vw, 15px);
+            border-radius: 12px;
+            color: white;
+            font-size: clamp(14px, 3vw, 16px);
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            min-height: 50px;
+        }
+
+        .close-modal:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                margin: 30px auto;
+            }
+
+            .lessons-grid {
+                gap: 15px;
+            }
+
+            .lesson-card:hover {
+                transform: translateY(-5px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                padding: 12px 4%;
+            }
+
+            .container {
+                margin: 20px auto;
+            }
+
+            .page-subtitle {
+                margin-bottom: 30px;
+            }
+
+            .lessons-grid {
+                gap: 12px;
+            }
+
+            .modal {
+                padding: 15px;
+            }
+
+            .option-btn {
+                gap: 5px;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .options-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body class="light-theme">
+    <div class="bg-animation" id="bgAnimation"></div>
+
+    <header>
+        <div class="logo">🎓 Learning Hub</div>
+        <button class="theme-toggle" onclick="toggleTheme()">
+            <span id="themeIcon">🌙</span> Theme
+        </button>
+    </header>
+
+    <div class="container">
+        <h1 class="page-title">Darslarni tanlang</h1>
+        <p class="page-subtitle">Har bir dars turli xil mashqlarni o'z ichiga oladi</p>
+
+        <div class="lessons-grid" id="lessonsGrid"></div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <h2 class="modal-title">Mashq turini tanlang</h2>
+            <div class="options-grid">
+                <button class="option-btn" data-type="reading">📖 Reading</button>
+                <button class="option-btn" data-type="definition">📚 Definition</button>
+                <button class="option-btn" data-type="listening">🎧 Listening</button>
+                <button class="option-btn" data-type="reading-words">📝 Reading Words</button>
+                <button class="option-btn" data-type="definition-write">✍️ Definition Write</button>
+                <button class="option-btn" data-type="words-write">✏️ Words Write</button>
+                <button class="option-btn" data-type="grammar">📘 Grammar</button>
+                <button class="option-btn" data-type="mini-test">✅ Mini Test</button>
+            </div>
+            <button class="close-modal" onclick="closeModal()">❌ Yopish</button>
+        </div>
+    </div>
+
+    <script>
+        // Theme management
+        const themes = ['light-theme', 'dark-theme', 'ocean-theme', 'sunset-theme'];
+        const themeIcons = ['🌙', '☀️', '🌊', '🌅'];
+        let currentThemeIndex = 0;
+
+        function toggleTheme() {
+            document.body.classList.remove(themes[currentThemeIndex]);
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+            document.body.classList.add(themes[currentThemeIndex]);
+            document.getElementById('themeIcon').textContent = themeIcons[currentThemeIndex];
+            createBackgroundCircles();
+        }
+
+        // Background animation
+        function createBackgroundCircles() {
+            const container = document.getElementById('bgAnimation');
+            container.innerHTML = '';
+            for (let i = 0; i < 10; i++) {
+                const circle = document.createElement('div');
+                circle.classList.add('circle');
+                const size = Math.random() * 100 + 50;
+                circle.style.width = `${size}px`;
+                circle.style.height = `${size}px`;
+                circle.style.left = `${Math.random() * 100}%`;
+                circle.style.top = `${Math.random() * 100}%`;
+                circle.style.animationDelay = `${Math.random() * 5}s`;
+                circle.style.animationDuration = `${Math.random() * 10 + 15}s`;
+                container.appendChild(circle);
+            }
+        }
+
+        // Generate lessons
+        function generateLessons() {
+            const grid = document.getElementById('lessonsGrid');
+            for (let i = 1; i <= 23; i++) {
+                const card = document.createElement('div');
+                card.classList.add('lesson-card');
+                card.innerHTML = `
+                    <div class="lesson-number">Dars ${i}</div>
+                    <div class="lesson-title">Lesson ${i}</div>
+                    <div class="lesson-description">
+                        8 xil mashq turi: Reading, Definition, Listening, va boshqalar
+                    </div>
+                `;
+                card.onclick = () => openModal(i);
+                grid.appendChild(card);
+            }
+        }
+
+        // Modal management
+        let selectedLesson = 1;
+
+        function openModal(lessonNumber) {
+            selectedLesson = lessonNumber;
+            const modal = document.getElementById('modal');
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.classList.remove('active');
+        }
+
+        // Option buttons
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const type = btn.getAttribute('data-type');
+                let url = '';
+                
+                switch(type) {
+                    case 'reading':
+                        url = `${selectedLesson}read.html`;
+                        break;
+                    case 'definition':
+                        url = `${selectedLesson}def.html`;
+                        break;
+                    case 'listening':
+                        url = `${selectedLesson}pod.html`;
+                        break;
+                    case 'reading-words':
+                        url = `${selectedLesson}words.html`;
+                        break;
+                    case 'definition-write':
+                        url = `${selectedLesson}defwrite.html`;
+                        break;
+                    case 'words-write':
+                        url = `${selectedLesson}wordswrite.html`;
+                        break;
+                    case 'grammar':
+                        url = `${selectedLesson}gramm.html`;
+                        break;
+                    case 'mini-test':
+                        url = `${selectedLesson}test.html`;
+                        break;
+                }
+                
+                window.location.href = url;
+            });
+        });
+
+        // Close modal on outside click
+        document.getElementById('modal').addEventListener('click', (e) => {
+            if (e.target.id === 'modal') {
+                closeModal();
+            }
+        });
+
+        // Initialize
+        createBackgroundCircles();
+        generateLessons();
+    </script>
+</body>
+</html>
