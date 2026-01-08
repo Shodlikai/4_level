@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beautiful Natural Places - Interactive Reader</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://code.responsivevoice.org/responsivevoice.js?key=ftro4Sxr"></script>
+    
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #334155;
+            --heading-color: #1e293b;
+            --tooltip-bg: #1e293b;
+            --tooltip-text: #ffffff;
+            --timer-bg: rgba(255, 255, 255, 0.9);
+            --border-color: #e2e8f0;
+            --highlight-color: rgba(37, 99, 235, 0.1);
+            --word-hover-color: #2563eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        body.dark-mode {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #cbd5e1;
+            --heading-color: #f1f5f9;
+            --tooltip-bg: #f1f5f9;
+            --tooltip-text: #0f172a;
+            --timer-bg: rgba(15, 23, 42, 0.9);
+            --border-color: #334155;
+            --highlight-color: rgba(147, 197, 253, 0.15);
+            --word-hover-color: #60a5fa;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        }
+
+        body.sepia-mode {
+            --bg-color: #f5e6d3;
+            --card-bg: #fdf6e3;
+            --text-color: #5f4b32;
+            --heading-color: #433422;
+            --tooltip-bg: #433422;
+            --tooltip-text: #fdf6e3;
+            --timer-bg: rgba(245, 230, 211, 0.95);
+            --border-color: #d6c4a6;
+            --highlight-color: rgba(95, 75, 50, 0.1);
+            --word-hover-color: #8c6b4a;
+        }
+
+        * {
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        body {
+            font-family: 'Merriweather', serif;
+            line-height: 1.8;
+            margin: 0;
+            padding-top: 70px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        #sticky-timer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background-color: var(--timer-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: var(--heading-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        #timer-icon { margin-right: 10px; color: var(--primary-color); }
+
+        .container {
+            max-width: 750px;
+            margin: 30px auto 60px;
+            background: var(--card-bg);
+            padding: 40px 50px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .content-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin: 20px 0;
+            background-color: var(--border-color);
+        }
+
+        h1 { font-family: 'Montserrat', sans-serif; text-align: center; color: var(--primary-color); margin-bottom: 10px; }
+        h2 { font-family: 'Montserrat', sans-serif; font-weight: 700; text-align: center; color: var(--heading-color); margin-top: 40px; margin-bottom: 20px; font-size: 1.8rem; border-bottom: 2px solid var(--primary-color); display: inline-block; width: 100%; padding-bottom: 10px; }
+        h3 { font-family: 'Montserrat', sans-serif; color: var(--primary-color); margin-top: 30px; text-align: center; }
+
+        p { margin-bottom: 20px; font-size: 1.1rem; text-align: justify; }
+
+        .word {
+            cursor: pointer;
+            position: relative;
+            display: inline-block;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+            padding: 0 1px;
+        }
+
+        .word:hover {
+            color: var(--word-hover-color);
+            background-color: var(--highlight-color);
+            border-bottom-color: var(--word-hover-color);
+            border-radius: 3px;
+        }
+
+        .tooltip {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            bottom: 140%;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background-color: var(--tooltip-bg);
+            color: var(--tooltip-text);
+            text-align: center;
+            border-radius: 6px;
+            padding: 6px 12px;
+            z-index: 1000;
+            white-space: nowrap;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+        }
+
+        .tooltip::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -6px;
+            border-width: 6px;
+            border-style: solid;
+            border-color: var(--tooltip-bg) transparent transparent transparent;
+        }
+
+        .word:hover .tooltip { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .button-group button {
+            padding: 12px 24px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+            font-size: 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .button-group button:hover { background-color: var(--primary-hover); transform: translateY(-2px); }
+
+        .button-group button.secondary { background-color: transparent; color: var(--text-color); border: 2px solid var(--border-color); }
+
+        @media (max-width: 600px) {
+            .container { padding: 25px; }
+            .content-image { height: 250px; }
+            .button-group { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="sticky-timer">
+        <span id="timer-icon">⏱</span>
+        <span id="time-display">00:00</span>
+    </div>
+
+    <div class="container">
+        <div id="english-text" class="text-section">
+            <h1>Beautiful Natural Places</h1>
+            <h3>Guess Where?</h3>
+
+            <h2>I</h2>
+            <p>
+                <span class="sentence">This 100 million year-old rock formation extends to 3,000 feet (900 meters) above the ground.</span>
+                <span class="sentence">It is located in a mountainous area, yet not too far away from the ocean.</span>
+                <span class="sentence">Where do you think that could be?</span>
+            </p>
+            <h3>El Capitan, Yosemite National Park, the United States of America</h3>
+            <img class="content-image" src="https://images.unsplash.com/photo-1426604966848-d7adac402bff?auto=format&fit=crop&w=1000&q=80" alt="El Capitan">
+            <p>
+                <span class="sentence">The El Capitan cliff is found on the north side of Yosemite Valley in California.</span>
+                <span class="sentence">The name, given to it in 1851, means "the chief" in Spanish.</span>
+                <span class="sentence">El Cap, as it is popularly called, attracts many rock climbers who feel challenged by how flat the cliff is.</span>
+            </p>
+            <p>
+                <span class="sentence">For the longest time, people thought El Cap was impossible to climb until three climbers managed to do it in 1958.</span>
+                <span class="sentence">They used special tactics to climb the rock in 47 days.</span>
+                <span class="sentence">Things changed since then because in 2017, Alex Honnold completed the first ever ascent of El Capitan without any protective equipment in only 4 hours.</span>
+            </p>
+
+            <h2>II</h2>
+            <p>
+                <span class="sentence">These ruins of an ancient city are located in a very green and hilly area.</span>
+                <span class="sentence">Lovely animals called llamas like to visit this place.</span>
+                <span class="sentence">Could it be somewhere in the Americas, or is it in Europe?</span>
+            </p>
+            <h3>Machu Picchu, Peru</h3>
+            <img class="content-image" src="https://images.unsplash.com/photo-1587595431973-160d0d94add1?auto=format&fit=crop&w=1000&q=80" alt="Machu Picchu">
+            <p>
+                <span class="sentence">Lying at 8,000 feet (2,430 meters) above the ground, Machu Picchu is known as The Lost City of the Incas, the indigenous people of South America.</span>
+                <span class="sentence">Archaeologists believe that the Incas started building this glorious city around 1430, but completely abandoned it once European conquerors arrived.</span>
+                <span class="sentence">No more than 750 people lived in Machu Picchu.</span>
+            </p>
+            <p>
+                <span class="sentence">Because of the specific area where it was built, the city is surrounded by the most unique animals and plants, including butterflies which do not live anywhere else in the world.</span>
+            </p>
+
+            <h2>III</h2>
+            <p>
+                <span class="sentence">This small waterfall stands close to a mountain, in an uninhabited area.</span>
+                <span class="sentence">The sky above them changes its blue color to green and red when the night falls.</span>
+                <span class="sentence">Do you know where this phenomenon happens?</span>
+            </p>
+            <h3>Kirkjufellsfoss Waterfall, Iceland</h3>
+            <img class="content-image" src="https://images.unsplash.com/photo-1476610182048-b716b8518aae?auto=format&fit=crop&w=1000&q=80" alt="Kirkjufellsfoss">
+            <p>
+                <span class="sentence">This stunning waterfall, which channels the water from one of the many glaciers in Iceland, stands next to the Kirkjufell Mountain (Church Mountain in Icelandic).</span>
+                <span class="sentence">This isolated mountain is believed to be the most photographed place in Iceland, due to its remarkable nature.</span>
+                <span class="sentence">The area around the waterfall is one of the few places in the world where you can see aurora borealis, better known as northern lights.</span>
+            </p>
+            <p>
+                <span class="sentence">These green, purple and red lights occasionally start dancing across the dark winter sky, making the whole landscape even more beautiful.</span>
+            </p>
+
+            <h2>IV</h2>
+            <p>
+                <span class="sentence">Imagine a place with golden fields where you can smell fresh air and see low green hills everywhere around you.</span>
+                <span class="sentence">If you knew this place was also known for its wines and art, could you guess what it is?</span>
+            </p>
+            <h3>Tuscany, Italy</h3>
+            <img class="content-image" src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1000&q=80" alt="Tuscany">
+            <p>
+                <span class="sentence">Olive trees, sunflower fields, farms and vineyards spread across Tuscany, a region in central Italy.</span>
+                <span class="sentence">What's perhaps even more enchanting are its ancient castles, which look like they have been untouched for centuries.</span>
+            </p>
+            <p>
+                <span class="sentence">The land in Tuscany is relatively low, with occasional hills and mountains.</span>
+                <span class="sentence">The region got its name from the Etruscan people who settled there around 3,000 years ago.</span>
+                <span class="sentence">There are over 120 protected nature reserves, which proves how valuable this dream-like region is.</span>
+            </p>
+
+            <h2>V</h2>
+            <p>
+                <span class="sentence">This long, curvy river is surrounded by green hills and tall rocks.</span>
+                <span class="sentence">It is found in a place with many plant and animal species, and known for its good weather.</span>
+                <span class="sentence">The country where this place is located is at the same time the edge of a continent.</span>
+            </p>
+            <h3>Blyde River Canyon, South Africa</h3>
+            <img class="content-image" src="https://images.unsplash.com/photo-1547963334-a63e8a48793b?auto=format&fit=crop&w=1000&q=80" alt="Blyde River Canyon">
+            <p>
+                <span class="sentence">The Blyde River formed this 16 mile (25 km)-long and 2,461 feet (750 meter)-deep wonder of nature, one of the largest canyons in the world.</span>
+                <span class="sentence">In Dutch, blyde means "happy, glad", and this name was given to the river by Dutch explorers in 1844.</span>
+            </p>
+            <p>
+                <span class="sentence">The Blyde River Canyon is certainly one of the greatest places in the world, due to the subtropical climate in the area.</span>
+                <span class="sentence">The wildlife in the canyon is so diverse – there are monkeys and antelopes, as well as some dangerous animals like hippos and crocodiles.</span>
+            </p>
+
+            <h2>VI</h2>
+            <p>
+                <span class="sentence">There is a beautiful rock formation in the shape of an arch surrounded by the sea.</span>
+                <span class="sentence">You can explore the area around it on a boat, swim in the warm waters, or sunbathe on the beach.</span>
+                <span class="sentence">Where could this perfect holiday destination be?</span>
+            </p>
+            <h3>Cathedral Cove, New Zealand</h3>
+            <img class="content-image" src="https://images.unsplash.com/photo-1505504639763-7c385764d271?auto=format&fit=crop&w=1000&q=80" alt="Cathedral Cove">
+            <p>
+                <span class="sentence">One of the most visited tourist attractions in New Zealand, the Coromandel Peninsula offers more than 250 miles (400km) of white sand beaches.</span>
+                <span class="sentence">The best way to tour the peninsula is in a kayak – you can go around the entire coast, or even descend down a waterfall.</span>
+            </p>
+            <p>
+                <span class="sentence">Even though not many people live on the Coromandel nowadays, it is believed to be one of the earliest Polynesian settlements.</span>
+                <span class="sentence">It is a popular retirement destination – nearly a third of all residents on the peninsula are aged 65 or over.</span>
+                <span class="sentence">Cathedral Cove, named after the large arch located there, is a marine reserve, reachable only by boat or on foot.</span>
+            </p>
+        </div>
+        
+        <div id="uzbek-text" class="text-section" style="display:none;">
+            <h1>Go'zal Tabiiy Joylar</h1>
+            <h3>Toping-chi qayerda?</h3>
+
+            <h2>I</h2>
+            <p>
+                <span class="sentence">Ushbu 100 million yoshli qoya hosilasi yerdan 3000 fut (900 metr) balandlikkacha cho'zilgan.</span>
+                <span class="sentence">U tog'li hududda joylashgan, ammo okeandan juda uzoq emas.</span>
+                <span class="sentence">Sizningcha, bu qayerda bo'lishi mumkin?</span>
+            </p>
+            <h3>El Kapitan, Yosemit milliy bog'i, Amerika Qo'shma Shtatlari</h3>
+            <img class="content-image" src="https://images.unsplash.com/photo-1426604966848-d7adac402bff?auto=format&fit=crop&w=1000&q=80" alt="El Capitan">
+            <p>
+                <span class="sentence">El Kapitan qoyasi Kaliforniyadagi Yosemit vodiysining shimoliy tomonida joylashgan.</span>
+                <span class="sentence">1851-yilda berilgan bu nom ispanchada "boshliq" degan ma'noni anglatadi.</span>
+                <span class="sentence">Xalq orasida "El Kap" deb ataladigan bu joy, qoyaning tekisligidan hayratda qolgan ko'plab alpinistlarni o'ziga jalb qiladi.</span>
+            </p>
+            <p>
+                <span class="sentence">Uzoq vaqt davomida odamlar 1958-yilda uchta alpinist unga chiqishga muvaffaq bo'lmaguncha, El Kapga chiqishning iloji yo'q deb o'ylashgan.</span>
+                <span class="sentence">Ular qoyaga 47 kun ichida chiqish uchun maxsus usullardan foydalanishgan.</span>
+                <span class="sentence">O'shandan beri vaziyat o'zgardi, chunki 2017-yilda Aleks Honnold hech qanday himoya vositalarisiz atigi 4 soat ichida El Kapitanga birinchi marta ko'tarilishni yakunladi.</span>
+            </p>
+
+            <h2>II</h2>
+            <p>
+                <span class="sentence">Qadimgi shaharning bu xarobalari juda yashil va tepalikli hududda joylashgan.</span>
+                <span class="sentence">Llamalar deb ataladigan yoqimli hayvonlar bu joyga tashrif buyurishni yaxshi ko'radilar.</span>
+                <span class="sentence">Bu Amerika qit'asida bo'lishi mumkinmi yoki Yevropadami?</span>
+            </p>
+            <h3>Machu Pikchu, Peru</h3>
+            <img class="content-image" src="https://images.unsplash.com/photo-1587595431973-160d0d94add1?auto=format&fit=crop&w=1000&q=80" alt="Machu Picchu">
+            <p>
+                <span class="sentence">Yerdan 8000 fut (2430 metr) balandlikda joylashgan Machu Pikchu Janubiy Amerikaning tub aholisi bo'lgan inkalarning "Yo'qolgan shahri" sifatida tanilgan.</span>
+                <span class="sentence">Arxeologlar inkalar ushbu ulug'vor shaharni 1430-yillarda qurishni boshlagan deb hisoblashadi, ammo yevropalik bosqinchilar kelganidan keyin uni butunlay tark etishgan.</span>
+                <span class="sentence">Machu Pikchuda 750 tadan ko'p bo'lmagan odam yashagan.</span>
+            </p>
+            <p>
+                <span class="sentence">Shahar qurilgan o'ziga xos hudud tufayli u eng noyob hayvonlar va o'simliklar, jumladan dunyoning boshqa hech bir joyida yashamaydigan kapalaklar bilan o'ralgan.</span>
+            </p>
+
+            <h2>III</h2>
+            <p>
+                <span class="sentence">Bu kichik sharshara tog'ga yaqin, aholi yashamaydigan hududda joylashgan.</span>
+                <span class="sentence">Kecha tushganda uning ustidagi osmon o'zining ko'k rangini yashil va qizilga o'zgartiradi.</span>
+                <span class="sentence">Bu hodisa qayerda sodir bo'lishini bilasizmi?</span>
+            </p>
+            <h3>Kirkjufellsfoss Sharsharasi, Islandiya</h3>
+            <img class="content-image" src="https://images.unsplash.com/photo-1476610182048-b716b8518aae?auto=format&fit=crop&w=1000&q=80" alt="Kirkjufellsfoss">
+            <p>
+                <span class="sentence">Islandiyadagi ko'plab muzliklarning biridan suv olib keladigan ushbu ajoyib sharshara Kirkjufell tog'i (island tilida Cherkov tog'i) yonida joylashgan.</span>
+                <span class="sentence">Bu alohida tog' o'zining ajoyib tabiati tufayli Islandiyada eng ko'p suratga olingan joy hisoblanadi.</span>
+                <span class="sentence">Sharshara atrofidagi hudud dunyoda shimoliy yog'du (Aurora Borealis)ni ko'rish mumkin bo'lgan kam sonli joylardan biridir.</span>
+            </p>
+            <p>
+                <span class="sentence">Ushbu yashil, binafsha va qizil chiroqlar vaqti-vaqti bilan qishki qorong'u osmonda raqsga tushib, butun manzarani yanada go'zal qiladi.</span>
+            </p>
+
+            <h2>IV</h2>
+            <p>
+                <span class="sentence">Oltin dalalari bo'lgan, toza havodan nafas oladigan va atrofingizda past yashil tepaliklarni ko'radigan joyni tasavvur qiling.</span>
+                <span class="sentence">Agar bu joy o'zining vinolari va san'ati bilan ham mashhurligini bilsangiz, bu nima ekanligini topa olasizmi?</span>
+            </p>
+            <h3>Tuskana, Italiya</h3>
+            <img class="content-image" src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1000&q=80" alt="Tuscany">
+            <p>
+                <span class="sentence">Zaytun daraxtlari, kungaboqar dalalari, fermalar va uzumzorlar markaziy Italiyadagi Tuskana bo'ylab tarqalgan.</span>
+                <span class="sentence">Ehtimol, yanada maftunkor tomoni uning qadimiy qal'alari bo'lib, ular asrlar davomida tegishilmagandek ko'rinadi.</span>
+            </p>
+            <p>
+                <span class="sentence">Tuskanadagi yer nisbatan past bo'lib, vaqti-vaqti bilan tepaliklar va tog'lar uchraydi.</span>
+                <span class="sentence">Viloyat o'z nomini 3000 yil oldin u yerga joylashgan etrusk xalqidan olgan.</span>
+                <span class="sentence">U yerda 120 dan ortiq himoyalangan tabiat qo'riqxonalari bor, bu esa ushbu tushdagidek mintaqaning qanchalik qadrli ekanligini isbotlaydi.</span>
+            </p>
+
+            <h2>V</h2>
+            <p>
+                <span class="sentence">Bu uzun, egri-bugri daryo yashil tepaliklar va baland qoyalar bilan o'ralgan.</span>
+                <span class="sentence">U ko'plab o'simlik va hayvon turlari mavjud bo'lgan va yaxshi ob-havosi bilan tanilgan joyda topilgan.</span>
+                <span class="sentence">Bu joy joylashgan mamlakat ayni paytda qit'aning chekkasidir.</span>
+            </p>
+            <h3>Blyde River Kanyoni, Janubiy Afrika</h3>
+            <img class="content-image" src="https://images.unsplash.com/photo-1547963334-a63e8a48793b?auto=format&fit=crop&w=1000&q=80" alt="Blyde River Canyon">
+            <p>
+                <span class="sentence">Blyde daryosi 16 mil (25 km) uzunlikdagi va 2461 fut (750 metr) chuqurlikdagi ushbu tabiat mo'jizasini, dunyodagi eng katta kanyonlardan birini hosil qilgan.</span>
+                <span class="sentence">Golland tilida "blyde" "baxtli, xursand" degan ma'noni anglatadi va bu nom daryoga 1844-yilda gollandiyalik tadqiqotchilar tomonidan berilgan.</span>
+            </p>
+            <p>
+                <span class="sentence">Blyde River Kanyoni hududdagi subtropik iqlim tufayli, shubhasiz, dunyodagi eng buyuk joylardan biridir.</span>
+                <span class="sentence">Kanyondagi yovvoyi tabiat juda xilma-xil – u yerda maymunlar va antilopalar, shuningdek begemotlar va timsohlar kabi ba'zi xavfli hayvonlar bor.</span>
+            </p>
+
+            <h2>VI</h2>
+            <p>
+                <span class="sentence">Dengiz bilan o'ralgan arka shaklidagi go'zal qoya hosilasi mavjud.</span>
+                <span class="sentence">Siz uning atrofidagi hududni qayiqda o'rganishingiz, iliq suvlarda suzishingiz yoki plyajda quyoshda toblanishingiz mumkin.</span>
+                <span class="sentence">Bu mukammal ta'til manzili qayerda bo'lishi mumkin?</span>
+            </p>
+            <h3>Cathedral Cove, Yangi Zelandiya</h3>
+            <img class="content-image" src="https://images.unsplash.com/photo-1505504639763-7c385764d271?auto=format&fit=crop&w=1000&q=80" alt="Cathedral Cove">
+            <p>
+                <span class="sentence">Yangi Zelandiyadagi eng ko'p tashrif buyuriladigan sayyohlik joylaridan biri bo'lgan Koromandel yarim oroli 250 mildan (400 km) ortiq oq qumli plyajlarni taklif qiladi.</span>
+                <span class="sentence">Yarim orolni sayohat qilishning eng yaxshi usuli - kayakda; siz butun qirg'oq bo'ylab aylanishingiz yoki hatto sharsharadan pastga tushishingiz mumkin.</span>
+            </p>
+            <p>
+                <span class="sentence">Hozirgi kunda Koromandelda ko'p odam yashamasa-da, u eng qadimgi Polineziya aholi punktlaridan biri deb hisoblanadi.</span>
+                <span class="sentence">Bu mashhur nafaqaga chiqish manzili – yarim oroldagi barcha aholining deyarli uchdan bir qismi 65 yosh va undan kattadir.</span>
+                <span class="sentence">U yerda joylashgan katta arka nomi bilan atalgan Cathedral Cove dengiz qo'riqxonasi bo'lib, unga faqat qayiqda yoki piyoda borish mumkin.</span>
+            </p>
+        </div>
+
+        <div class="button-group">
+            <button id="toggle-lang-button">O'zbekcha</button>
+            <button id="toggle-theme-button" class="secondary">Qorong'u rejim</button>
+        </div>
+    </div>
+
+    <script>
+        const originalTexts = {};
+        const words = {
+            // A-Z tartibida barcha so'zlar
+            "a": "bir", "abandoned": "tark etilgan", "above": "tepasida", "across": "bo'ylab", "aged": "yoshdagi", "ago": "oldin", "air": "havo", "alex": "Aleks", "all": "barcha", "also": "shuningdek", "america": "Amerika", "americas": "Amerika qit'alari", "an": "bir", "ancient": "qadimiy", "and": "va", "animal": "hayvon", "animals": "hayvonlar", "antelopes": "antilopalar", "any": "har qanday", "arch": "arka", "archaeologists": "arxeologlar", "are": "dirlar", "area": "hudud", "around": "atrofida", "arrived": "kelgan", "art": "san'at", "as": "sifatida / kabi", "ascent": "ko'tarilish", "at": "da", "attracts": "jalb qiladi", "attractions": "diqqatga sazovor joylar", "aurora": "qutb yog'dusi", "away": "uzoqda", "be": "bo'lish", "beach": "plyaj", "beautiful": "go'zal", "because": "chunki", "believe": "ishonish", "believed": "ishoniladi", "best": "eng yaxshi", "better": "yaxshiroq", "blue": "ko'k", "blyde": "baxtli (gollandcha)", "boat": "qayiq", "borealis": "shimoliy", "building": "qurish", "built": "qurilgan", "but": "lekin", "butterflies": "kapalaklar", "by": "tomonidan / orqali", "called": "ataladigan", "can": "olmoq (imkoniyat)", "canyon": "kanyon", "canyons": "kanyonlar", "castles": "qal'alar", "cathedral": "sobor", "centuries": "asrlar", "central": "markaziy", "certainly": "shubhasiz", "challenged": "qiyinchilik sezgan", "changed": "o'zgargan", "changes": "o'zgaradi", "channels": "yo'naltiradi", "chief": "boshliq", "church": "cherkov", "city": "shahar", "cliff": "tik qoya", "climate": "iqlim", "climb": "chiqish", "climbers": "alpinistlar", "close": "yaqin", "coast": "qirg'oq", "color": "rang", "completed": "yakunladi", "completely": "butunlay", "conquerors": "bosqinchilar", "coromandel": "Koromandel", "could": "mumkin", "country": "mamlakat", "cove": "qo'ltiq", "crocodiles": "timsohlar", "curvy": "egri-bugri", "dancing": "raqs tushayotgan", "dangerous": "xavfli", "dark": "qorong'u", "days": "kunlar", "deep": "chuqur", "descend": "tushish", "destination": "manzil", "diverse": "xilma-xil", "do": "qilmoq", "dutch": "gollandcha", "earliest": "eng erta", "edge": "chekka", "el": "El", "else": "boshqa", "enchanting": "maftunkor", "entire": "butun", "equipment": "jihoz", "etruscan": "etrusk", "europe": "Yevropa", "european": "yevropalik", "even": "hatto", "ever": "qachonlardir", "everywhere": "hamma yerda", "explorers": "tadqiqotchilar", "explore": "tadqiq qilish", "extends": "cho'ziladi", "falls": "tushadi", "far": "uzoq", "farms": "fermalar", "feel": "his qilish", "feet": "fut", "fields": "dalalar", "first": "birinchi", "flat": "tekis", "foot": "piyoda", "for": "uchun", "formation": "tuzilish", "formed": "hosil bo'lgan", "found": "topilgan", "fresh": "toza / yangi", "from": "dan", "given": "berilgan", "glaciers": "muzliklar", "glad": "xursand", "glorious": "ulug'vor", "go": "borish", "golden": "oltin", "good": "yaxshi", "got": "olgan", "ground": "yer", "guess": "toping", "happens": "sodir bo'ladi", "happy": "baxtli", "has": "bor", "have": "bor", "hilly": "tepalikli", "hills": "tepaliklar", "hippos": "begemotlar", "holiday": "ta'til", "honnold": "Honnold", "hours": "soatlar", "how": "qanday", "iceland": "Islandiya", "icelandic": "islandcha", "if": "agar", "imagine": "tasavvur qiling", "impossible": "imkonsiz", "in": "ichida / -da", "incas": "inkalar", "including": "shu jumladan", "indigenous": "tub", "is": "dir / -dir", "isolated": "ajratilgan", "it": "u", "italy": "Italiya", "its": "uning", "just": "shunchaki", "kayak": "kayak", "kirkjufell": "Kirkjufell", "kirkjufellsfoss": "Kirkjufellsfoss", "knew": "bilgan", "known": "tanilgan", "km": "km", "land": "yer", "landscape": "manzara", "large": "katta", "largest": "eng katta", "last": "oxirgi", "lights": "chiroqlar", "like": "kabi / yoqtirish", "lived": "yashagan", "living": "yashaydigan", "llamas": "llamalar", "located": "joylashgan", "long": "uzun", "longest": "eng uzoq", "look": "ko'rinish", "lost": "yo'qolgan", "lovely": "yoqimli", "low": "past", "machu": "Machu", "making": "qilish / yaratish", "managed": "uddalagan", "many": "ko'plab", "marine": "dengiz", "means": "anglatadi", "meters": "metr", "mile": "mil", "million": "million", "monkeys": "maymunlar", "more": "ko'proq", "most": "eng / aksar", "mountain": "tog'", "mountainous": "tog'li", "nature": "tabiat", "natural": "tabiiy", "nearly": "deyarli", "next": "yonida / keyingi", "new": "yangi", "night": "tun / kecha", "no": "yo'q / emas", "northern": "shimoliy", "north": "shimoliy", "not": "emas", "nowadays": "hozirgi kunlarda", "of": "ning", "occasionally": "vaqti-vaqti bilan", "occasional": "ba'zi", "ocean": "okean", "offers": "taklif qiladi", "olive": "zaytun", "on": "ustida / -da", "one": "bitta", "only": "faqat", "or": "yoki", "other": "boshqa", "over": "dan ortiq", "park": "bog'", "peninsula": "yarim orol", "people": "odamlar", "perfect": "mukammal", "perhaps": "ehtimol", "peru": "Peru", "phenomenon": "fenomen", "photographed": "suratga olingan", "picchu": "Pikchu", "place": "joy", "places": "joylar", "plants": "o'simliklar", "polynesian": "polineziya", "popularly": "mashhur tarzda", "protected": "himoyalangan", "protective": "himoya", "proves": "isbotlaydi", "purple": "binafsha", "reachable": "borish mumkin", "red": "qizil", "region": "viloyat", "relatively": "nisbatan", "remarkable": "ajoyib", "reserve": "qo'riqxona", "reserves": "qo'riqxonalar", "residents": "aholisi", "retirement": "pensiya", "river": "daryo", "rock": "qoya", "rocks": "qoyalar", "ruins": "xarobalar", "same": "bir xil / ayni", "sand": "qum", "sea": "dengiz", "see": "ko'rish", "settled": "joylashgan", "settlements": "aholi punktlari", "shape": "shakl", "since": "dan beri", "sky": "osmon", "small": "kichik", "smell": "hid / hidlash", "so": "shunday", "some": "ba'zi", "somewhere": "qayerdadir", "south": "janubiy", "spanish": "ispancha", "special": "maxsus", "species": "turlar", "spread": "tarqalgan", "stands": "turadi", "started": "boshlagan", "stunning": "hayratlanarli", "subtropical": "subtropik", "sunbathe": "quyoshda toblanish", "sunflower": "kungaboqar", "surrounded": "o'ralgan", "swim": "suzish", "tactics": "taktikalar", "tall": "baland", "than": "ko'ra", "that": "o'sha", "the": "o'sha (aniqlovchi)", "their": "ularning", "them": "ularni", "there": "u yerda", "these": "bular", "they": "ular", "things": "narsalar", "think": "o'ylash", "third": "uchdan bir", "this": "bu", "though": "garchi", "thought": "o'ylashgan", "three": "uchta", "through": "orqali", "time": "vaqt", "to": "ga", "too": "juda / ham", "tour": "sayohat", "tourist": "sayyohlik", "trees": "daraxtlar", "tuscany": "Tuskana", "under": "tagida", "unhabited": "aholi yashamaydigan", "unique": "noyob", "united": "birlashgan", "until": "gacha", "untouched": "tegishilmagan", "up": "tepaga", "used": "ishlatilgan", "valuable": "qadrli", "valley": "vodiy", "very": "juda", "vineyards": "uzumzorlar", "visit": "tashrif buyurish", "visited": "tashrif buyurilgan", "warm": "iliq", "was": "edi", "water": "suv", "waterfall": "sharshara", "waters": "suvlar", "way": "yo'l", "we": "biz", "weather": "ob-havo", "where": "qayerda", "which": "qaysiki", "white": "oq", "who": "kimlar", "whole": "butun", "wildlife": "yovvoyi tabiat", "wines": "vinolar", "winter": "qishki", "with": "bilan", "without": "siz / -siz", "wonder": "mo''jiza", "world": "dunyo", "year-old": "yoshli", "yosemite": "Yosemit", "yet": "ammo / hali", "you": "siz", "zealand": "Zelandiya"
+        };
+
+        function makeWordsClickable(containerId) {
+            const container = document.getElementById(containerId);
+            const sentences = container.getElementsByClassName('sentence');
+            
+            for (let sentence of sentences) {
+                if (!originalTexts[sentence.innerText]) {
+                    originalTexts[sentence.innerText] = sentence.innerText;
+                }
+                
+                const text = sentence.innerText;
+                const wordsArray = text.split(/(\s+|[,.?!:;()""—])/);
+                sentence.innerHTML = '';
+                
+                wordsArray.forEach(word => {
+                    if (word.trim() && !/[,.?!:;()""—]/.test(word)) {
+                        const span = document.createElement('span');
+                        span.className = 'word';
+                        span.innerText = word;
+                        
+                        // So'zni tozalash (kichik harf va ortiqcha belgisiz)
+                        const lowerWord = word.toLowerCase().replace(/[^a-z0-9'-]/g, '');
+                        const translation = words[lowerWord] || '...';
+                        
+                        const tooltip = document.createElement('span');
+                        tooltip.className = 'tooltip';
+                        tooltip.innerText = translation;
+                        
+                        span.appendChild(tooltip);
+                        
+                        span.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            if (typeof responsiveVoice !== 'undefined') {
+                                responsiveVoice.speak(word, "UK English Female");
+                            }
+                        });
+                        
+                        sentence.appendChild(span);
+                    } else {
+                        sentence.appendChild(document.createTextNode(word));
+                    }
+                });
+            }
+        }
+
+        // Timer Logic
+        let seconds = 0;
+        setInterval(() => {
+            seconds++;
+            const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const secs = (seconds % 60).toString().padStart(2, '0');
+            document.getElementById('time-display').textContent = `${mins}:${secs}`;
+        }, 1000);
+
+        // Language Toggle
+        const toggleButton = document.getElementById('toggle-lang-button');
+        const englishText = document.getElementById('english-text');
+        const uzbekText = document.getElementById('uzbek-text');
+        let isEnglish = true;
+
+        toggleButton.addEventListener('click', () => {
+            if (isEnglish) {
+                englishText.style.display = 'none';
+                uzbekText.style.display = 'block';
+                toggleButton.textContent = 'English';
+                isEnglish = false;
+                makeWordsClickable('uzbek-text');
+            } else {
+                englishText.style.display = 'block';
+                uzbekText.style.display = 'none';
+                toggleButton.textContent = 'O\'zbekcha';
+                isEnglish = true;
+                makeWordsClickable('english-text');
+            }
+        });
+
+        // Theme Toggle
+        const toggleThemeButton = document.getElementById('toggle-theme-button');
+        let currentThemeIndex = 0;
+        const themes = ['light-mode', 'dark-mode', 'sepia-mode'];
+        const themeTexts = ['Qorong\'u rejim', 'Qizg\'ich rejim', 'Kun rejimi'];
+
+        toggleThemeButton.addEventListener('click', () => {
+            document.body.classList.remove(...themes);
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+            if (themes[currentThemeIndex] !== 'light-mode') {
+                document.body.classList.add(themes[currentThemeIndex]);
+            }
+            toggleThemeButton.textContent = themeTexts[currentThemeIndex];
+        });
+
+        // Init
+        window.onload = () => {
+            makeWordsClickable('english-text');
+            if (typeof responsiveVoice !== 'undefined') responsiveVoice.enableSpeech();
+        };
+    </script>
+</body>
+</html>
