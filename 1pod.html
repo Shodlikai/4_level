@@ -1,0 +1,1788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>English Listening Practice - Missing School & Geography Test</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  
+<style>
+      /* 5pod.html dan asl CSS kodlari */
+      * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+      }
+
+      /* index10.html dan olingan body stillari kun/tun rejimini boshqaradi */
+      body {
+          font-family: 'Inter', sans-serif;
+          transition: background-color 0.3s ease, color 0.3s ease;
+          margin: 0;
+          display: flex;
+          flex-direction: column;
+          min-height: 100vh;
+          padding: 20px; /* 5pod.html dagi asl padding */
+          padding-top: 70px; /* Yuqoridagi fixed elementlar uchun joy */
+      }
+      
+      /* === YANGI YONUVCHI RANGLI FON === */
+      body {
+          background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+          background-size: 400% 400%;
+          animation: rainbow-bg 15s ease infinite;
+      }
+      body.light-mode { color: #333; } /* Matn rangi */
+      body.dark-mode { color: #ecf0f1; } /* Matn rangi */
+
+      @keyframes rainbow-bg {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+      }
+      /* === YONUVCHI FON TUGADI === */
+
+      
+      /* 5pod.html dagi asl .container (SHAFFOF QILINDI) */
+      .container {
+          max-width: 1200px;
+          margin: 0 auto;
+          /* background: var(--card-bg, white); - Eski fon */
+          border-radius: 20px;
+          box-shadow: 0 20px 40px rgba(0,0,0,0.2); /* Soya kuchaytirildi */
+          overflow: hidden;
+          transition: background-color 0.3s ease, color 0.3s ease;
+          position: relative; 
+          z-index: 2; /* Animatsiyalardan oldinda turishi uchun */
+      }
+      body.dark-mode .container {
+          --card-bg: rgba(52, 73, 94, 0.9); /* Tun rejimi shaffof fon */
+          background-color: var(--card-bg);
+          color: #ecf0f1;
+      }
+      body.light-mode .container {
+          --card-bg: rgba(255, 255, 255, 0.9); /* Kun rejimi shaffof fon */
+          background-color: var(--card-bg);
+          color: #333;
+      }
+
+      .header {
+          background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+          color: white;
+          padding: 3px;
+          text-align: center;
+      }
+      .header h1, .header h3 { /* h3 uchun ham stil qo'shildi */
+          font-size: 2.5em;
+          margin-bottom: 5px;
+          text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      }
+      .header p {
+          font-size: 1.2em;
+          opacity: 0.9;
+      }
+      .content {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 30px;
+          padding: 30px;
+      }
+
+      /* 5pod.html stillari */
+      .transcript-section,
+      .uzbek-transcript-section {
+          background: rgba(248, 249, 250, 0.85); /* Shaffoflik qo'shildi */
+          border-radius: 15px;
+          padding: 25px;
+          max-height: 600px;
+          overflow-y: auto;
+          border: 2px solid rgba(233, 236, 239, 0.7); /* Shaffoflik qo'shildi */
+          display: none;
+          margin-bottom: 30px;
+      }
+      body.dark-mode .transcript-section,
+      body.dark-mode .uzbek-transcript-section {
+           background: rgba(44, 62, 80, 0.85); /* Tun rejimi uchun shaffoflik */
+           border-color: rgba(52, 73, 94, 0.7);
+      }
+      
+      /* Lug'at bo'limi endi index10 stillaridan foydalanadi */
+      .vocabulary-section {
+           border-radius: 15px;
+           padding: 25px;
+           display: none;
+           margin-bottom: 30px;
+           display: none; /* Boshida yashirin */
+           flex-direction: column;
+           align-items: center;
+           width: 100%;
+      }
+
+      /* H2 sarlavhalari uchun umumiy stillar */
+      .transcript-section h2,
+      .uzbek-transcript-section h2,
+      .vocabulary-section h2,
+      .exercises-section h2 {
+          color: var(--header-color, #2c3e50); /* Kun/tun rejimiga moslashuv */
+          margin-bottom: 20px;
+          font-size: 1.8em;
+          border-bottom: 3px solid #3498db;
+          padding-bottom: 10px;
+      }
+      .uzbek-transcript-section h2 {
+          border-bottom: 3px solid #e74c3c;
+      }
+      .vocabulary-section h2 {
+          border-bottom: 3px solid #f39c12;
+          width: 100%; /* Sarlavha kengligini to'g'rilash */
+          text-align: center; /* Sarlavhani markazga olish */
+      }
+      .exercises-section h2 {
+          border-bottom: 3px solid #27ae60;
+      }
+      
+      body.dark-mode .transcript-section h2,
+      body.dark-mode .uzbek-transcript-section h2,
+      body.dark-mode .vocabulary-section h2,
+      body.dark-mode .exercises-section h2 {
+          color: #ecf0f1;
+      }
+
+      /* ... 5pod.html dagi mashqlar va transkript uchun qolgan stillar ... */
+      
+      .transcript p,
+      .uzbek-transcript p {
+          margin-bottom: 15px;
+          line-height: 1.6;
+          padding: 10px;
+          border-radius: 8px;
+          transition: all 0.3s ease;
+      }
+      .transcript p:hover,
+      .uzbek-transcript p:hover {
+          background: #e3f2fd;
+          transform: translateX(5px);
+      }
+      body.dark-mode .transcript p:hover,
+      body.dark-mode .uzbek-transcript p:hover {
+          background: rgba(75, 108, 183, 0.3); /* Tun rejimi uchun hover */
+      }
+
+      .transcript strong {
+          color: #e74c3c;
+          font-weight: bold;
+          background: #fff3cd;
+          padding: 2px 6px;
+          border-radius: 4px;
+          margin-right: 10px;
+      }
+      body.dark-mode .transcript strong {
+           background: rgba(255, 243, 205, 0.3);
+           color: #ffc107;
+      }
+
+
+      .exercises-section {
+          background: var(--card-bg-exercise, rgba(255, 255, 255, 0.85)); /* Shaffoflik */
+          border-radius: 15px;
+          padding: 25px; 
+          border: 2px solid rgba(233, 236, 239, 0.7); /* Shaffoflik */
+          transition: background-color 0.3s ease;
+      }
+       body.dark-mode .exercises-section {
+          --card-bg-exercise: rgba(44, 62, 80, 0.85);
+          background-color: var(--card-bg-exercise);
+           border-color: rgba(52, 73, 94, 0.7);
+      }
+
+
+      /* ... (qolgan mashq stillari o'zgarishsiz) ... */
+      .exercise {
+          background: rgba(248, 249, 250, 0.9); /* Shaffof */
+          border-radius: 10px;
+          padding: 20px;
+          margin-bottom: 20px;
+          border-left: 5px solid #27ae60;
+      }
+      body.dark-mode .exercise {
+          background: rgba(52, 73, 94, 0.9); /* Tun rejimi shaffof */
+      }
+      
+      .exercise h3 { color: #2c3e50; margin-bottom: 15px; font-size: 1.3em; }
+      body.dark-mode .exercise h3 { color: #ecf0f1; }
+
+      .question { margin-bottom: 15px; padding: 15px; background: rgba(255, 255, 255, 0.95); border-radius: 8px; border: 1px solid #dee2e6; }
+      body.dark-mode .question { background: rgba(236, 240, 241, 0.1); border-color: rgba(149, 165, 166, 0.5); }
+      
+      .question p { margin-bottom: 10px; font-weight: 500; color: inherit; }
+      
+      .options { display: flex; flex-direction: column; gap: 8px; }
+      .option { padding: 10px 15px; background: #f1f3f4; border-radius: 6px; cursor: pointer; transition: all 0.3s ease; border: 2px solid transparent; color: #333;}
+      body.dark-mode .option { background: rgba(149, 165, 166, 0.2); color: #ecf0f1; }
+
+      .option:hover { background: #e8f5e8; border-color: #27ae60; }
+      body.dark-mode .option:hover { background: rgba(39, 174, 96, 0.3); border-color: #2ecc71; }
+
+      .option.selected { background: #d4edda; border-color: #27ae60; color: #155724; }
+      body.dark-mode .option.selected { background: rgba(45, 204, 113, 0.4); border-color: #2ecc71; color: #e8f5e9; }
+      
+      .option.correct { background: #d4edda; border-color: #27ae60; color: #155724; }
+      body.dark-mode .option.correct { background: rgba(45, 204, 113, 0.4); border-color: #2ecc71; color: #e8f5e9; }
+
+      .option.incorrect { background: #f8d7da; border-color: #dc3545; color: #721c24; }
+       body.dark-mode .option.incorrect { background: rgba(220, 53, 69, 0.4); border-color: #e74c3c; color: #f8d7da; }
+
+      .check-btn { background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%); color: white; border: none; padding: 12px 30px; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.3s ease; margin-top: 15px; }
+      .check-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3); }
+      .check-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+      .result { margin-top: 15px; padding: 15px; border-radius: 8px; font-weight: 600; text-align: center; }
+      .result.correct { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+      body.dark-mode .result.correct { background: rgba(45, 204, 113, 0.3); color: #d4edda; border-color: rgba(39, 174, 96, 0.5); }
+
+      .result.incorrect { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+      body.dark-mode .result.incorrect { background: rgba(220, 53, 69, 0.3); color: #f8d7da; border-color: rgba(199, 53, 69, 0.5); }
+      
+      .progress-bar { width: 100%; height: 8px; background: rgba(233, 236, 239, 0.5); border-radius: 4px; overflow: hidden; margin-bottom: 20px; }
+      body.dark-mode .progress-bar { background: rgba(149, 165, 166, 0.2); }
+
+      .progress-fill { height: 100%; background: linear-gradient(90deg, #27ae60, #2ecc71); transition: width 0.3s ease; }
+      .gap-input { width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #dee2e6; border-radius: 8px; font-size: 16px; transition: all 0.3s ease; background: rgba(255,255,255,0.7); color: #333;}
+      body.dark-mode .gap-input { border-color: rgba(149, 165, 166, 0.5); background: rgba(52, 73, 94, 0.7); color: #ecf0f1; }
+      
+      .gap-input:focus { border-color: #3498db; outline: none; box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1); }
+      body.dark-mode .gap-input:focus { border-color: #5dade2; box-shadow: 0 0 0 3px rgba(93, 173, 226, 0.1); }
+      
+      .gap-input.correct { border-color: #27ae60; background-color: rgba(212, 237, 218, 0.8); }
+       body.dark-mode .gap-input.correct { border-color: #2ecc71; background-color: rgba(45, 204, 113, 0.3); }
+
+      .gap-input.incorrect { border-color: #dc3545; background-color: rgba(248, 215, 218, 0.8); }
+      body.dark-mode .gap-input.incorrect { border-color: #e74c3c; background-color: rgba(220, 53, 69, 0.3); }
+
+
+      /* Boshqaruv tugmalari */
+      .controls {
+          text-align: center;
+          padding: 20px;
+          background: var(--card-bg-controls, rgba(248, 249, 250, 0.85)); /* Shaffoflik */
+          border-bottom: 1px solid rgba(222, 226, 230, 0.7); /* Shaffoflik */
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 10px;
+          transition: background-color 0.3s ease;
+      }
+      body.dark-mode .controls {
+           --card-bg-controls: rgba(44, 62, 80, 0.85);
+           background-color: var(--card-bg-controls);
+           border-color: rgba(52, 73, 94, 0.7);
+      }
+      .control-btn {
+          background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+          color: white;
+          border: none;
+          padding: 12px 25px;
+          border-radius: 25px;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: 600;
+          margin: 0 5px;
+          transition: all 0.3s ease;
+      }
+      .control-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+      }
+
+      /* Audio player */
+      #audio-player {
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          background-color: rgba(51, 51, 51, 0.8); /* Shaffoflik */
+          backdrop-filter: blur(5px); /* Xira fon effekti */
+          color: white;
+          border-radius: 50%;
+          padding: 15px;
+          display: flex;
+          gap: 10px;
+          align-items: center;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+          z-index: 1000;
+      }
+      #audio-player button {
+          background: none;
+          border: none;
+          color: white;
+          font-size: 18px;
+          cursor: pointer;
+      }
+
+      /* Xabar oynasi */
+      .custom-message-box {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.6);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 9999;
+          backdrop-filter: blur(3px); /* Orqa fonni xiralashtirish */
+      }
+      .message-content {
+          background: white;
+          padding: 30px;
+          border-radius: 10px;
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+          text-align: center;
+          max-width: 80%;
+          color: #333; 
+      }
+      body.dark-mode .message-content {
+          background: #34495e;
+          color: #ecf0f1;
+      }
+      .message-content p {
+          font-size: 1.2em;
+          margin-bottom: 20px;
+          color: inherit; 
+      }
+      .close-message-btn {
+          background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+          color: white;
+          border: none;
+          padding: 10px 20px;
+          border-radius: 20px;
+          cursor: pointer;
+          font-size: 1em;
+          font-weight: 600;
+          transition: all 0.3s ease;
+      }
+      .close-message-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 3px 10px rgba(52, 152, 219, 0.3);
+      }
+
+      /* Transkript sinxronizatsiyasi */
+      .text-container {
+           background: rgba(255, 255, 255, 0.9); /* Shaffoflik */
+           border-radius: 15px;
+           padding: 25px;
+           box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+           line-height: 1.8;
+           font-size: 1.1rem;
+           max-height: 500px;
+           overflow-y: auto;
+           color: #333; 
+       }
+       body.dark-mode .text-container {
+           background: rgba(44, 62, 80, 0.9); /* Tun rejimi shaffoflik */
+           color: #ecf0f1;
+       }
+       .sentence { margin-bottom: 15px; padding: 10px; border-radius: 8px; transition: all 0.3s ease; }
+       .sentence.active {
+           background: linear-gradient(45deg, rgba(227, 242, 253, 0.9), rgba(187, 222, 251, 0.9)); /* Shaffoflik */
+           border-left: 4px solid #2196F3;
+           transform: translateX(5px);
+           color: #333; 
+       }
+       body.dark-mode .sentence.active {
+           background: linear-gradient(45deg, rgba(75, 108, 183, 0.7), rgba(24, 40, 72, 0.7)); /* Tun rejimi shaffoflik */
+           border-left-color: #40c4ff;
+           color: #fff;
+       }
+       .word { display: inline; padding: 2px 4px; border-radius: 4px; transition: all 0.2s ease; cursor: pointer; }
+       .word.current {
+           background: linear-gradient(45deg, #FFD54F, #FFC107);
+           font-weight: bold;
+           transform: scale(1.05);
+           box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+           color: #333; 
+       }
+       .word:hover { background: rgba(33, 150, 243, 0.1); }
+       body.dark-mode .word:hover { background: rgba(64, 196, 255, 0.1); }
+       
+       .music-indicator { color: #9C27B0; font-style: italic; background: linear-gradient(45deg, #f3e5f5, #e1bee7); padding: 5px 10px; border-radius: 20px; display: inline-block; margin: 5px 0; }
+       .loading { text-align: center; color: #666; font-style: italic; }
+        body.dark-mode .loading { color: #bdc3c7; }
+       @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+       .pulse { animation: pulse 1s infinite; }
+
+
+      /* === index10.html dan fleshkarta stillari === */
+      .vocabulary-section .header { 
+          display: none; /* Endi lug'at bo'limida alohida header kerak emas */
+      }
+
+      .slider-wrapper {
+          width: 100%;
+          max-width: 500px;
+          margin-bottom: 20px;
+      }
+      .slider {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          color: inherit;
+      }
+      .slider input[type="range"] {
+          flex-grow: 1;
+          -webkit-appearance: none;
+          height: 8px;
+          border-radius: 5px;
+          background: rgba(221, 221, 221, 0.7); /* Shaffoflik */
+          outline: none;
+          opacity: 0.7;
+          transition: opacity .2s;
+      }
+       body.dark-mode .slider input[type="range"] {
+           background: rgba(149, 165, 166, 0.3);
+       }
+
+      .slider input[type="range"]::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          background: #40c4ff;
+          cursor: pointer;
+      }
+      .slider input[type="range"]::-moz-range-thumb {
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          background: #40c4ff;
+          cursor: pointer;
+      }
+
+      .card {
+          position: relative;
+          width: 90%; /* Kenglikni moslashtirish */
+          max-width: 400px;
+          height: 600px;
+          background-color: var(--card-card-bg); /* O'zgaruvchi nomi o'zgardi */
+          border-radius: 20px;
+          box-shadow: 0 0 16px rgba(0, 0, 0, 0.15);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: flex-start;
+          padding: 10px;
+          perspective: 1000px;
+          overflow: hidden;
+          transition: transform 0.3s ease, left 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+          left: 0;
+          color: inherit;
+      }
+
+      /* Tun rejimi uchun karta ranglari */
+      body.dark-mode .card {
+          --card-card-bg: rgba(52, 73, 94, 0.95); /* Shaffoflik */
+          color: #ecf0f1;
+      }
+      /* Kun rejimi uchun karta ranglari */
+      body.light-mode .card {
+          --card-card-bg: rgba(255, 255, 255, 0.95); /* Shaffoflik */
+          color: #333;
+      }
+
+      .card::after {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          border-radius: 20px;
+          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+          pointer-events: none;
+      }
+      .card-inner {
+          width: 100%;
+          height: 100%;
+          transform-style: preserve-3d;
+          transition: transform 0.6s;
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+      }
+      .card.flipped .card-inner { transform: rotateY(180deg); }
+      .card-front,
+      .card-back {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          backface-visibility: hidden;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          background-color: var(--card-card-bg); /* Fonni qo'shish */
+          border-radius: 20px; /* Chegarani aylantirish */
+      }
+      .card-front .image { display: none; }
+      .card-back { transform: rotateY(180deg); }
+      .top-circle,
+      .bottom-circle {
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 100%;
+          height: 100px;
+          background-color: rgba(64, 196, 255, 0.8); /* Shaffoflik */
+          border-radius: 0 0 100% 100%;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      .top-circle { top: 0; transform: translate(-50%, -50%); }
+      .bottom-circle { bottom: 0; transform: translate(-50%, 50%) rotate(180deg); }
+      .content {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          z-index: 2; /* Doiralarning ustida bo'lishi uchun */
+      }
+      .word-container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 5px;
+      }
+      .en-word {
+          font-size: 32px;
+          font-weight: bold;
+          color: inherit;
+          text-align: center;
+      }
+      .uz-word {
+          font-size: 22px;
+          font-weight: bold;
+          color: red;
+          text-align: center;
+          padding: 0 10px;
+      }
+       body.dark-mode .uz-word { color: #ff8a80; } /* Tun rejimi uchun qizil rang */
+      
+      .pronunciation {
+          font-size: 16px;
+          color: #888;
+          margin-top: 5px;
+      }
+      body.dark-mode .pronunciation { color: #bdc3c7; }
+
+      .type {
+          background-color: #40c4ff;
+          color: white;
+          font-size: 15px;
+          padding: 1px 2px;
+          border-radius: 5px;
+      }
+      .definition {
+          text-align: center;
+          color: #808080;
+          font-size: 10px;
+          line-height: 1.4;
+          max-width: 90%;
+          z-index: 2;
+      }
+      body.dark-mode .definition { color: #bdc3c7; }
+
+      .uzbek-hint,
+      .uzbek-definition {
+          font-size: 12px;
+          color: #a0a0a0;
+          margin-top: 5px;
+          text-align: center;
+          padding: 0 10px;
+      }
+      body.dark-mode .uzbek-hint,
+      body.dark-mode .uzbek-definition { color: #95a5a6; }
+
+      .card-buttons {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 20px;
+          width: 100%;
+          padding: 20px;
+      }
+      #next-button,
+      #audio-button {
+          padding: 15px 30px;
+          border: none;
+          border-radius: 10px;
+          background-color: #40c4ff;
+          color: white;
+          cursor: pointer;
+          font-size: 16px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+          transition: background-color 0.3s ease;
+      }
+      #next-button:hover,
+      #audio-button:hover { background-color: #29b6f6; }
+      .image {
+          width: 150px;
+          height: 150px;
+          border-radius: 10px;
+          margin-bottom: 10px;
+          z-index: 2;
+      }
+      .card.swiping-left { left: -100%; transform: rotate(-10deg); }
+      .card.swiping-right { left: 100%; transform: rotate(10deg); }
+
+      .modal {
+          display: none;
+          position: fixed;
+          z-index: 1000;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.5);
+          justify-content: center;
+          align-items: center;
+          backdrop-filter: blur(3px); /* Modal orqasini xiralashtirish */
+      }
+      .modal-content {
+          background-color: white;
+          padding: 20px;
+          border-radius: 10px;
+          text-align: center;
+          box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+          max-width: 80%;
+          color: #333;
+      }
+      body.dark-mode .modal-content {
+          background-color: #34495e;
+          color: #ecf0f1;
+      }
+      #close-modal {
+          margin-top: 10px;
+          padding: 10px 20px;
+          background-color: #40c4ff;
+          color: white;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+      }
+      #close-modal:hover { background-color: #29b6f6; }
+
+      /* === GLOBAL KUN/TUN TUGMASI (YANGI JOY) === */
+      #theme-toggle {
+          position: fixed; /* Qotirilgan */
+          top: 15px;      /* Yuqoridan */
+          right: 20px;     /* O'ngdan */
+          z-index: 1001;   /* Boshqa elementlardan ustun */
+          background: linear-gradient(135deg, #FFD700, #FFA500);
+          color: white;
+          border: none;
+          border-radius: 50%;
+          width: 50px;
+          height: 50px;
+          font-size: 24px;
+          cursor: pointer;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+          transition: all 0.3s ease;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          overflow: hidden;
+      }
+      #theme-toggle:hover {
+          transform: translateY(-2px) scale(1.1); /* Kattalashish effekti */
+          box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+      }
+      #theme-toggle::before {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 0;
+          height: 0;
+          background: rgba(255, 255, 255, 0.3);
+          border-radius: 50%;
+          opacity: 0;
+          transform: translate(-50%, -50%);
+          transition: width 0.4s ease-out, height 0.4s ease-out, opacity 0.4s ease-out;
+      }
+      #theme-toggle:active::before {
+          width: 120%;
+          height: 120%;
+          opacity: 1;
+      }
+      /* === KUN/TUN TUGMASI JOYI TUGADI === */
+
+
+      /* Taymer uslublari (Flashkarta uchun) */
+      .timer-container {
+          margin-top: auto;
+          margin-bottom: 5px;
+          padding: 2px 5px;
+          text-align: center;
+          font-family: 'Inter', sans-serif;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          width: auto;
+          max-width: 200px;
+          box-sizing: border-box;
+      }
+      .timer-display {
+          font-size: 2.5em;
+          font-weight: bold;
+          background: linear-gradient(to right, #ff7e5f, #feb47b, #86a8e7, #91eae4);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          animation: pulse 2s infinite alternate;
+          text-shadow: 0 0 8px rgba(255, 126, 95, 0.4), 0 0 16px rgba(254, 180, 123, 0.4), 0 0 24px rgba(134, 168, 231, 0.4);
+      }
+      
+      /* === YANGI GLOBAL TAYMER UCHUN STILLAR === */
+      #global-timer {
+          position: fixed;
+          top: 15px;      /* Yuqoridan */
+          left: 20px;      /* Chapdan */
+          z-index: 1001;   /* Boshqa elementlardan ustun */
+          font-size: 1.8em; /* Kattaroq shrift */
+          font-weight: bold;
+          font-family: 'Courier New', Courier, monospace; /* Raqamli ko'rinish uchun */
+          padding: 5px 15px;
+          border-radius: 8px;
+          background: rgba(0, 0, 0, 0.1); /* Yarim shaffof fon */
+          backdrop-filter: blur(5px); /* Fonni xiralashtirish */
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+          /* Taymer rangi */
+          background-image: linear-gradient(45deg, #FA8BFF 0%, #2BD2FF 52%, #2BFF88 90%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          /* Soya */
+          text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+      }
+       body.dark-mode #global-timer {
+           background: rgba(255, 255, 255, 0.1);
+           text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+           background-image: linear-gradient(45deg, #fbc2eb 0%, #a6c1ee 100%); /* Tun uchun boshqa rang */
+           -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+       }
+      /* === GLOBAL TAYMER STILLARI TUGADI === */
+
+      
+      /* === YANGI YOG'INLAR ANIMATSIYASI === */
+      #particle-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 1; /* Fon ustida, container orqasida */
+          overflow: hidden;
+          pointer-events: none; /* Kliklarni "o'tkazib yuborish" */
+      }
+
+      .particle {
+          position: absolute;
+          top: -20px; /* Ekranning tepasidan boshlash */
+          animation: fall-random linear infinite;
+          opacity: 0; /* Animatsiya boshlanguncha ko'rinmas */
+          user-select: none; /* Belgilarni belgilab bo'lmasligi uchun */
+      }
+
+      @keyframes fall-random {
+          0% {
+              transform: translateY(-5vh) rotate(0deg); /* Sal yuqoriroqdan boshlash */
+              opacity: 0;
+          }
+          10% {
+               opacity: 1; /* Paydo bo'lish */
+          }
+          95% {
+              opacity: 1; /* Yo'qolishdan oldin */
+          }
+          100% {
+              transform: translateY(105vh) rotate(var(--rotate-end, 360deg)); /* JS dan keladigan o'zgaruvchi */
+              opacity: 0;
+          }
+      }
+
+      /* Yog'in turlari */
+      .rain {
+          width: 1px;
+          height: 15px; /* JS dan keladi */
+          background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.6));
+      }
+       body.dark-mode .rain {
+          background: linear-gradient(to bottom, rgba(173, 216, 230,0), rgba(173, 216, 230,0.6)); /* Tun uchun och ko'k */
+      }
+
+
+      .snow {
+          font-size: 1.5rem; /* JS dan keladi */
+          color: rgba(255, 255, 255, 0.8);
+      }
+      body.dark-mode .snow {
+          color: rgba(224, 242, 241, 0.8); /* Tun uchun ochroq oq */
+      }
+
+      .leaf {
+          font-size: 1.5rem; /* JS dan keladi */
+          color: rgba(139, 69, 19, 0.8); /* Jigarrang */
+          transform-origin: center center;
+          --rotate-end: 720deg !important; /* Barg ko'proq aylansin */
+      }
+       body.dark-mode .leaf {
+           color: rgba(210, 180, 140, 0.8); /* Tun uchun ochroq jigarrang */
+       }
+
+      .flower {
+          font-size: 1.5rem; /* JS dan keladi */
+          color: rgba(255, 105, 180, 0.8); /* Pushti */
+          transform-origin: center center;
+          --rotate-end: 180deg !important; /* Gul kamroq aylansin */
+      }
+       body.dark-mode .flower {
+           color: rgba(255, 182, 193, 0.8); /* Tun uchun ochroq pushti */
+       }
+
+  </style>
+
+</head>
+
+<body class="light-mode">
+  
+  <div id="particle-overlay">
+      </div>
+  <div id="global-timer">00:00:00</div> 
+  <button id="theme-toggle"></button>
+  <div class="container">
+      <div class="header">
+          <h3> English Listening Practice</h3>
+          <p>Missing School & Geography Test - Lucy & Peter</p>
+
+          <audio id="myAudio" src="1.mp3" preload="auto"></audio>
+
+          <div id="audio-player">
+              <button id="rewind"></button>
+              <button id="playPause"></button>
+              <button id="forward"></button>
+          </div>
+      </div>
+
+      <div class="controls">
+          <button class="control-btn" onclick="showSection('transcript-section')"> Show Transcript</button>
+          <button class="control-btn" onclick="showSection('uzbek-transcript-section')"> Uzbek Transcript</button>
+          <button class="control-btn" onclick="showSection('vocabulary-section')"> Lug'at</button>
+          <button class="control-btn" onclick="hideAllSections()"> Hide All</button>
+          <button class="control-btn" onclick="resetExercises()"> Reset All</button>
+      </div>
+
+      <div class="content">
+          <div class="transcript-section" id="transcript-section" style="display: block;">
+              <h2> Transcript</h2>
+              <div class="text-container" id="textContainer">
+                  <div class="loading pulse">Audio yuklanmoqda...</div>
+              </div>
+          </div>
+
+          <div class="uzbek-transcript-section" id="uzbek-transcript-section">
+              <h2> O'zbekcha Transkript</h2>
+              <div class="text-container" id="uzbekTextContainer">
+                  <div class="loading pulse">Audio yuklanmoqda...</div>
+              </div>
+          </div>
+
+          <div class="vocabulary-section" id="vocabulary-section">
+              <h2> Lug'at</h2>
+              
+              <div class="slider-wrapper">
+                      <div class="slider">
+                          <span id="slider-value">1 / 20</span>
+                          <input type="range" id="word-slider" min="0" value="0">
+                          <span id="slider-max">20</span>
+                      </div>
+                  </div>
+              
+              <div class="card">
+                  <div class="card-inner">
+                      <div class="card-front">
+                          <div class="top-circle"></div>
+                          <div class="content">
+                              <div class="word-container">
+                                  <div class="word en-word"></div> <span class="pronunciation" id="pronunciation"></span>
+                                  <div class="uzbek-hint" id="uzbek-hint"></div>
+                              </div>
+                              <div class="type" id="type-front"></div>
+                          </div>
+                          <div class="bottom-circle"></div>
+                          <div class="definition">Ta'rifni ko'rish uchun bosing</div>
+                      </div>
+                      <div class="card-back">
+                          <div class="top-circle"></div>
+                          <img src="https://placehold.co/150x150/40c4ff/ffffff?text=Image" alt="Rasm" class="image"
+                              id="back-image">
+                          <div class="content">
+                              <div class="word uz-word"></div> <div class="type" id="type-back"></div>
+                              <div class="uzbek-definition" id="uzbek-definition"></div>
+                          </div>
+                          <div class="bottom-circle"></div>
+                          <div class="definition">Ta'rif tarjimasi</div>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="card-buttons">
+                  <button id="audio-button">Ovoz</button>
+                  <button id="next-button">Keyingi</button>
+              </div>
+
+              <div class="timer-container">
+                  <div class="timer-display" id="timer-display">00:00</div>
+              </div>
+              
+          </div>
+
+          <div class="exercises-section">
+              <h2> Exercises</h2>
+              <div class="progress-bar">
+                  <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+              </div>
+
+              <div class="exercise" id="exercise1"><h3>Question 1</h3><div class="question"><p>Why was Lucy absent from school?</p><div class="options"><div class="option" data-answer="incorrect">She had a headache</div><div class="option" data-answer="correct">She felt sick (stomach ache)</div><div class="option" data-answer="incorrect">She missed the bus</div><div class="option" data-answer="incorrect">She was on holiday</div></div><button class="check-btn" onclick="checkAnswer(1)">Check Answer</button><div class="result" id="result1" style="display: none;"></div></div></div>
+              <div class="exercise" id="exercise2"><h3>Question 2</h3><div class="question"><p>What does Lucy think caused her sickness?</p><div class="options"><div class="option" data-answer="incorrect">Bad weather</div><div class="option" data-answer="incorrect">Homework stress</div><div class="option" data-answer="correct">The pizza she ate yesterday</div><div class="option" data-answer="incorrect">A virus from Peter</div></div><button class="check-btn" onclick="checkAnswer(2)">Check Answer</button><div class="result" id="result2" style="display: none;"></div></div></div>
+              <div class="exercise" id="exercise3"><h3>Question 3</h3><div class="question"><p>Did Lucy go to the doctor this time?</p><div class="options"><div class="option" data-answer="incorrect">Yes, she got a certificate</div><div class="option" data-answer="incorrect">She is going tomorrow</div><div class="option" data-answer="correct">No, her mom called the teacher</div><div class="option" data-answer="incorrect">Yes, Peter took her</div></div><button class="check-btn" onclick="checkAnswer(3)">Check Answer</button><div class="result" id="result3" style="display: none;"></div></div></div>
+              <div class="exercise" id="exercise4"><h3>Question 4</h3><div class="question"><p>What did the class do during the Geography lesson?</p><div class="options"><div class="option" data-answer="incorrect">They watched a documentary</div><div class="option" data-answer="incorrect">They took a big test</div><div class="option" data-answer="correct">They revised and had a map contest</div><div class="option" data-answer="incorrect">They started a new topic</div></div><button class="check-btn" onclick="checkAnswer(4)">Check Answer</button><div class="result" id="result4" style="display: none;"></div></div></div>
+              <div class="exercise" id="exercise5"><h3>Question 5</h3><div class="question"><p>When is the Geography test scheduled for?</p><div class="options"><div class="option" data-answer="incorrect">Next week</div><div class="option" data-answer="incorrect">It was today</div><div class="option" data-answer="incorrect">In two hours</div><div class="option" data-answer="correct">Tomorrow</div></div><button class="check-btn" onclick="checkAnswer(5)">Check Answer</button><div class="result" id="result5" style="display: none;"></div></div></div>
+              <div class="exercise" id="exercise6"><h3>Question 6 - True/False</h3><div class="question"><p>Lucy missed school because she had a dental appointment.</p><div class="options"><div class="option" data-answer="incorrect">True</div><div class="option" data-answer="correct">False</div></div><button class="check-btn" onclick="checkAnswer(6)">Check Answer</button><div class="result" id="result6" style="display: none;"></div></div></div>
+              <div class="exercise" id="exercise7"><h3>Question 7 - True/False</h3><div class="question"><p>The teacher said they are starting a new topic next week.</p><div class="options"><div class="option" data-answer="correct">True</div><div class="option" data-answer="incorrect">False</div></div><button class="check-btn" onclick="checkAnswer(7)">Check Answer</button><div class="result" id="result7" style="display: none;"></div></div></div>
+              <div class="exercise" id="exercise8"><h3>Question 8 - True/False</h3><div class="question"><p>Peter gave his exercise book to Lucy immediately.</p><div class="options"><div class="option" data-answer="incorrect">True</div><div class="option" data-answer="correct">False</div></div><button class="check-btn" onclick="checkAnswer(8)">Check Answer</button><div class="result" id="result8" style="display: none;"></div></div></div>
+              <div class="exercise" id="exercise9"><h3>Question 9 - True/False</h3><div class="question"><p>Lucy and Peter agreed to study together in two hours.</p><div class="options"><div class="option" data-answer="correct">True</div><div class="option" data-answer="incorrect">False</div></div><button class="check-btn" onclick="checkAnswer(9)">Check Answer</button><div class="result" id="result9" style="display: none;"></div></div></div>
+              <div class="exercise" id="exercise10"><h3>Question 10 - Fill in the Gap</h3><div class="question"><p>Complete the sentence: "If you can _______ me your _______ book with notes..."</p><input type="text" class="gap-input" id="gap1" placeholder="First word..."><input type="text" class="gap-input" id="gap2" placeholder="Second word..."><button class="check-btn" onclick="checkDoubleGapAnswer(10, 'gap1', 'gap2', 'lend', 'exercise')">Check Answer</button><div class="result" id="result10" style="display: none;"></div></div></div>
+
+          </div>
+      </div>
+  </div>
+
+  <div id="instruction-modal" class="modal">
+      <div class="modal-content">
+          <h2>Fleshcarddan foydalanish bo'yicha yo'riqnoma</h2>
+          <p>&#x25B6; O'ngga sursangiz oldingi so'zga qaytasiz.</p>
+          <p>&#x25C0; Chapga sursangiz so'z yodlangan hisoblanadi va qayta chiqmaydi.</p>
+          <p>&#x1F504; Kartani ustiga bosing va so'zning inglizcha ma'nosini ko'rasiz.</p>
+          <p>&#x1F50A; "Ovoz" tugmasini bosib, kartaning hozirgi tomonidagi matnni eshitasiz (old tomonda inglizcha so'zni, orqa tomonda inglizcha ta'rifni).</p>
+          <button id="close-modal">Tushunarli</button>
+      </div>
+  </div>
+
+  <script src="https://code.responsivevoice.org/responsivevoice.js?key=ftro4Sxr"></script>
+  
+  <script>
+      /* === index10.html dan yangi fleshkarta skripti === */
+      const card = document.querySelector('.card');
+      const slider = document.querySelector('.slider input[type="range"]');
+      const sliderValue = document.getElementById('slider-value');
+      const sliderMax = document.getElementById('slider-max');
+      const nextButton = document.getElementById('next-button');
+      const audioButton = document.getElementById('audio-button');
+      const backImage = document.getElementById('back-image');
+      const pronunciationElement = document.querySelector('.pronunciation');
+      const uzbekHintElement = document.getElementById('uzbek-hint');
+      const uzbekDefinitionElement = document.getElementById('uzbek-definition');
+      const instructionModal = document.getElementById('instruction-modal');
+      const closeModalButton = document.getElementById('close-modal');
+      const themeToggle = document.getElementById('theme-toggle'); 
+      const body = document.body;
+      const timerDisplay = document.getElementById('timer-display'); 
+      const globalTimerDisplay = document.getElementById('global-timer'); 
+
+      const PIXABAY_API_KEY = "49146347-e05e26bd1aae0010e8163774c"; 
+
+      const learnedWords = [];
+      
+      // YANGI LUG'ATLAR (Audio transkript asosida)
+      let words = [ 
+          { "english": "Stomach ache", "definition": "Pain in the belly", "uzbekDefinition": "Qorin sohasidagi og'riq", "uzbek": "Qorin og'rig'i", "type": "noun" },
+          { "english": "Medical certificate", "definition": "A document from a doctor", "uzbekDefinition": "Shifokor tomonidan berilgan hujjat", "uzbek": "Tibbiy ma'lumotnoma", "type": "noun" },
+          { "english": "Geography", "definition": "Study of earth and places", "uzbekDefinition": "Yer va joylarni o'rganish fani", "uzbek": "Geografiya", "type": "noun" },
+          { "english": "Revise", "definition": "To study again", "uzbekDefinition": "Imtihon uchun qayta o'qib chiqish", "uzbek": "Takrorlamoq", "type": "verb" },
+          { "english": "Contest", "definition": "A competition or game", "uzbekDefinition": "Musobaqa yoki o'yin", "uzbek": "Musobaqa", "type": "noun" },
+          { "english": "Lend", "definition": "To give temporarily", "uzbekDefinition": "Vaqtinchalik berib turish", "uzbek": "Qarzga bermoq", "type": "verb" },
+          { "english": "Exercise book", "definition": "Notebook for school work", "uzbekDefinition": "Maktab ishlari uchun daftar", "uzbek": "Mashq daftari", "type": "noun" },
+          { "english": "Topic", "definition": "A subject of discussion", "uzbekDefinition": "Muhokama mavzusi", "uzbek": "Mavzu", "type": "noun" },
+          { "english": "Absent", "definition": "Not present", "uzbekDefinition": "Qatnashmagan, yo'q", "uzbek": "Darsda yo'q", "type": "adjective" },
+          { "english": "Serious", "definition": "Important or bad", "uzbekDefinition": "Jiddiy yoki muhim", "uzbek": "Jiddiy", "type": "adjective" },
+          { "english": "Recover", "definition": "To feel better", "uzbekDefinition": "O'zini yaxshi his qilish", "uzbek": "Tuzalmoq", "type": "verb" },
+          { "english": "Prepare", "definition": "To get ready", "uzbekDefinition": "Tayyorgarlik ko'rmoq", "uzbek": "Tayyorlanmoq", "type": "verb" },
+          { "english": "Blackboard", "definition": "Board for writing in class", "uzbekDefinition": "Sinfda yozish uchun doska", "uzbek": "Doska", "type": "noun" },
+          { "english": "Offer", "definition": "To ask if someone wants help", "uzbekDefinition": "Yordam taklif qilish", "uzbek": "Taklif qilmoq", "type": "verb" },
+          { "english": "Matter", "definition": "Problem or issue", "uzbekDefinition": "Muammo yoki masala", "uzbek": "Nima gap/muammo", "type": "noun" }
+      ];
+
+      function shuffleWords() {
+          words = words.sort(() => Math.random() - 0.5);
+      }
+      shuffleWords();
+
+      let currentIndex = 0;
+
+      if (slider && sliderMax && sliderValue) {
+          slider.min = 0;
+          slider.max = words.length - 1;
+          slider.value = 0;
+          sliderMax.textContent = words.length;
+          sliderValue.textContent = `1 / ${words.length}`; 
+          
+          slider.addEventListener('input', function () {
+            if(words.length > 0) updateCard(parseInt(this.value)); 
+          });
+      } else {
+          console.error("Slider elements not found!");
+      }
+
+
+      async function getPixabayImage(query) {
+          const url = `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${query}&image_type=photo`;
+          try {
+              const response = await fetch(url);
+              const data = await response.json();
+              return (data.hits.length > 0) ? data.hits[0].webformatURL : "https://placehold.co/150x150/40c4ff/ffffff?text=Image";
+          } catch (error) {
+              console.error("Pixabay API error:", error);
+              return "https://placehold.co/150x150/40c4ff/ffffff?text=Image";
+          }
+      }
+
+      async function updateCard(index) {
+          const frontWordEl = document.querySelector('.card-front .en-word');
+          const backWordEl = document.querySelector('.card-back .uz-word');
+          const typeFrontEl = document.getElementById('type-front');
+          const typeBackEl = document.getElementById('type-back');
+
+          if (!frontWordEl || !backWordEl || !typeFrontEl || !typeBackEl || !pronunciationElement || !uzbekHintElement || !uzbekDefinitionElement || !backImage || !slider || !sliderMax || !sliderValue) {
+               console.error("One or more card elements are missing!");
+               return; 
+          }
+          
+          if (words.length === 0) {
+              frontWordEl.textContent = "Barcha so'zlar yodlandi!";
+              pronunciationElement.textContent = "";
+              typeFrontEl.textContent = ""; 
+              uzbekHintElement.textContent = "";
+              backImage.src = "https://placehold.co/150x150/40c4ff/ffffff?text=Image";
+              backWordEl.textContent = "";
+              uzbekDefinitionElement.textContent = "";
+              typeBackEl.textContent = ""; 
+              slider.value = 0;
+              sliderMax.textContent = 0;
+              sliderValue.textContent = "0 / 0";
+              return;
+          }
+
+          if (index < 0) index = 0;
+          if (index >= words.length) index = words.length > 0 ? words.length - 1 : 0;
+          
+          if (words.length === 0) return; 
+
+          const currentWordData = words[index]; 
+
+          frontWordEl.textContent = currentWordData.english;
+          pronunciationElement.textContent = currentWordData.pronunciation || ""; 
+          typeFrontEl.textContent = currentWordData.type; 
+          uzbekHintElement.textContent = currentWordData.uzbek;
+
+          backWordEl.textContent = currentWordData.definition;
+          uzbekDefinitionElement.textContent = currentWordData.uzbekDefinition;
+          typeBackEl.textContent = currentWordData.type; 
+
+          slider.value = index;
+          sliderValue.textContent = `${index + 1} / ${words.length}`;
+          currentIndex = index;
+
+          const imageUrl = await getPixabayImage(currentWordData.english);
+          backImage.src = imageUrl;
+
+          checkAndDownloadAudio(currentWordData.english);
+         if (card) card.classList.remove('flipped'); 
+      }
+
+      async function checkAndDownloadAudio(audioFile) {
+      }
+
+      if(card) { 
+          card.addEventListener('click', function () {
+              this.classList.toggle('flipped');
+          });
+
+          let startX = 0;
+          let endX = 0;
+          card.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; });
+          card.addEventListener('touchend', (e) => { endX = e.changedTouches[0].clientX; handleSwipe(); });
+      }
+
+     if(nextButton) { 
+          nextButton.addEventListener('click', function () {
+              if (words.length === 0) return; 
+              currentIndex++;
+              if (currentIndex >= words.length) {
+                  shuffleWords();
+                  currentIndex = 0;
+              }
+              updateCard(currentIndex);
+          });
+      }
+      
+      function speak(text) {
+          if (typeof responsiveVoice !== 'undefined') {
+              responsiveVoice.speak(text, "US English Male", { rate: 0.9 });
+          } else {
+              console.error("ResponsiveVoice not loaded or initialized.");
+              showMessageBox("Kechirasiz, ovoz funksiyasi ishlamayapti. Sahifani yangilang.");
+          }
+      }
+
+      if(audioButton) { 
+          audioButton.addEventListener('click', function () {
+              if (words.length > 0 && currentIndex < words.length) { 
+                  if (card && card.classList.contains('flipped')) {
+                     speak(words[currentIndex].definition); 
+                  } else {
+                     speak(words[currentIndex].english); 
+                  }
+              }
+          });
+      }
+
+
+      function handleSwipe() {
+           if (words.length === 0) return; 
+           if (!card) return; 
+
+          const deltaX = endX - startX;
+          if (deltaX > 50) { 
+              card.classList.add('swiping-right');
+              setTimeout(() => {
+                  currentIndex--; 
+                  if (currentIndex < 0) {
+                      currentIndex = words.length - 1; 
+                  }
+                  updateCard(currentIndex);
+                  card.classList.remove('swiping-right');
+                  card.style.left = '';
+                  card.style.transform = '';
+              }, 300);
+          } else if (deltaX < -50) { 
+              const learnedWord = words.splice(currentIndex, 1)[0];
+              learnedWords.push(learnedWord);
+
+              if (slider && sliderMax) {
+                   slider.max = words.length > 0 ? words.length - 1 : 0; 
+                   sliderMax.textContent = words.length; 
+              } else {
+                  console.error("Cannot update slider max/value - elements not found")
+              }
+
+
+              if (words.length === 0) {
+                  showCustomAlert("Barcha so'zlar yodlandi!");
+                  updateCard(-1); 
+                  return;
+              }
+
+              if (currentIndex >= words.length) {
+                  currentIndex = 0;
+              }
+
+              updateCard(currentIndex); 
+
+              card.classList.add('swiping-left');
+              setTimeout(() => {
+                  card.classList.remove('swiping-left');
+                  card.style.left = '';
+                  card.style.transform = '';
+              }, 300);
+          }
+      }
+
+      themeToggle.addEventListener('click', () => { 
+          body.classList.toggle('dark-mode');
+          body.classList.toggle('light-mode');
+          if (body.classList.contains('dark-mode')) {
+              themeToggle.textContent = '';
+              themeToggle.style.background = 'linear-gradient(135deg, #4b6cb7, #182848)';
+          } else {
+              themeToggle.textContent = '';
+              themeToggle.style.background = 'linear-gradient(135deg, #FFD700, #FFA500)';
+          }
+      });
+
+      let timerInterval;
+      let totalSeconds = 0;
+      let isTimerRunning = false;
+
+      function formatTime(seconds, includeHours = false) { 
+          const hours = Math.floor(seconds / 3600);
+          const minutes = Math.floor((seconds % 3600) / 60);
+          const remainingSeconds = seconds % 60;
+          
+          if (includeHours) {
+              return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+          } else {
+              return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+          }
+      }
+
+      function startTimer() { 
+          if (!isTimerRunning && timerDisplay) { 
+              isTimerRunning = true;
+              timerInterval = setInterval(() => {
+                  totalSeconds++;
+                  timerDisplay.textContent = formatTime(totalSeconds);
+              }, 1000);
+          }
+      }
+
+      function stopTimer() { 
+          if (isTimerRunning) {
+              clearInterval(timerInterval);
+              isTimerRunning = false;
+          }
+      }
+      
+      let globalTimerInterval;
+      let globalTotalSeconds = 0;
+      
+      function startGlobalTimer() {
+           if (!globalTimerDisplay) return; 
+           globalTimerInterval = setInterval(() => {
+                globalTotalSeconds++;
+                globalTimerDisplay.textContent = formatTime(globalTotalSeconds, true); 
+           }, 1000);
+      }
+
+      function showCustomAlert(message) {
+          showMessageBox(message);
+      }
+
+      let completedExercises = 0;
+      const totalExercises = 10;
+
+      function checkAnswer(exerciseNum) {
+          const exercise = document.getElementById(`exercise${exerciseNum}`);
+          const options = exercise.querySelectorAll('.option');
+          const result = document.getElementById(`result${exerciseNum}`);
+          const button = exercise.querySelector('.check-btn');
+
+          let selectedOption = null;
+          let isCorrect = false;
+
+          options.forEach(option => {
+              if (option.classList.contains('selected')) {
+                  selectedOption = option;
+                  if (option.dataset.answer === 'correct') {
+                      isCorrect = true;
+                      option.classList.add('correct');
+                  } else {
+                      option.classList.add('incorrect');
+                  }
+              }
+          });
+
+          if (!selectedOption) {
+              showMessageBox('Please select an answer first!');
+              return;
+          }
+
+          options.forEach(option => {
+              if (option.dataset.answer === 'correct') {
+                  option.classList.add('correct');
+              }
+              option.style.pointerEvents = 'none';
+          });
+
+          result.style.display = 'block';
+          if (isCorrect) {
+              result.textContent = ' Correct! Well done!';
+              result.className = 'result correct';
+              if (!button.disabled) {
+                  completedExercises++;
+                  updateProgress();
+              }
+          } else {
+              result.textContent = ' Incorrect. The correct answer is highlighted.';
+              result.className = 'result incorrect';
+          }
+          button.disabled = true;
+      }
+
+      function updateProgress() {
+          const progressFill = document.getElementById('progressFill');
+          if (!progressFill) return; 
+          const progress = (completedExercises / totalExercises) * 100;
+          progressFill.style.width = progress + '%';
+
+          if (completedExercises === totalExercises) {
+              setTimeout(() => {
+                  showMessageBox(' Congratulations! You completed all exercises!');
+              }, 500);
+          }
+      }
+
+      function checkGapAnswer(exerciseNum, inputId, correctAnswer) {
+          const input = document.getElementById(inputId);
+          const result = document.getElementById(`result${exerciseNum}`);
+          const button = document.querySelector(`#exercise${exerciseNum} .check-btn`);
+          if(!input || !result || !button) return; 
+          const userAnswer = input.value.trim().toLowerCase();
+          const correct = correctAnswer.toLowerCase();
+          if (!userAnswer) { showMessageBox('Please enter your answer!'); return; }
+          const isCorrect = userAnswer === correct;
+          if (isCorrect) {
+              input.classList.add('correct'); input.classList.remove('incorrect');
+              result.textContent = ' Correct! Well done!'; result.className = 'result correct';
+              if (!button.disabled) { completedExercises++; updateProgress(); }
+          } else {
+              input.classList.add('incorrect'); input.classList.remove('correct');
+              result.textContent = ` Incorrect. The correct answer is: "${correctAnswer}"`; result.className = 'result incorrect';
+          }
+          result.style.display = 'block'; button.disabled = true; input.disabled = true;
+      }
+
+      function checkDoubleGapAnswer(exerciseNum, inputId1, inputId2, correctAnswer1, correctAnswer2) {
+          const input1 = document.getElementById(inputId1);
+          const input2 = document.getElementById(inputId2);
+          const result = document.getElementById(`result${exerciseNum}`);
+          const button = document.querySelector(`#exercise${exerciseNum} .check-btn`);
+           if(!input1 || !input2 || !result || !button) return; 
+          const userAnswer1 = input1.value.trim().toLowerCase();
+          const userAnswer2 = input2.value.trim().toLowerCase();
+          const correct1 = correctAnswer1.toLowerCase();
+          const correct2 = correctAnswer2.toLowerCase();
+          if (!userAnswer1 || !userAnswer2) { showMessageBox('Please fill in both gaps!'); return; }
+          const isCorrect1 = userAnswer1 === correct1;
+          const isCorrect2 = userAnswer2 === correct2;
+          const bothCorrect = isCorrect1 && isCorrect2;
+          if (isCorrect1) { input1.classList.add('correct'); input1.classList.remove('incorrect'); } else { input1.classList.add('incorrect'); input1.classList.remove('correct'); }
+          if (isCorrect2) { input2.classList.add('correct'); input2.classList.remove('incorrect'); } else { input2.classList.add('incorrect'); input2.classList.remove('correct'); }
+          if (bothCorrect) {
+              result.textContent = ' Correct! Well done!'; result.className = 'result correct';
+              if (!button.disabled) { completedExercises++; updateProgress(); }
+          } else {
+              result.textContent = ` Incorrect. The correct answers are: "${correctAnswer1}" and "${correctAnswer2}"`; result.className = 'result incorrect';
+          }
+          result.style.display = 'block'; button.disabled = true; input1.disabled = true; input2.disabled = true;
+      }
+
+      function resetExercises() {
+          completedExercises = 0;
+          updateProgress();
+
+          for (let i = 1; i <= totalExercises; i++) {
+              const exercise = document.getElementById(`exercise${i}`);
+              if (exercise) {
+                  const options = exercise.querySelectorAll('.option');
+                  const inputs = exercise.querySelectorAll('.gap-input');
+                  const result = document.getElementById(`result${i}`);
+                  const button = exercise.querySelector('.check-btn');
+                  options.forEach(option => {
+                      option.classList.remove('selected', 'correct', 'incorrect');
+                      option.style.pointerEvents = 'auto';
+                  });
+                  inputs.forEach(input => {
+                      input.value = '';
+                      input.classList.remove('correct', 'incorrect');
+                      input.disabled = false;
+                  });
+                  if (result) { result.style.display = 'none'; }
+                  if (button) { button.disabled = false; }
+              }
+          }
+          
+          stopTimer(); 
+          totalSeconds = 0;
+          if (timerDisplay) timerDisplay.textContent = formatTime(totalSeconds); 
+          
+          words = [...words, ...learnedWords]; 
+          learnedWords.length = 0; 
+          shuffleWords();
+          currentIndex = 0;
+          if (slider && sliderMax) { 
+              slider.min = 0;
+              slider.max = words.length > 0 ? words.length - 1 : 0;
+              sliderMax.textContent = words.length;
+          }
+          updateCard(0); 
+          
+          createParticles(); 
+      }
+
+      function showSection(sectionIdToShow) {
+          const sections = ['transcript-section', 'uzbek-transcript-section', 'vocabulary-section'];
+          sections.forEach(id => {
+              const section = document.getElementById(id);
+              if (section) {
+                  const displayType = (id === 'vocabulary-section') ? 'flex' : 'block';
+                  section.style.display = 'none';
+              }
+          });
+          stopTimer(); 
+
+          const targetSection = document.getElementById(sectionIdToShow);
+          if (targetSection) {
+              const displayType = (sectionIdToShow === 'vocabulary-section') ? 'flex' : 'block';
+              targetSection.style.display = displayType;
+          }
+
+          if (sectionIdToShow === 'vocabulary-section') {
+              if (instructionModal && !instructionModal.dataset.shown) { 
+                  instructionModal.style.display = 'flex';
+                  instructionModal.dataset.shown = 'true';
+              }
+              startTimer(); 
+          }
+      }
+
+      function hideAllSections() {
+          const sections = ['transcript-section', 'uzbek-transcript-section', 'vocabulary-section'];
+          sections.forEach(id => {
+              const section = document.getElementById(id);
+              if (section) {
+                  section.style.display = 'none';
+              }
+          });
+          stopTimer(); 
+      }
+
+      document.addEventListener('DOMContentLoaded', function() {
+          const allOptions = document.querySelectorAll('.option');
+          allOptions.forEach(option => {
+              option.addEventListener('click', function() {
+                  const siblings = this.parentElement.querySelectorAll('.option');
+                  siblings.forEach(sibling => {
+                      sibling.classList.remove('selected');
+                  });
+                  this.classList.add('selected');
+              });
+          });
+
+          if (closeModalButton && instructionModal) { 
+              closeModalButton.addEventListener("click", function () {
+                  instructionModal.style.display = "none";
+              });
+          }
+          
+          updateCard(0);
+          
+          createParticles();
+          
+          startGlobalTimer(); 
+
+           initializeText();
+           initializeUzbekText();
+      });
+
+
+      function showMessageBox(message) {
+          const existingBox = document.querySelector('.custom-message-box');
+          if (existingBox) {
+              existingBox.remove(); 
+          }
+          
+          const messageBox = document.createElement('div');
+          messageBox.classList.add('custom-message-box');
+          messageBox.innerHTML = `
+              <div class="message-content">
+                  <p>${message}</p>
+                  <button class="close-message-btn">OK</button>
+              </div>
+          `;
+          document.body.appendChild(messageBox);
+
+          messageBox.querySelector('.close-message-btn').addEventListener('click', () => {
+              if (document.body.contains(messageBox)) { 
+                 document.body.removeChild(messageBox);
+              }
+          });
+      }
+
+      const audio = document.getElementById("myAudio");
+      const playPauseBtn = document.getElementById("playPause");
+      const forwardBtn = document.getElementById("forward");
+      const rewindBtn = document.getElementById("rewind");
+
+      let isPlaying = false;
+      const textContainer = document.getElementById('textContainer');
+      const uzbekTextContainer = document.getElementById('uzbekTextContainer');
+      let currentSentenceIndex = -1;
+      let currentWordIndex = -1;
+
+      // YANGI AUDIO TRANSKRIPT MA'LUMOTLARI (Vaqtlar taxminiy, mp3 faylingizga moslashing)
+      const audioData = [
+        {time: 0, text: "Hi Lucy, you weren't at school today."},
+        {time: 6, text: "What is the matter? I was worried about you."},
+        {time: 8, text: "Hi Peter, it's nothing serious actually."},
+        {time: 12, text: "I just felt a bit sick in the morning, so my mom let me stay at home."},
+        {time: 17, text: "You poor thing. And are you feeling better now?"},
+        {time: 22, text: "Yeah, much better, thank you."},
+        {time: 25, text: "I guess it must have been the pizza that I ate yesterday."},
+        {time: 29, text: "That was the reason for my bad stomach ache."},
+        {time: 32, text: "I had too much. But now, yeah, I feel alright."},
+        {time: 38, text: "I think I won't have to miss any more lessons this week."},
+        {time: 42, text: "But you haven't been to the doctor's office, have you?"},
+        {time: 46, text: "Won't you have problems at school because you missed classes?"},
+        {time: 50, text: "When I was ill last month, I brought a medical certificate to school."},
+        {time: 54, text: "Well, my mom called our class teacher, so I don't think there will be any problem."},
+        {time: 59, text: "Besides, we don't have many lessons on Wednesdays."},
+        {time: 65, text: "How was geography, by the way? Did you take a test?"},
+        {time: 69, text: "Oh no, we didn't. But we revised the material for a test."},
+        {time: 75, text: "The teacher asked several people to do exercises with the map of the UK at the Blackboard."},
+        {time: 80, text: "And then we had a sort of contest in groups where we had to find different mountains, rivers, and lakes."},
+        {time: 86, text: "The quicker the better. That was fun."},
+        {time: 90, text: "And we also checked our homework and asked the teacher questions if we were not sure about the answers."},
+        {time: 96, text: "You know, I feel well prepared for tomorrow's test now."},
+        {time: 100, text: "Wait a second. Are we going to take the test tomorrow?"},
+        {time: 103, text: "I can't believe it."},
+        {time: 105, text: "Yes. Our teacher said that we are starting a new topic next week, so we have to finish this one tomorrow."},
+        {time: 112, text: "Do you need any help with geography?"},
+        {time: 116, text: "Uh, if you can lend me your exercise book with notes and checked homework, that would save me hours."},
+        {time: 124, text: "I am afraid I can't give you my exercise book right now because I have to revise the material for the test myself."},
+        {time: 131, text: "But if you call me in two hours, we could probably study for the test together."},
+        {time: 136, text: "Sounds like a great idea. And thanks so much for offering to help."},
+        {time: 141, text: "It's so nice to have a friend like you."},
+        {time: 144, text: "No problem. See you later then."},
+        {time: 147, text: "Bye for now."},
+        {time: 149, text: "Bye Peter."}
+      ];
+
+      // YANGI O'ZBEKCHA TARJIMA MA'LUMOTLARI
+      const uzbekAudioData = [
+        {time: 0, text: "Salom Lucy, bugun maktabda yo'q eding."},
+        {time: 6, text: "Nima gap? Sendan xavotir oldim."},
+        {time: 8, text: "Salom Peter, aslida jiddiy narsa emas."},
+        {time: 12, text: "Ertalab o'zimni biroz yomon his qildim, shuning uchun oyim uyda qolishimga ruxsat berdilar."},
+        {time: 17, text: "Voy bechora. Hozir o'zingni yaxshi his qilyapsanmi?"},
+        {time: 22, text: "Ha, ancha yaxshi, rahmat."},
+        {time: 25, text: "Menimcha, bu kecha yegan pitssamdan bo'lsa kerak."},
+        {time: 29, text: "Qornim og'riganining sababi shu edi."},
+        {time: 32, text: "Juda ko'p yeb yubordim. Lekin hozir, ha, yaxshiman."},
+        {time: 38, text: "O'ylaymanki, bu hafta boshqa dars qoldirmasam kerak."},
+        {time: 42, text: "Lekin sen shifokorga bormading, shundaymi?"},
+        {time: 46, text: "Dars qoldirganing uchun maktabda muammo bo'lmaydimi?"},
+        {time: 50, text: "O'tgan oy kasal bo'lganimda, maktabga tibbiy ma'lumotnoma olib borgan edim."},
+        {time: 54, text: "Oyim sinf rahbarimizga qo'ng'iroq qildilar, shuning uchun muammo bo'lmasa kerak deb o'ylayman."},
+        {time: 59, text: "Buning ustiga, chorshanba kunlari darslarimiz ko'p emas."},
+        {time: 65, text: "Aytgancha, geografiya qanday o'tdi? Test topshirdinglarmi?"},
+        {time: 69, text: "Yo'q, topshirmadik. Lekin test uchun materiallarni takrorladik."},
+        {time: 75, text: "O'qituvchi bir necha o'quvchidan doskada Buyuk Britaniya xaritasi bilan mashqlar bajarishni so'radi."},
+        {time: 80, text: "Keyin guruhlarda o'ziga xos musobaqa o'tkazdik, unda turli tog'lar, daryolar va ko'llarni topishimiz kerak edi."},
+        {time: 86, text: "Qanchalik tez bo'lsa, shuncha yaxshi. Bu qiziqarli edi."},
+        {time: 90, text: "Shuningdek, uy vazifamizni tekshirdik va javoblarga ishonchimiz komil bo'lmasa, o'qituvchiga savollar berdik."},
+        {time: 96, text: "Bilasanmi, men hozir ertangi testga yaxshi tayyorlangandek his qilyapman."},
+        {time: 100, text: "Bir daqiqa shoshma. Ertaga test topshiramizmi?"},
+        {time: 103, text: "Ishonim kelmayapti."},
+        {time: 105, text: "Ha. O'qituvchimiz keyingi hafta yangi mavzuni boshlashimizni aytdi, shuning uchun buni ertaga tugatishimiz kerak."},
+        {time: 112, text: "Senga geografiyadan yordam kerakmi?"},
+        {time: 116, text: "Agar menga qaydlar va tekshirilgan uy vazifalari bor mashq daftaringni berib tursang, soatlab vaqtimni tejagan bo'larding."},
+        {time: 124, text: "Afsuski, hozir senga mashq daftarimni berolmayman, chunki test uchun materiallarni o'zim takrorlashim kerak."},
+        {time: 131, text: "Lekin ikki soatdan keyin menga qo'ng'iroq qilsang, ehtimol testga birga tayyorlanishimiz mumkin."},
+        {time: 136, text: "Ajoyib fikr. Va yordam taklif qilganing uchun katta rahmat."},
+        {time: 141, text: "Sen kabi do'stim borligi juda yaxshi."},
+        {time: 144, text: "Arzimaydi. Unda ko'rishguncha."},
+        {time: 147, text: "Hozircha xayr."},
+        {time: 149, text: "Xayr Peter."}
+      ];
+
+      function initializeText() {
+          let html = '';
+          audioData.forEach((item, index) => {
+              const words = item.text.split(' ');
+              html += `<div class="sentence" data-index="${index}">`;
+              words.forEach((word, wordIndex) => {
+                  html += `<span class="word" data-sentence="${index}" data-word="${wordIndex}" onclick="seekToWord(${index}, ${wordIndex})">${word}</span> `;
+              });
+              html += '</div>';
+          });
+          if (textContainer) textContainer.innerHTML = html; 
+          else console.error("textContainer not found for English text");
+      }
+      function initializeUzbekText() {
+          let html = '';
+          uzbekAudioData.forEach((item, index) => {
+              const words = item.text.split(' ');
+              html += `<div class="sentence" data-index="${index}">`;
+              words.forEach((word, wordIndex) => {
+                  html += `<span class="word" data-sentence="${index}" data-word="${wordIndex}" onclick="seekToWord(${index}, ${wordIndex})">${word}</span> `;
+              });
+              html += '</div>';
+          });
+           if (uzbekTextContainer) uzbekTextContainer.innerHTML = html; 
+           else console.error("uzbekTextContainer not found for Uzbek text");
+      }
+      
+      function updateTextHighlight(currentTimeSeconds, textData, containerId) {
+          let newSentenceIndex = -1;
+          for (let i = textData.length - 1; i >= 0; i--) {
+              if (currentTimeSeconds >= textData[i].time) {
+                  newSentenceIndex = i;
+                  break;
+              }
+          }
+
+          const container = document.getElementById(containerId);
+          if (!container) return; 
+
+          container.querySelectorAll('.sentence.active').forEach(el => {
+              el.classList.remove('active');
+          });
+          container.querySelectorAll('.word.current').forEach(el => {
+              el.classList.remove('current');
+          });
+
+          if (newSentenceIndex >= 0) {
+              const sentenceEl = container.querySelector(`[data-index="${newSentenceIndex}"]`);
+              if (sentenceEl) {
+                  sentenceEl.classList.add('active');
+                  
+                  const containerRect = container.getBoundingClientRect();
+                  const sentenceRect = sentenceEl.getBoundingClientRect();
+                  const sentenceMiddle = sentenceRect.top + sentenceRect.height / 2;
+                  const containerMiddle = containerRect.top + containerRect.height / 2;
+                  const isOutOfView = sentenceRect.top < containerRect.top || sentenceRect.bottom > containerRect.bottom;
+                  
+                  if (container.lastScrolledSentenceIndex !== newSentenceIndex && (isOutOfView || Math.abs(sentenceMiddle - containerMiddle) > containerRect.height / 3)) { 
+                      const scrollTopTarget = container.scrollTop + (sentenceMiddle - containerMiddle);
+                      container.scrollTo({ top: scrollTopTarget, behavior: 'smooth' });
+                      container.lastScrolledSentenceIndex = newSentenceIndex; 
+                  }
+              }
+          }
+
+          if (newSentenceIndex >= 0) {
+              const sentence = textData[newSentenceIndex];
+              const words = sentence.text.split(' ');
+              const timeInSentence = currentTimeSeconds - sentence.time;
+              const nextSentenceTime = (textData[newSentenceIndex + 1]) ? textData[newSentenceIndex + 1].time : (audio.duration || sentence.time + 5); 
+              const sentenceDuration = Math.max(0.5, nextSentenceTime - sentence.time); 
+              const wordsPerSecond = words.length / sentenceDuration;
+              const estimatedWordIndex = Math.floor(timeInSentence * wordsPerSecond);
+              const wordIndex = Math.max(0, Math.min(estimatedWordIndex, words.length - 1));
+              const wordEl = container.querySelector(`[data-sentence="${newSentenceIndex}"][data-word="${wordIndex}"]`);
+              if (wordEl) {
+                  wordEl.classList.add('current');
+              }
+          }
+      }
+
+
+      function seekToWord(sentenceIndex, wordIndex) {
+          const sentence = audioData[sentenceIndex];
+          if (sentence && audio) { 
+              const words = sentence.text.split(' ');
+              const nextSentenceTime = (audioData[sentenceIndex + 1]) ? audioData[sentenceIndex + 1].time : (audio.duration || sentence.time + 5);
+              const sentenceDuration = Math.max(0.5, nextSentenceTime - sentence.time);
+              const wordTime = sentence.time + (wordIndex / words.length) * sentenceDuration;
+              
+              audio.currentTime = wordTime;
+              if (audio.paused) {
+                  audio.play().catch(e => console.error("Audio play failed:", e)); 
+                  if (playPauseBtn) playPauseBtn.textContent = "";
+                  isPlaying = true;
+              }
+              updateTextHighlight(audio.currentTime, audioData, 'textContainer');
+              updateTextHighlight(audio.currentTime, uzbekAudioData, 'uzbekTextContainer');
+          }
+      }
+      
+      if (playPauseBtn && audio) {
+          playPauseBtn.addEventListener("click", () => {
+              if (isPlaying) { audio.pause(); playPauseBtn.textContent = ""; } 
+              else { audio.play().catch(e => console.error("Audio play failed:", e)); playPauseBtn.textContent = ""; }
+              isPlaying = !isPlaying;
+          });
+      }
+      if(forwardBtn && audio) forwardBtn.addEventListener("click", () => { audio.currentTime += 15; });
+      if(rewindBtn && audio) rewindBtn.addEventListener("click", () => { audio.currentTime -= 15; });
+      
+      if(audio) { 
+          audio.addEventListener('timeupdate', () => {
+              updateTextHighlight(audio.currentTime, audioData, 'textContainer');
+              updateTextHighlight(audio.currentTime, uzbekAudioData, 'uzbekTextContainer');
+          });
+          audio.addEventListener('ended', () => {
+              if (playPauseBtn) playPauseBtn.textContent = '';
+              isPlaying = false;
+              document.querySelectorAll('.sentence.active, .word.current').forEach(el => {
+                  el.classList.remove('active', 'current');
+              });
+          });
+           audio.addEventListener('error', (e) => {
+              console.error("Audio Error:", e);
+              showMessageBox("Audio faylni yuklashda xatolik yuz berdi. Fayl mavjudligini tekshiring.");
+          });
+      } else {
+          console.error("Audio element (myAudio) not found!");
+          document.addEventListener('DOMContentLoaded', () => {
+              showMessageBox("Audio pleyer yuklanmadi. Audio fayl mavjudligini tekshiring.");
+              if(textContainer) textContainer.innerHTML = "<p style='color: red;'>Audio fayl topilmadi yoki yuklanmadi.</p>";
+               if(uzbekTextContainer) uzbekTextContainer.innerHTML = "<p style='color: red;'>Audio fayl topilmadi yoki yuklanmadi.</p>";
+          });
+      }
+
+      
+      function createParticles() {
+          const particleOverlay = document.getElementById('particle-overlay');
+          if (!particleOverlay) return; 
+          
+          particleOverlay.innerHTML = ''; 
+          
+          const particleTypes = ['rain', 'snow', 'leaf', 'flower'];
+          const chosenType = particleTypes[Math.floor(Math.random() * particleTypes.length)];
+          const particleCount = 50; 
+          
+          const symbols = {
+              rain: '', 
+              snow: '',
+              leaf: ['', ''][Math.floor(Math.random()*2)], 
+              flower: ['', '', ''][Math.floor(Math.random()*3)] 
+          };
+
+          for (let i = 0; i < particleCount; i++) {
+              const particle = document.createElement('div');
+              particle.classList.add('particle', chosenType);
+              
+              if(symbols[chosenType]) {
+                  particle.innerHTML = symbols[chosenType];
+              }
+
+              const delay = Math.random() * 10; 
+              const duration = 6 + Math.random() * 6; 
+              const left = Math.random() * 100; 
+              const initialSize = 0.8 + Math.random() * 0.7; 
+              const rotateEnd = chosenType === 'leaf' ? 720 : (chosenType === 'flower' ? 180 : 360); 
+
+              particle.style.left = `${left}vw`;
+              particle.style.animationDelay = `-${delay}s`;
+              particle.style.animationDuration = `${duration}s`;
+              
+              if (chosenType === 'rain') {
+                  particle.style.height = `${10 + Math.random() * 10}px`; 
+                  particle.style.opacity = 0.3 + Math.random() * 0.4; 
+              } else {
+                  particle.style.fontSize = `${initialSize}rem`; 
+                  particle.style.opacity = 0.5 + Math.random() * 0.4; 
+              }
+              
+               particle.style.setProperty('--rotate-end', `${Math.random() * rotateEnd}deg`);
+
+              particleOverlay.appendChild(particle);
+          }
+      }
+      
+  </script>
+</body>
+</html>
