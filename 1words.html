@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infrequent Meanings</title>
+    <style>
+        /* --- SIZNING ASL CSS KODLARINGIZ (O'zgarishsiz) --- */
+        body {
+            margin: 20px;
+            font-family: sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease; /* O'tish effekti qo'shildi */
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 90vh;
+            background-color: white;
+            transition: background-color 0.3s ease; /* O'tish effekti */
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 20px;
+        }
+
+        .slider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .slider input[type="range"] {
+            width: 200px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background-color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .button img {
+            width: 20px;
+        }
+
+        .card {
+            position: relative;
+            width: 80%;
+            max-width: 400px;
+            height: 600px;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 0 16px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 10px;
+            perspective: 1000px;
+            overflow: hidden;
+            transition: transform 0.3s ease, left 0.3s ease;
+            left: 0;
+        }
+
+        .card::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            pointer-events: none;
+        }
+
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front,
+        .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-front .image {
+            display: none;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+        }
+
+        .top-circle,
+        .bottom-circle {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 100px;
+            background-color: #40c4ff;
+            border-radius: 0 0 100% 100%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .top-circle {
+            top: 0;
+            transform: translate(-50%, -50%);
+        }
+
+        .bottom-circle {
+            bottom: 0;
+            transform: translate(-50%, 50%) rotate(180deg);
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .word-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .en-word {
+            font-size: 32px;
+            font-weight: bold;
+            color: #000;
+            text-align: center;
+        }
+
+        .uz-word {
+            font-size: 22px;
+            font-weight: bold;
+            color: red;
+            text-align: center;
+        }
+
+        .pronunciation {
+            font-size: 16px;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .type {
+            background-color: #40c4ff;
+            color: white;
+            font-size: 15px;
+            padding: 1px 2px;
+            border-radius: 5px;
+        }
+
+        .definition {
+            text-align: center;
+            color: #808080;
+            font-size: 10px;
+            line-height: 1.4;
+            max-width: 90%;
+        }
+
+        .card-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            width: 100%;
+            padding: 20px;
+        }
+
+        #next-button,
+        #audio-button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            background-color: #40c4ff;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease;
+        }
+
+        #next-button:hover,
+        #audio-button:hover {
+            background-color: #29b6f6;
+        }
+
+        .image {
+            width: 150px;
+            height: 150px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .card.swiping-left {
+            left: -100%;
+            transform: rotate(-10deg);
+        }
+
+        .card.swiping-right {
+            left: 100%;
+            transform: rotate(10deg);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 80%;
+        }
+
+        #close-modal {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #40c4ff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #close-modal:hover {
+            background-color: #29b6f6;
+        }
+
+        /* --- QO'SHIMCHA: TUN REJIMI VA LAVA TAYMER STYLES --- */
+        
+        /* Tun rejimi */
+        body.dark-mode {
+            background-color: #121212;
+            color: #ffffff;
+        }
+
+        body.dark-mode .container {
+            background-color: #121212;
+        }
+
+        body.dark-mode .card {
+            background-color: #1e1e1e;
+            box-shadow: 0 0 16px rgba(255, 255, 255, 0.1);
+        }
+
+        body.dark-mode .en-word {
+            color: #ffffff;
+        }
+
+        body.dark-mode .modal-content {
+            background-color: #1e1e1e;
+            color: #ffffff;
+        }
+
+        /* Tun rejimi tugmasi */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: none;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 1001;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Lava Taymer Effekti */
+        .lava-timer-container {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 40px;
+            border-radius: 50px;
+            z-index: 1001;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 5s ease infinite;
+            box-shadow: 0 0 20px rgba(231, 60, 126, 0.6);
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .timer-text {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            font-family: monospace;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+
+<body>
+  
+    <div class="container">
+        <div class="header"></div>
+
+        <div class="slider-wrapper">
+            <div class="slider">
+                <span id="slider-value">1 / 50</span>
+                <input type="range" id="word-slider" min="0" value="0">
+                <span id="slider-max">50</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-inner">
+                <div class="card-front">
+                    <div class="top-circle"></div>
+                    <img src="" alt="" class="image" id="front-image">
+                    <div class="content">
+                        <div class="word-container">
+                            <div class="word en-word" id="word-front">Otavaliyev.M</div>
+                            <span class="pronunciation" id="pronunciation">/SHodlik/</span>
+                        </div>
+                        <div class="type" id="type-front">noun</div>
+                    </div>
+                    <div class="bottom-circle"></div>
+                    <div class="definition">Tap to see the definition</div>   
+                </div>
+                <div class="card-back">
+                    <div class="top-circle"></div>
+                    <img src="" alt="" class="image" id="back-image">
+                    <div class="content">
+                    <div class="word uz-word" id="word-back">uyg'onmoq</div>
+                        <div class="type" id="type-back">fe'l</div>
+                    </div>
+                    <div class="bottom-circle"></div>
+                    <div class="definition">Tarjimani ko'rsatish</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-buttons">
+            <button id="audio-button">Ovoz</button>
+            <button id="next-button">Keyingi</button>
+        </div>
+    </div>
+
+ 
+
+    <div id="instruction-modal" class="modal">
+        <div class="modal-content">
+            <h2>Fleshcarddan foydalanish bo'yicha yo'riqnoma</h2>
+            <p>&#x25B6; O'ngga sursangiz  keyingi so'z chiqadi.</p>
+            <p>&#x25C0; Chapga sursangiz  so'z yodlangan hisoblanadi va qayta chiqmaydi.</p>
+            <p>&#x1F504; Kartani ustiga bosing va so'zning tarjimasini ko'rasiz.</p>
+            <button id="close-modal">Tushunarli</button>
+        </div>
+    </div>
+
+    <script src="https://code.responsivevoice.org/responsivevoice.js?key=ftro4Sxr"></script>
+    <script>
+        // --- SIZNING ASL JS KODLARINGIZ (O'zgarishsiz) ---
+        const card = document.querySelector('.card');
+        const word = document.querySelector('.word'); // word-front uchun
+        const type = document.querySelector('.type');
+        const slider = document.querySelector('.slider input[type="range"]');
+        const sliderValue = document.getElementById('slider-value');
+        const sliderMax = document.getElementById('slider-max');
+        const nextButton = document.getElementById('next-button');
+        const audioButton = document.getElementById('audio-button');
+        const frontImage = document.getElementById('front-image');
+        const backImage = document.getElementById('back-image');
+        const pronunciationElement = document.querySelector('.pronunciation');
+        const PIXABAY_API_KEY = "49146347-e05e26bd1aae0010e8163774c";
+        const learnedWords = []; // Yodlangan so'zlar ro'yxati
+     let words = [
+  { english: "cliff", uzbek: "qoya", type: "ot", pronunciation: "/klɪf/" },
+  { english: "north", uzbek: "shimoliy", type: "sifat/ot", pronunciation: "/nɔːθ/" },
+  { english: "attract", uzbek: "jalb qilmoq", type: "fe'l", pronunciation: "/əˈtrækt/" },
+  { english: "climber", uzbek: "alpinist", type: "ot", pronunciation: "/ˈklaɪmər/" },
+  { english: "challenge", uzbek: "qiyinchilik/chorlov", type: "ot/fe'l", pronunciation: "/ˈtʃælɪndʒ/" },
+  { english: "thought", uzbek: "o'y/fikr", type: "ot", pronunciation: "/θɔːt/" },
+  { english: "climb", uzbek: "tirmashib chiqmoq", type: "fe'l", pronunciation: "/klaɪm/" },
+  { english: "manage", uzbek: "uddalamoq/boshqarmoq", type: "fe'l", pronunciation: "/ˈmænɪdʒ/" },
+  { english: "ruin", uzbek: "vayrona", type: "ot", pronunciation: "/ˈruːɪn/" },
+  { english: "ancient", uzbek: "qadimiy", type: "sifat", pronunciation: "/ˈeɪnʃənt/" },
+  { english: "equipment", uzbek: "jihoz/anjom", type: "ot", pronunciation: "/ɪˈkwɪpmənt/" },
+  { english: "protective", uzbek: "himoyalovchi", type: "sifat", pronunciation: "/prəˈtektɪv/" },
+  { english: "above", uzbek: "tepasida/yuqorisida", type: "predlog", pronunciation: "/əˈbʌv/" },
+  { english: "indigenous", uzbek: "mahalliy/tub", type: "sifat", pronunciation: "/ɪnˈdɪdʒənəs/" },
+  { english: "glorious", uzbek: "ulug'vor/shonli", type: "sifat", pronunciation: "/ˈɡlɔːriəs/" },
+  { english: "abandoned", uzbek: "tashlab ketilgan", type: "sifat", pronunciation: "/əˈbændənd/" },
+  { english: "completed", uzbek: "tugatilgan", type: "sifat", pronunciation: "/kəmˈpliːtɪd/" },
+  { english: "surrounded", uzbek: "o'ralgan", type: "sifat", pronunciation: "/səˈraʊndɪd/" },
+  { english: "unique", uzbek: "noyob/yagona", type: "sifat", pronunciation: "/juˈniːk/" },
+  { english: "including", uzbek: "shu jumladan", type: "predlog", pronunciation: "/ɪnˈkluːdɪŋ/" },
+  { english: "else", uzbek: "yana/boshqa", type: "ravish", pronunciation: "/els/" },
+  { english: "waterfall", uzbek: "sharshara", type: "ot", pronunciation: "/ˈwɔːtəfɔːl/" },
+  { english: "close to", uzbek: "yaqinida", type: "ibora", pronunciation: "/kləʊz tuː/" },
+  { english: "uninhabited", uzbek: "kimsasiz", type: "sifat", pronunciation: "/ˌʌnɪnˈhæbɪtɪd/" },
+  { english: "phenomenon", uzbek: "hodisa", type: "ot", pronunciation: "/fəˈnɒmɪnən/" },
+  { english: "stunning", uzbek: "hayratlanarli", type: "sifat", pronunciation: "/ˈstʌnɪŋ/" },
+  { english: "glacier", uzbek: "muzlik", type: "ot", pronunciation: "/ˈɡlæsiər/" },
+  { english: "remarkable", uzbek: "ajoyib/e'tiborga loyiq", type: "sifat", pronunciation: "/rɪˈmɑːkəbl/" },
+  { english: "aurora", uzbek: "qutb yog'dusi", type: "ot", pronunciation: "/ɔːˈrɔːrə/" },
+  { english: "purple", uzbek: "binafsha rang", type: "sifat/ot", pronunciation: "/ˈpɜːpl/" },
+  { english: "occasionally", uzbek: "ba'zan/vaqti-vaqti bilan", type: "ravish", pronunciation: "/əˈkeɪʒnəli/" },
+  { english: "landscape", uzbek: "manzara", type: "ot", pronunciation: "/ˈlændskeɪp/" },
+  { english: "imagine", uzbek: "tasavvur qilmoq", type: "fe'l", pronunciation: "/ɪˈmædʒɪn/" },
+  { english: "field", uzbek: "dala/maydon", type: "ot", pronunciation: "/fiːld/" },
+  { english: "hill", uzbek: "tepalik", type: "ot", pronunciation: "/hɪl/" },
+  { english: "vineyard", uzbek: "uzumzor", type: "ot", pronunciation: "/ˈvɪnjɑːd/" },
+  { english: "enchanting", uzbek: "maftunkor", type: "sifat", pronunciation: "/ɪnˈtʃɑːntɪŋ/" },
+  { english: "relatively", uzbek: "nisbatan", type: "ravish", pronunciation: "/ˈrelətɪvli/" },
+  { english: "occasional", uzbek: "vaqti-vaqti bilan bo'ladigan", type: "sifat", pronunciation: "/əˈkeɪʒənl/" },
+  { english: "settled", uzbek: "o'rnashgan", type: "sifat", pronunciation: "/ˈsetld/" },
+  { english: "valuable", uzbek: "qimmatli", type: "sifat", pronunciation: "/ˈvæljuəbl/" },
+  { english: "curvy", uzbek: "egri-bugri", type: "sifat", pronunciation: "/ˈkɜːvi/" },
+  { english: "edge", uzbek: "chekka/qirg'oq", type: "ot", pronunciation: "/edʒ/" },
+  { english: "formed", uzbek: "shakllangan", type: "sifat", pronunciation: "/fɔːmd/" },
+  { english: "wonder", uzbek: "mo'jiza", type: "ot", pronunciation: "/ˈwʌndər/" },
+  { english: "certainly", uzbek: "shubhasiz", type: "ravish", pronunciation: "/ˈsɜːtnli/" },
+  { english: "wildlife", uzbek: "yovvoyi tabiat", type: "ot", pronunciation: "/ˈwaɪldlaɪf/" },
+  { english: "hippo", uzbek: "begemot", type: "ot", pronunciation: "/ˈhɪpəʊ/" },
+  { english: "sunbathe", uzbek: "quyoshda toblanmoq", type: "fe'l", pronunciation: "/ˈsʌnbeɪð/" },
+  { english: "destination", uzbek: "manzil", type: "ot", pronunciation: "/ˌdestɪˈneɪʃn/" }
+];
+        let currentIndex = 0;
+        let startX, endX; // Surish (swipe) uchun o'zgaruvchilar
+
+        function shuffleArray(array) {
+          const newArray = [...array];
+          for (let i = newArray.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+          }
+          return newArray;
+        }
+
+        function initializeApp() {
+          words = shuffleArray(words);
+          slider.max = words.length;
+          slider.value = 1;
+          sliderMax.textContent = words.length;
+          currentIndex = 0;
+          updateCard(currentIndex);
+        }
+
+        async function getPixabayImage(query) {
+          const url = `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${query}&image_type=photo`;
+          try {
+            const response = await fetch(url);
+            const data = await response.json();
+            return (data.hits.length > 0) ? data.hits[0].webformatURL : "placeholder.png";
+          } catch (error) {
+            console.error("Pixabay API error:", error);
+            return "placeholder.png";
+          }
+        }
+
+        async function updateCard(index) {
+          document.getElementById('word-front').textContent = words[index].english; // Fix for word selector
+          pronunciationElement.textContent = words[index].pronunciation;
+          document.getElementById('type-front').textContent = words[index].type;
+          document.querySelector('.card-back .word').textContent = words[index].uzbek;
+          document.querySelector('.card-back .type').textContent = words[index].type;
+
+          slider.value = index + 1;
+          sliderValue.textContent = `${index + 1} / ${words.length}`;
+          currentIndex = index;
+
+          const imageUrl = await getPixabayImage(words[index].english);
+          backImage.src = imageUrl;
+        }
+
+        nextButton.addEventListener('click', function() {
+          currentIndex++;
+          if (currentIndex >= words.length) {
+            words = shuffleArray(words);
+            currentIndex = 0;
+          }
+          updateCard(currentIndex);
+        });
+
+        function speak(text) {
+          responsiveVoice.speak(text, "US English Male", { rate: 0.9 });
+        }
+
+        audioButton.addEventListener('click', function() {
+          speak(words[currentIndex].english);
+        });
+
+        card.addEventListener('click', function() {
+          this.classList.toggle('flipped');
+          if (this.classList.contains('flipped')) {
+            speak(words[currentIndex].english);
+          }
+        });
+
+        slider.addEventListener('input', function() {
+          updateCard(this.value - 1);
+        });
+
+        card.addEventListener('touchstart', (e) => {
+          startX = e.touches[0].clientX;
+        });
+
+        card.addEventListener('touchend', (e) => {
+          endX = e.changedTouches[0].clientX;
+          handleSwipe();
+        });
+
+        function handleSwipe() {
+          const deltaX = endX - startX;
+          if (deltaX > 50) { // O'ngga surish
+            card.classList.add('swiping-right');
+            setTimeout(() => {
+              currentIndex++;
+              if (currentIndex >= words.length) {
+                words = shuffleArray(words);
+                currentIndex = 0;
+              }
+              updateCard(currentIndex);
+              card.classList.remove('swiping-right');
+            }, 300);
+          } else if (deltaX < -50) { // Chapga surish (yodlash)
+            const learnedWord = words.splice(currentIndex, 1)[0];
+            learnedWords.push(learnedWord);
+            console.log("Yodlangan so'zlar:", learnedWords);
+
+            if (currentIndex >= words.length) {
+              currentIndex = 0;
+            }
+            updateCard(currentIndex);
+
+            card.classList.add('swiping-left');
+            setTimeout(() => {
+              card.classList.remove('swiping-left');
+            }, 300);
+          }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+          const modal = document.getElementById("instruction-modal");
+          const closeModal = document.getElementById("close-modal");
+
+          // Modalni faqat birinchi marta ochish uchun (yoki Next button bosilganda, eski koddagi kabi)
+          // Sizning kodingizda nextButton bosilganda modal ochilishi yozilgan edi, 
+          // lekin odatda modal bir marta ko'rsatiladi. Kodni o'zgartirmaslik uchun shu holda qoldirdim.
+          // Agar xohlasangiz quyidagi qatorni o'chirib qo'yishingiz mumkin.
+          nextButton.addEventListener("click", function() {
+            modal.style.display = "flex";
+          });
+
+          closeModal.addEventListener("click", function() {
+            modal.style.display = "none";
+          });
+        });
+
+        document.addEventListener("DOMContentLoaded", initializeApp);
+
+        // --- QO'SHIMCHA: TUN REJIMI VA TAYMER LOGIKASI ---
+
+        // 1. Tun Rejimi
+        const themeBtn = document.getElementById('theme-toggle-btn');
+        themeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            themeBtn.textContent = isDark ? "Kun Rejimi" : "Tun Rejimi";
+        });
+
+        // 2. Lava Taymer (00:00:00 formati)
+        let totalSeconds = 0;
+        const timerElement = document.getElementById('page-timer');
+        
+        setInterval(() => {
+            totalSeconds++;
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+
+            const fHours = hours < 10 ? '0' + hours : hours;
+            const fMinutes = minutes < 10 ? '0' + minutes : minutes;
+            const fSeconds = seconds < 10 ? '0' + seconds : seconds;
+
+            timerElement.textContent = `${fHours}:${fMinutes}:${fSeconds}`;
+        }, 1000);
+
+    </script>
+</body>
+</html>
