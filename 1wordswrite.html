@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Word Game - Optimized Layout</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://code.responsivevoice.org/responsivevoice.js?key=ftro4Sxr"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(to right bottom, #8e44ad, #3498db);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start; /* Sahifa teparoqda turishi uchun */
+            padding: 20px;
+            padding-top: 60px; 
+            color: #333;
+        }
+        body::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="antialiased">
+    <nav class="fixed top-0 left-0 w-full bg-gray-900 bg-opacity-80 py-3 flex justify-center items-center z-50 shadow-lg" id="navHome">
+        <span class="text-white text-xl font-bold">Home Page</span>
+    </nav>
+
+    <header class="text-center mb-6 mt-10">
+        <h1 class="text-4xl font-extrabold text-white drop-shadow-md">Word Game</h1>
+    </header>
+
+    <div class="container flex flex-col items-center gap-4 p-6 bg-white bg-opacity-95 rounded-2xl shadow-2xl max-w-sm w-full">
+        
+        <button id="toggleSoundBtn" class="w-full py-2 px-6 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold rounded-lg shadow-md transition-all active:scale-95">
+            🔊 Ovoz: Yoqilgan
+        </button>
+
+        <div class="game w-full text-center">
+            <h2 id="question" class="text-2xl font-bold text-gray-800 mb-4"></h2>
+            
+            <input type="text" id="answer" placeholder="Inglizchasini yozing..." autocomplete="off"
+                   class="w-full p-4 border-2 border-gray-200 rounded-xl text-center text-lg focus:outline-none focus:border-blue-500 transition-all shadow-inner">
+            
+            <div id="feedbackArea" class="mt-2 min-h-[40px] flex flex-col items-center justify-center">
+            
+                <p id="result" class="text-base font-bold"></p>
+            </div>
+            
+            <button onclick="checkAnswer()" class="w-full py-3 mt-2 bg-gradient-to-r from-green-500 to-teal-500 text-white font-bold rounded-xl shadow-lg active:scale-95 transition-all">
+                TEKSHIRISH
+            </button>
+            
+            <div class="border-t border-gray-100 mt-6 pt-4 flex justify-between text-xs font-medium text-gray-500">
+                <span>Urinish: <b id="attempts" class="text-gray-800">0</b></span>
+                <span>To'g'ri: <b id="correct" class="text-green-600">0</b></span>
+                <span>Foiz: <b id="percentage" class="text-blue-600">0%</b></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const words = [
+          { word: "call for", pronunciation: "ko:l fo:r", translation: "chaqirmoq, talab qilmoq" },
+          { word: "district", pronunciation: "'distrikt", translation: "tuman, okrug" },
+          { word: "profit", pronunciation: "'profit", translation: "foyda ko'rmoq, foydalanmoq" },
+          { word: "existence", pronunciation: "rg'zistans", translation: "mavjudlik, borlik" },
+          { word: "incident", pronunciation: "'insident", translation: "noqulay voqea, mojaro" },
+          { word: "individual", pronunciation: ",.mda`vidgual", translation: "shaxs, bir kishi" },
+          { word: "judge", pronunciation: "dʒadʒ", translation: "baho bermoq, xulosa qilmoq" },
+          { word: "side by side", pronunciation: "said baı said", translation: "yonma-yon" },
+          { word: "murder", pronunciation: "'ms:rdər", translation: "o'ldirmoq, qotillik sodir etmoq" },
+          { word: "reputation", pronunciation: ".repjs`teıʃən", translation: "obro', e'tibor" },
+          { word: "tend to", pronunciation: "tend to", translation: "odatlanmoq" },
+          { word: "justified", pronunciation: "'dʒʌstıfând", translation: "asosli, o'rinli" },
+          { word: "state", pronunciation: "stert", translation: "bildirmoq, bayon etmoq" },
+          { word: "widespread", pronunciation: "'wadspred", translation: "keng tarqalgan" },
+          { word: "plenty", pronunciation: "'plenti", translation: "juda ko'p" },
+          { word: "handy", pronunciation: "'haendi", translation: "qulay, kerakli" },
+          { word: "diverse", pronunciation: "daı`vs:rs", translation: "turli-tuman" },
+          { word: "incredibly", pronunciation: "m`kredəbli", translation: "aql bovar qilmaydigan" },
+          { word: "truly", pronunciation: "'tru:li", translation: "rostdan ham" },
+          { word: "unique", pronunciation: "ju:`ni:k", translation: "yagona, takrorlanmas" },
+          { word: "spirit", pronunciation: "'spirit", translation: "ruhiyat" },
+          { word: "laid-back", pronunciation: "lerd back", translation: "xotirjam" },
+          { word: "easy-going", pronunciation: "'i:zi `gəʊŋ", translation: "bag'ri keng" },
+          { word: "vital", pronunciation: "'vartl", translation: "hayotiy ahamiyatga ega" },
+          { word: "outlook", pronunciation: "'aotlok", translation: "dunyoqarash" },
+          { word: "turn up", pronunciation: "tə:rn ap", translation: "kelmoq, ko'rinmoq" },
+          { word: "exchange", pronunciation: "iks`tʃemdʒ", translation: "almashmoq" },
+          { word: "appreciate", pronunciation: "o`pri;fiet", translation: "qadrlamoq" },
+          { word: "mate", pronunciation: "met", translation: "o'rtoq" },
+          { word: "welcoming", pronunciation: "'welkəmŋ", translation: "mehribon" }
+        ];
+
+        let remainingWords = shuffleArray([...words]);
+        let currentWord = null;
+        let totalAttempts = 0;
+        let correctAnswers = 0;
+        let failCount = 0;
+        let isSoundEnabled = true;
+
+        function loadWord() {
+            if (remainingWords.length === 0) remainingWords = shuffleArray([...words]);
+            currentWord = remainingWords.pop();
+            failCount = 0;
+
+            document.getElementById("question").innerText = `"${currentWord.translation}"`;
+            document.getElementById("pronunciation").innerText = `[${currentWord.pronunciation}]`;
+            document.getElementById("answer").value = "";
+            document.getElementById("result").innerText = "";
+            document.getElementById("answer").focus();
+
+            if (isSoundEnabled) responsiveVoice.speak(currentWord.word, "UK English Male");
+            updateStats();
+        }
+
+        document.getElementById("toggleSoundBtn").addEventListener("click", function() {
+            isSoundEnabled = !isSoundEnabled;
+            if (isSoundEnabled) {
+                this.innerText = "🔊 Ovoz: Yoqilgan";
+                this.classList.replace("from-gray-500", "from-purple-600");
+                responsiveVoice.speak(currentWord.word, "UK English Male");
+            } else {
+                this.innerText = "🔇 Ovoz: O'chirilgan";
+                this.classList.replace("from-purple-600", "from-gray-500");
+                responsiveVoice.cancel();
+            }
+        });
+
+        document.getElementById("answer").addEventListener("keyup", (e) => {
+            if (e.key === "Enter") checkAnswer();
+        });
+
+        function checkAnswer() {
+            const userInp = document.getElementById("answer").value.trim().toLowerCase();
+            const correct = currentWord.word.toLowerCase();
+
+            if (userInp === correct) {
+                correctAnswers++;
+                totalAttempts++;
+                document.getElementById("result").innerText = "✅ To'g'ri!";
+                document.getElementById("result").style.color = "green";
+                updateStats();
+                setTimeout(loadWord, 1000);
+            } else {
+                totalAttempts++;
+                failCount++;
+                if (failCount >= 3) {
+                    // 3-urinishdan so'ng aynan shu yerda javob chiqadi
+                    document.getElementById("result").innerText = `⚠️ Javob: ${currentWord.word}`;
+                    document.getElementById("result").style.color = "#3498db";
+                } else {
+                    document.getElementById("result").innerText = `❌ Noto'g'ri (${3 - failCount} ta imkoniyat)`;
+                    document.getElementById("result").style.color = "red";
+                }
+                updateStats();
+            }
+        }
+
+        function updateStats() {
+            let percentage = totalAttempts > 0 ? ((correctAnswers / totalAttempts) * 100).toFixed(1) : 0;
+            document.getElementById("attempts").innerText = totalAttempts;
+            document.getElementById("correct").innerText = correctAnswers;
+            document.getElementById("percentage").innerText = percentage + "%";
+        }
+
+        function shuffleArray(array) { return array.sort(() => Math.random() - 0.5); }
+        document.getElementById("navHome").addEventListener("click", () => window.location.href = "index.html");
+
+        loadWord();
+    </script>
+</body>
+</html>
