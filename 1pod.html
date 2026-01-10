@@ -6,7 +6,7 @@
   <title>English Listening Practice - Missing School & Geography Test</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   
-<style>
+  <style>
       /* 5pod.html dan asl CSS kodlari */
       * {
           margin: 0;
@@ -860,46 +860,46 @@
   <div id="particle-overlay">
       </div>
   <div id="global-timer">00:00:00</div> 
-  <button id="theme-toggle"></button>
+  <button id="theme-toggle">☀️</button>
   <div class="container">
       <div class="header">
-          <h3> English Listening Practice</h3>
+          <h3>🎧 English Listening Practice</h3>
           <p>Missing School & Geography Test - Lucy & Peter</p>
 
           <audio id="myAudio" src="1.mp3" preload="auto"></audio>
 
           <div id="audio-player">
-              <button id="rewind"></button>
-              <button id="playPause"></button>
-              <button id="forward"></button>
+              <button id="rewind">⏪</button>
+              <button id="playPause">▶️</button>
+              <button id="forward">⏩</button>
           </div>
       </div>
 
       <div class="controls">
-          <button class="control-btn" onclick="showSection('transcript-section')"> Show Transcript</button>
-          <button class="control-btn" onclick="showSection('uzbek-transcript-section')"> Uzbek Transcript</button>
-          <button class="control-btn" onclick="showSection('vocabulary-section')"> Lug'at</button>
-          <button class="control-btn" onclick="hideAllSections()"> Hide All</button>
-          <button class="control-btn" onclick="resetExercises()"> Reset All</button>
+          <button class="control-btn" onclick="showSection('transcript-section')">📝 Show Transcript</button>
+          <button class="control-btn" onclick="showSection('uzbek-transcript-section')">🇺🇿 Uzbek Transcript</button>
+          <button class="control-btn" onclick="showSection('vocabulary-section')">📚 Lug'at</button>
+          <button class="control-btn" onclick="hideAllSections()">🙈 Hide All</button>
+          <button class="control-btn" onclick="resetExercises()">🔄 Reset All</button>
       </div>
 
       <div class="content">
           <div class="transcript-section" id="transcript-section" style="display: block;">
-              <h2> Transcript</h2>
+              <h2>📝 Transcript</h2>
               <div class="text-container" id="textContainer">
                   <div class="loading pulse">Audio yuklanmoqda...</div>
               </div>
           </div>
 
           <div class="uzbek-transcript-section" id="uzbek-transcript-section">
-              <h2> O'zbekcha Transkript</h2>
+              <h2>🇺🇿 O'zbekcha Transkript</h2>
               <div class="text-container" id="uzbekTextContainer">
                   <div class="loading pulse">Audio yuklanmoqda...</div>
               </div>
           </div>
 
           <div class="vocabulary-section" id="vocabulary-section">
-              <h2> Lug'at</h2>
+              <h2>📚 Lug'at</h2>
               
               <div class="slider-wrapper">
                       <div class="slider">
@@ -949,7 +949,7 @@
           </div>
 
           <div class="exercises-section">
-              <h2> Exercises</h2>
+              <h2>🎯 Exercises</h2>
               <div class="progress-bar">
                   <div class="progress-fill" id="progressFill" style="width: 0%"></div>
               </div>
@@ -1213,10 +1213,10 @@
           body.classList.toggle('dark-mode');
           body.classList.toggle('light-mode');
           if (body.classList.contains('dark-mode')) {
-              themeToggle.textContent = '';
+              themeToggle.textContent = '🌙';
               themeToggle.style.background = 'linear-gradient(135deg, #4b6cb7, #182848)';
           } else {
-              themeToggle.textContent = '';
+              themeToggle.textContent = '☀️';
               themeToggle.style.background = 'linear-gradient(135deg, #FFD700, #FFA500)';
           }
       });
@@ -1307,14 +1307,14 @@
 
           result.style.display = 'block';
           if (isCorrect) {
-              result.textContent = ' Correct! Well done!';
+              result.textContent = '✅ Correct! Well done!';
               result.className = 'result correct';
               if (!button.disabled) {
                   completedExercises++;
                   updateProgress();
               }
           } else {
-              result.textContent = ' Incorrect. The correct answer is highlighted.';
+              result.textContent = '❌ Incorrect. The correct answer is highlighted.';
               result.className = 'result incorrect';
           }
           button.disabled = true;
@@ -1328,7 +1328,7 @@
 
           if (completedExercises === totalExercises) {
               setTimeout(() => {
-                  showMessageBox(' Congratulations! You completed all exercises!');
+                  showMessageBox('🎉 Congratulations! You completed all exercises!');
               }, 500);
           }
       }
@@ -1344,11 +1344,11 @@
           const isCorrect = userAnswer === correct;
           if (isCorrect) {
               input.classList.add('correct'); input.classList.remove('incorrect');
-              result.textContent = ' Correct! Well done!'; result.className = 'result correct';
+              result.textContent = '✅ Correct! Well done!'; result.className = 'result correct';
               if (!button.disabled) { completedExercises++; updateProgress(); }
           } else {
               input.classList.add('incorrect'); input.classList.remove('correct');
-              result.textContent = ` Incorrect. The correct answer is: "${correctAnswer}"`; result.className = 'result incorrect';
+              result.textContent = `❌ Incorrect. The correct answer is: "${correctAnswer}"`; result.className = 'result incorrect';
           }
           result.style.display = 'block'; button.disabled = true; input.disabled = true;
       }
@@ -1370,10 +1370,10 @@
           if (isCorrect1) { input1.classList.add('correct'); input1.classList.remove('incorrect'); } else { input1.classList.add('incorrect'); input1.classList.remove('correct'); }
           if (isCorrect2) { input2.classList.add('correct'); input2.classList.remove('incorrect'); } else { input2.classList.add('incorrect'); input2.classList.remove('correct'); }
           if (bothCorrect) {
-              result.textContent = ' Correct! Well done!'; result.className = 'result correct';
+              result.textContent = '✅ Correct! Well done!'; result.className = 'result correct';
               if (!button.disabled) { completedExercises++; updateProgress(); }
           } else {
-              result.textContent = ` Incorrect. The correct answers are: "${correctAnswer1}" and "${correctAnswer2}"`; result.className = 'result incorrect';
+              result.textContent = `❌ Incorrect. The correct answers are: "${correctAnswer1}" and "${correctAnswer2}"`; result.className = 'result incorrect';
           }
           result.style.display = 'block'; button.disabled = true; input1.disabled = true; input2.disabled = true;
       }
@@ -1690,7 +1690,7 @@
               audio.currentTime = wordTime;
               if (audio.paused) {
                   audio.play().catch(e => console.error("Audio play failed:", e)); 
-                  if (playPauseBtn) playPauseBtn.textContent = "";
+                  if (playPauseBtn) playPauseBtn.textContent = "⏸️";
                   isPlaying = true;
               }
               updateTextHighlight(audio.currentTime, audioData, 'textContainer');
@@ -1700,8 +1700,8 @@
       
       if (playPauseBtn && audio) {
           playPauseBtn.addEventListener("click", () => {
-              if (isPlaying) { audio.pause(); playPauseBtn.textContent = ""; } 
-              else { audio.play().catch(e => console.error("Audio play failed:", e)); playPauseBtn.textContent = ""; }
+              if (isPlaying) { audio.pause(); playPauseBtn.textContent = "▶️"; } 
+              else { audio.play().catch(e => console.error("Audio play failed:", e)); playPauseBtn.textContent = "⏸️"; }
               isPlaying = !isPlaying;
           });
       }
@@ -1714,7 +1714,7 @@
               updateTextHighlight(audio.currentTime, uzbekAudioData, 'uzbekTextContainer');
           });
           audio.addEventListener('ended', () => {
-              if (playPauseBtn) playPauseBtn.textContent = '';
+              if (playPauseBtn) playPauseBtn.textContent = '▶️';
               isPlaying = false;
               document.querySelectorAll('.sentence.active, .word.current').forEach(el => {
                   el.classList.remove('active', 'current');
@@ -1746,9 +1746,9 @@
           
           const symbols = {
               rain: '', 
-              snow: '',
-              leaf: ['', ''][Math.floor(Math.random()*2)], 
-              flower: ['', '', ''][Math.floor(Math.random()*3)] 
+              snow: '❄',
+              leaf: ['🍂', '🍁'][Math.floor(Math.random()*2)], 
+              flower: ['🌸', '🌼', '🌺'][Math.floor(Math.random()*3)] 
           };
 
           for (let i = 0; i < particleCount; i++) {
