@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Japanese Kimono - Interactive Reader</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://code.responsivevoice.org/responsivevoice.js?key=ftro4Sxr"></script>
+<style>
+        /* DIZAYN VA STRUKTURA O'ZGARMADI (Siz so'ragandek) */
+        :root {
+            --primary-color: #be123c;
+            --primary-hover: #9f1239;
+            --bg-color: #fff1f2;
+            --card-bg: #ffffff;
+            --text-color: #334155;
+            --heading-color: #1e293b;
+            --tooltip-bg: #1e293b;
+            --tooltip-text: #ffffff;
+            --timer-bg: rgba(255, 255, 255, 0.9);
+            --border-color: #e2e8f0;
+            --highlight-color: rgba(190, 18, 60, 0.1);
+            --word-hover-color: #be123c;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        body.dark-mode {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #cbd5e1;
+            --heading-color: #f1f5f9;
+            --tooltip-bg: #f1f5f9;
+            --tooltip-text: #0f172a;
+            --timer-bg: rgba(15, 23, 42, 0.9);
+            --border-color: #334155;
+            --highlight-color: rgba(244, 63, 94, 0.15);
+            --word-hover-color: #fb7185;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        }
+
+        body.sepia-mode {
+            --bg-color: #f5e6d3;
+            --card-bg: #fdf6e3;
+            --text-color: #5f4b32;
+            --heading-color: #433422;
+            --tooltip-bg: #433422;
+            --tooltip-text: #fdf6e3;
+            --timer-bg: rgba(245, 230, 211, 0.95);
+            --border-color: #d6c4a6;
+            --highlight-color: rgba(95, 75, 50, 0.1);
+            --word-hover-color: #8c6b4a;
+        }
+
+        * { box-sizing: border-box; transition: all 0.3s ease; }
+
+        body {
+            font-family: 'Merriweather', serif;
+            line-height: 1.8;
+            margin: 0;
+            padding-top: 70px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        #sticky-timer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 60px;
+            background-color: var(--timer-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1000; font-family: 'Montserrat', sans-serif;
+            font-weight: 600; font-size: 1.2rem; color: var(--heading-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        #timer-icon { margin-right: 10px; color: var(--primary-color); }
+
+        .container {
+            max-width: 750px; margin: 30px auto 60px;
+            background: var(--card-bg); padding: 40px 50px;
+            border-radius: 16px; box-shadow: var(--shadow);
+        }
+
+        .content-image {
+            width: 100%; height: 400px; object-fit: cover;
+            border-radius: 12px; margin: 30px 0;
+            background-color: var(--border-color);
+        }
+
+        h1 { font-family: 'Montserrat', sans-serif; text-align: center; color: var(--primary-color); margin-bottom: 10px; }
+        h2 { 
+            font-family: 'Montserrat', sans-serif; 
+            font-weight: 700; 
+            color: var(--heading-color); 
+            margin-top: 40px; 
+            margin-bottom: 20px; 
+            font-size: 1.5rem; 
+            border-bottom: 2px solid var(--border-color); 
+            padding-bottom: 10px; 
+        }
+        
+        p { margin-bottom: 20px; font-size: 1.1rem; text-align: justify; }
+
+        .word {
+            cursor: pointer; position: relative; display: inline-block;
+            border-bottom: 2px solid transparent; padding: 0 1px;
+        }
+
+        .word:hover {
+            color: var(--word-hover-color);
+            background-color: var(--highlight-color);
+            border-bottom-color: var(--word-hover-color);
+            border-radius: 3px;
+        }
+
+        .tooltip {
+            visibility: hidden; opacity: 0; position: absolute;
+            bottom: 140%; left: 50%; transform: translateX(-50%) translateY(10px);
+            background-color: var(--tooltip-bg); color: var(--tooltip-text);
+            text-align: center; border-radius: 6px; padding: 6px 12px;
+            z-index: 1000; white-space: nowrap; font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .tooltip::after {
+            content: ""; position: absolute; top: 100%; left: 50%;
+            margin-left: -6px; border-width: 6px; border-style: solid;
+            border-color: var(--tooltip-bg) transparent transparent transparent;
+        }
+
+        .word:hover .tooltip { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        .button-group {
+            display: flex; justify-content: center; gap: 20px;
+            margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border-color);
+        }
+
+        .button-group button {
+            padding: 12px 24px; font-family: 'Montserrat', sans-serif;
+            font-weight: 500; font-size: 15px; background-color: var(--primary-color);
+            color: white; border: none; border-radius: 50px; cursor: pointer;
+        }
+
+        .button-group button.secondary { background-color: transparent; color: var(--text-color); border: 2px solid var(--border-color); }
+
+        @media (max-width: 600px) {
+            .container { padding: 25px; }
+            .content-image { height: 250px; }
+            .button-group { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="sticky-timer">
+        <span id="timer-icon">⏱</span>
+        <span id="time-display">00:00</span>
+    </div>
+
+    <div class="container">
+        
+        <div id="english-text" class="text-section">
+            <h1>The Japanese Kimono</h1>
+            
+            <p>
+                <span class="sentence">Many nations have traditional styles of dress.</span>
+                <span class="sentence">These are the country's traditional fashions.</span>
+                <span class="sentence">When you think of Japan, one or two images may come to mind.</span>
+                <span class="sentence">Maybe you think of delicious sushi?</span>
+                <span class="sentence">Or mountains and temples?</span>
+                <span class="sentence">Or maybe you think about the traditional Japanese dress, the Kimono?</span>
+            </p>
+
+      <img class="content-image" src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1000&q=80" alt="Woman in Kimono">
+
+
+            <h2>Origin</h2>
+            <p>
+                <span class="sentence">Kimonos came to Japan from China.</span>
+                <span class="sentence">They were worn underneath clothes as an undergarment.</span>
+                <span class="sentence">"Kimono" was the Japanese word for clothing.</span>
+                <span class="sentence">Now however, the word "kimono" refers to one type of Japanese dress.</span>
+                <span class="sentence">Kimonos are robes with long sleeves.</span>
+                <span class="sentence">The sleeves are very wide.</span>
+                <span class="sentence">Kimonos are also shaped like a "T."</span>
+                <span class="sentence">People wear a very wide belt with their kimonos.</span>
+                <span class="sentence">This belt is called an "obi."</span>
+                <span class="sentence">They are traditionally wrapped around your body from left to right.</span>
+                <span class="sentence">In fact, only the dead are wrapped right to left!</span>
+            </p>
+
+            <h2>Style</h2>
+            <p>
+                <span class="sentence">As you will learn, kimonos are a very important part of Japanese history.</span>
+                <span class="sentence">Kimonos became popular during the Heian period.</span>
+                <span class="sentence">Before that, Japanese people wore a different style of clothing.</span>
+                <span class="sentence">They wore pants and shirts of different materials.</span>
+                <span class="sentence">During the Heian period, a different type of clothing began being made.</span>
+                <span class="sentence">People began cutting clothes in straight lines and sewing them together.</span>
+                <span class="sentence">This style of making clothes gave makers plenty of freedom.</span>
+                <span class="sentence">Seamstresses didn't have to worry about size or body shape.</span>
+                <span class="sentence">Kimonos are made in all the same size for women, and all the same size for men.</span>
+                <span class="sentence">They are folded and tucked to make them fit each person.</span>
+                <span class="sentence">Thick fabrics could be used for winter and thin linen for summer.</span>
+            </p>
+
+            <img class="content-image" src="https://images.unsplash.com/photo-1492571350019-22de08371fd3?auto=format&fit=crop&w=1000&q=80" alt="Kimono Fabric">
+
+            <p>
+                <span class="sentence">Kimonos became very popular for a long time.</span>
+                <span class="sentence">As they began getting more popular, people became interested in different colors and fabrics.</span>
+                <span class="sentence">They matched bright fabrics with seasons.</span>
+                <span class="sentence">Also, in the past you could match colors to social and political class.</span>
+                <span class="sentence">By looking at someone's kimono, you could tell what part of society they belonged to.</span>
+            </p>
+
+            <p>
+                <span class="sentence">In the western world and other countries, people wear a lot of accessories.</span>
+                <span class="sentence">They may wear jewelry like rings and necklaces.</span>
+                <span class="sentence">The Japanese did not dress like this, however.</span>
+                <span class="sentence">Instead, they expressed their style and taste with the fabric of their kimono.</span>
+                <span class="sentence">Kimono designers used their fabric as a canvas.</span>
+                <span class="sentence">Like an artist who paints pictures, people would design very elegant images on their fabric.</span>
+                <span class="sentence">Some kimonos were even painted with ink!</span>
+            </p>
+
+            <p>
+                <span class="sentence">Warriors on the battlefield also wore very bright and colorful kimonos.</span>
+                <span class="sentence">Soldiers paid lots of attention to their dress.</span>
+                <span class="sentence">They wore extravagant outfits!</span>
+                <span class="sentence">The color of a warrior's kimono showed what part of the army he belonged to.</span>
+                <span class="sentence">At one point in time, kimonos involved 25 different layers of fabric!</span>
+                <span class="sentence">Can you imagine having to put on 25 layers of clothes?</span>
+                <span class="sentence">While soldiers and government officials dressed in particular colors to show class, normal citizens wore kimonos to show their family.</span>
+                <span class="sentence">They would put their family crest on their kimonos.</span>
+                <span class="sentence">Married women had a different style of kimono than single women.</span>
+                <span class="sentence">Mothers also had to teach their daughters how to wear kimonos.</span>
+                <span class="sentence">Nowadays, there are schools that teach you how to properly wear a kimono.</span>
+            </p>
+
+            <h2>Kimono Ceremony</h2>
+            <img class="content-image" src="https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&w=1000&q=80" alt="Kimono Ceremony">
+            <p>
+                <span class="sentence">Kimonos are still worn for traditional ceremonies, as well.</span>
+                <span class="sentence">You may find Japanese couples getting married wearing kimonos.</span>
+                <span class="sentence">They are also worn to funerals.</span>
+                <span class="sentence">The Japanese wear black kimonos to funerals.</span>
+                <span class="sentence">And men getting married wear black kimonos too.</span>
+                <span class="sentence">In the past, women wore kimonos while doing traditional arts such as tea ceremonies.</span>
+                <span class="sentence">They are often worn now to summer festivals.</span>
+                <span class="sentence">The western world has adopted the traditional Japanese kimono.</span>
+                <span class="sentence">If you go into a clothing store in the United States and ask for a kimono, you will be given a long light fabric robe.</span>
+            </p>
+            <p>
+                <span class="sentence">Now the most popular fabric to make kimonos with is silk.</span>
+                <span class="sentence">Silk is an expensive fabric.</span>
+                <span class="sentence">The cost of the fabric has made kimonos much less popular these days.</span>
+                <span class="sentence">A kimono could cost you thousands of dollars!</span>
+                <span class="sentence">Today if you travel to Japan, you will not see as many as you did in the past.</span>
+                <span class="sentence">However, traditional kimono fabric designers are considered very important in Japan.</span>
+                <span class="sentence">They create unique masterpieces.</span>
+            </p>
+        </div>
+        
+        <div id="uzbek-text" class="text-section" style="display:none;">
+            <h1>Yapon Kimonosi</h1>
+            
+            <p>
+                <span class="sentence">Ko'pgina millatlarning an'anaviy kiyinish uslublari mavjud.</span>
+                <span class="sentence">Bular o'sha mamlakatning an'anaviy modasidir.</span>
+                <span class="sentence">Yaponiya haqida o'ylaganingizda, hayolingizga bir yoki ikkita tasvir kelishi mumkin.</span>
+                <span class="sentence">Balki mazali sushini o'ylarsiz?</span>
+                <span class="sentence">Yoki tog'lar va ibodatxonalarnimi?</span>
+                <span class="sentence">Yoki Yaponiyaning an'anaviy libosi, Kimononi o'ylarsiz?</span>
+            </p>
+
+            <img class="content-image" src="https://images.unsplash.com/photo-1583993739775-680072eb0f14?auto=format&fit=crop&w=1000&q=80" alt="Japanese Kimono">
+
+            <h2>Kelib chiqishi (Origin)</h2>
+            <p>
+                <span class="sentence">Kimonolar Yaponiyaga Xitoydan kirib kelgan.</span>
+                <span class="sentence">Ular kiyimlar tagidan ichki kiyim sifatida kiyilgan.</span>
+                <span class="sentence">"Kimono" yaponcha kiyim degan so'z edi.</span>
+                <span class="sentence">Hozir esa, "Kimono" so'zi yapon libosining bir turini anglatadi.</span>
+                <span class="sentence">Kimonolar uzun yengli xalatlardir.</span>
+                <span class="sentence">Yenglari juda keng.</span>
+                <span class="sentence">Kimonolar shuningdek "T" shaklida bo'ladi.</span>
+                <span class="sentence">Odamlar kimonolari bilan juda keng kamar taqishadi.</span>
+                <span class="sentence">Bu kamar "obi" deb ataladi.</span>
+                <span class="sentence">Ular an'anaviy ravishda tanangizga chapdan o'ngga qarab o'raladi.</span>
+                <span class="sentence">Aslida, faqat o'liklar o'ngdan chapga o'raladi!</span>
+            </p>
+
+            <h2>Uslub (Style)</h2>
+            <p>
+                <span class="sentence">Bilib olganingizdek, kimonolar Yaponiya tarixining juda muhim qismidir.</span>
+                <span class="sentence">Kimonolar Xeyan davrida ommalashgan.</span>
+                <span class="sentence">Undan oldin, yapon xalqi boshqacha uslubdagi kiyimlarni kiyishgan.</span>
+                <span class="sentence">Ular turli materiallardan shim va ko'ylaklar kiyishgan.</span>
+                <span class="sentence">Xeyan davrida kiyim tikishning boshqacha turi paydo bo'ldi.</span>
+                <span class="sentence">Odamlar kiyimlarni to'g'ri chiziqlar bo'ylab kesishni va ularni birga tikishni boshladilar.</span>
+                <span class="sentence">Kiyim tikishning bu uslubi tikuvchilarga ko'plab erkinlik berdi.</span>
+                <span class="sentence">Tikuvchilar o'lcham yoki tana shakli haqida qayg'urishlari shart emas edi.</span>
+                <span class="sentence">Kimonolar ayollar uchun ham, erkaklar uchun ham bir xil o'lchamda tikiladi.</span>
+                <span class="sentence">Ular har bir kishiga mos tushishi uchun buklanadi va qistiriladi.</span>
+                <span class="sentence">Qish uchun qalin matolar, yoz uchun esa yupqa zig'ir matolar ishlatilishi mumkin.</span>
+            </p>
+
+            <img class="content-image" src="https://images.unsplash.com/photo-1492571350019-22de08371fd3?auto=format&fit=crop&w=1000&q=80" alt="Kimono Fabric">
+
+            <p>
+                <span class="sentence">Kimonolar uzoq vaqt davomida juda mashhur bo'ldi.</span>
+                <span class="sentence">Ular ommalashib borgani sari, odamlar turli xil ranglar va matolarga qiziqa boshladilar.</span>
+                <span class="sentence">Ular yorqin matolarni fasllarga moslashtirdilar.</span>
+                <span class="sentence">Shuningdek, o'tmishda ranglarni ijtimoiy va siyosiy tabaqaga moslashtirish mumkin edi.</span>
+                <span class="sentence">Birovning kimonosiga qarab, uning jamiyatning qaysi qismiga mansubligini aytish mumkin edi.</span>
+            </p>
+
+            <p>
+                <span class="sentence">G'arb dunyosida va boshqa mamlakatlarda odamlar ko'p aksessuarlar taqishadi.</span>
+                <span class="sentence">Ular uzuk va marjonlar kabi taqinchoqlar taqishlari mumkin.</span>
+                <span class="sentence">Ammo yaponlar bunday kiyinishmagan.</span>
+                <span class="sentence">Buning o'rniga, ular o'z uslubi va didini kimonolarining matosi bilan ifodalashgan.</span>
+                <span class="sentence">Kimono dizaynerlari matodan xuddi polotno (rism chizish matosi) kabi foydalanishgan.</span>
+                <span class="sentence">Rasmlar chizadigan rassom kabi, odamlar matolariga juda nafis tasvirlarni chizdirishgan.</span>
+                <span class="sentence">Ba'zi kimonolar hatto siyoh bilan bo'yalgan!</span>
+            </p>
+
+            <p>
+                <span class="sentence">Jang maydonidagi jangchilar ham juda yorqin va rang-barang kimonolar kiyishgan.</span>
+                <span class="sentence">Asakrlar o'z kiyimlariga katta e'tibor berishgan.</span>
+                <span class="sentence">Ular dabdabali liboslar kiyishgan!</span>
+                <span class="sentence">Jangchining kimonosining rangi u armiyaning qaysi qismiga tegishli ekanligini ko'rsatgan.</span>
+                <span class="sentence">Bir vaqtlar kimonolar 25 xil mato qatlamidan iborat bo'lgan!</span>
+                <span class="sentence">25 qavat kiyim kiyishni tasavvur qila olasizmi?</span>
+                <span class="sentence">Askar va hukumat amaldorlari o'z tabaqasini ko'rsatish uchun maxsus ranglarda kiyingan bo'lsa, oddiy fuqarolar o'z oilasini ko'rsatish uchun kimono kiyishgan.</span>
+                <span class="sentence">Ular kimonolariga o'z oilaviy tamg'alarini (gerb) tushirishgan.</span>
+                <span class="sentence">Turmushga chiqqan ayollarning kimono uslubi turmushga chiqmagan ayollarnikidan farq qilgan.</span>
+                <span class="sentence">Onalar qizlariga kimononi qanday kiyishni o'rgatishlari kerak bo'lgan.</span>
+                <span class="sentence">Hozirgi kunda kimononi qanday to'g'ri kiyishni o'rgatadigan maktablar mavjud.</span>
+            </p>
+
+            <h2>Kimono Marosimi (Ceremony)</h2>
+            <img class="content-image" src="https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&w=1000&q=80" alt="Kimono Ceremony">
+            <p>
+                <span class="sentence">Kimonolar an'anaviy marosimlar uchun ham haligacha kiyiladi.</span>
+                <span class="sentence">Siz turmush qurayotgan yapon juftliklarini kimono kiygan holda ko'rishingiz mumkin.</span>
+                <span class="sentence">Ular dafn marosimlariga ham kiyiladi.</span>
+                <span class="sentence">Yaponlar dafn marosimlariga qora kimono kiyishadi.</span>
+                <span class="sentence">Va uylanayotgan erkaklar ham qora kimono kiyishadi.</span>
+                <span class="sentence">O'tmishda ayollar choy marosimlari kabi an'anaviy san'at turlari bilan shug'ullanayotganda kimono kiyishgan.</span>
+                <span class="sentence">Hozir ular ko'pincha yozgi festivallarga kiyiladi.</span>
+                <span class="sentence">G'arb dunyosi an'anaviy yapon kimonosini qabul qildi.</span>
+                <span class="sentence">Agar siz Qo'shma Shtatlardagi kiyim do'koniga kirib, kimono so'rasangiz, sizga uzun yengil matoli xalat berishadi.</span>
+            </p>
+            <p>
+                <span class="sentence">Hozir kimonolar tikish uchun eng mashhur mato bu ipakdir.</span>
+                <span class="sentence">Ipak qimmat mato hisoblanadi.</span>
+                <span class="sentence">Matoning narxi bugungi kunda kimonolarni ancha kam ommabop qilib qo'ydi.</span>
+                <span class="sentence">Bir kimono sizga minglab dollarga tushishi mumkin!</span>
+                <span class="sentence">Bugun Yaponiyaga sayohat qilsangiz, o'tmishdagidek ko'p kimono ko'rmaysiz.</span>
+                <span class="sentence">Biroq, an'anaviy kimono mato dizaynerlari Yaponiyada juda muhim hisoblanadi.</span>
+                <span class="sentence">Ular noyob san'at asarlarini yaratadilar.</span>
+            </p>
+        </div>
+
+        <div class="button-group">
+            <button id="toggle-lang-button">O'zbekcha</button>
+            <button id="toggle-theme-button" class="secondary">Qorong'u rejim</button>
+        </div>
+    </div>
+
+    <script>
+        const originalTexts = {};
+        const words = {
+            // ASOSIY SO'ZLAR (Kengaytirilgan ro'yxat)
+            "kimono": "kimono (libos)",
+            "origin": "kelib chiqish",
+            "style": "uslub",
+            "ceremony": "marosim",
+            "ceremonies": "marosimlar",
+            "japan": "Yaponiya",
+            "japanese": "yapon/yaponcha",
+            "china": "Xitoy",
+            "nation": "millat",
+            "nations": "millatlar",
+            "traditional": "an'anaviy",
+            "dress": "libos/kiyinish",
+            "fashion": "moda",
+            "fashions": "modalar",
+            "image": "tasvir",
+            "images": "tasvirlar",
+            "mind": "xayol/aql",
+            "delicious": "mazali",
+            "sushi": "sushi",
+            "mountain": "tog'",
+            "mountains": "tog'lar",
+            "temple": "ibodatxona",
+            "temples": "ibodatxonalar",
+            "clothing": "kiyim",
+            "undergarment": "ichki kiyim",
+            "underneath": "tagidan",
+            "robe": "xalat",
+            "robes": "xalatlar",
+            "sleeve": "yeng",
+            "sleeves": "yenglar",
+            "wide": "keng",
+            "shaped": "shakllangan",
+            "shape": "shakl",
+            "belt": "kamar",
+            "obi": "obi (kamar)",
+            "wrap": "o'rash",
+            "wrapped": "o'ralgan",
+            "body": "tana",
+            "dead": "o'liklar",
+            "history": "tarix",
+            "period": "davr",
+            "heian": "Xeyan (davr)",
+            "pants": "shim",
+            "shirts": "ko'ylaklar",
+            "material": "material",
+            "materials": "materiallar",
+            "cut": "kesish",
+            "cutting": "kesish",
+            "straight": "to'g'ri",
+            "line": "chiziq",
+            "lines": "chiziqlar",
+            "sew": "tikish",
+            "sewing": "tikish",
+            "freedom": "erkinlik",
+            "maker": "yasovchi",
+            "makers": "yasovchilar",
+            "seamstress": "tikuvchi ayol",
+            "seamstresses": "tikuvchi ayollar",
+            "worry": "xavotirlanish",
+            "size": "o'lcham",
+            "fit": "mos tushish",
+            "fold": "buklash",
+            "folded": "buklangan",
+            "tuck": "qistirish",
+            "tucked": "qistirilgan",
+            "fabric": "mato",
+            "fabrics": "matolar",
+            "thick": "qalin",
+            "thin": "yupqa",
+            "linen": "zig'ir mato",
+            "winter": "qish",
+            "summer": "yoz",
+            "color": "rang",
+            "colors": "ranglar",
+            "bright": "yorqin",
+            "interested": "qiziqqan",
+            "match": "moslash",
+            "matched": "moslagan",
+            "season": "fasl",
+            "seasons": "fasllar",
+            "social": "ijtimoiy",
+            "political": "siyosiy",
+            "class": "sinf/tabaqa",
+            "society": "jamiyat",
+            "western": "g'arbiy",
+            "world": "dunyo",
+            "accessory": "aksessuar",
+            "accessories": "aksessuarlar",
+            "jewelry": "zargarlik buyumlari",
+            "ring": "uzuk",
+            "rings": "uzuklar",
+            "necklace": "marjon",
+            "necklaces": "marjonlar",
+            "taste": "did",
+            "express": "ifodalash",
+            "expressed": "ifodalagan",
+            "canvas": "polotno (mato)",
+            "artist": "rassom",
+            "paint": "chizish",
+            "paints": "chizadi",
+            "picture": "rasm",
+            "pictures": "rasmlar",
+            "design": "dizayn",
+            "designer": "dizayner",
+            "designers": "dizaynerlar",
+            "elegant": "nafis",
+            "ink": "siyoh",
+            "warrior": "jangchi",
+            "warriors": "jangchilar",
+            "battlefield": "jang maydoni",
+            "soldier": "askar",
+            "soldiers": "askarlar",
+            "pay": "to'lash/qaratish",
+            "paid": "qaratgan",
+            "attention": "e'tibor",
+            "extravagant": "dabdabali",
+            "outfit": "libos",
+            "outfits": "liboslar",
+            "army": "armiya",
+            "point": "nuqta/payt",
+            "layer": "qatlam",
+            "layers": "qatlamlar",
+            "government": "hukumat",
+            "official": "rasmiy",
+            "officials": "rasmiylar",
+            "citizen": "fuqaro",
+            "citizens": "fuqarolar",
+            "normal": "oddiy",
+            "family": "oila",
+            "crest": "gerb/tamg'a",
+            "married": "turmush qurgan",
+            "single": "bo'ydoq",
+            "mother": "ona",
+            "mothers": "onalar",
+            "daughter": "qiz",
+            "daughters": "qizlar",
+            "teach": "o'rgatish",
+            "school": "maktab",
+            "schools": "maktablar",
+            "properly": "to'g'ri",
+            "couple": "juftlik",
+            "couples": "juftliklar",
+            "funeral": "dafn marosimi",
+            "funerals": "dafn marosimlari",
+            "black": "qora",
+            "men": "erkaklar",
+            "women": "ayollar",
+            "art": "san'at",
+            "arts": "san'at turlari",
+            "tea": "choy",
+            "festival": "festival",
+            "festivals": "festivallar",
+            "adopt": "qabul qilish",
+            "adopted": "qabul qilingan",
+            "store": "do'kon",
+            "silk": "ipak",
+            "expensive": "qimmat",
+            "cost": "narx/turmoq",
+            "thousand": "ming",
+            "thousands": "minglab",
+            "dollar": "dollar",
+            "dollars": "dollar",
+            "travel": "sayohat qilish",
+            "unique": "noyob",
+            "masterpiece": "shoh asar",
+            "masterpieces": "shoh asarlar",
+            "consider": "hisoblash",
+            "considered": "hisoblangan",
+            "modern": "zamonaviy",
+            "nowadays": "hozirgi kunda",
+
+            // BOG'LOVCHI VA YORDAMCHI SO'ZLAR
+            "this": "bu", "that": "o'sha", "these": "bular", "those": "anavilar",
+            "is": "-dir", "are": "-dirlar", "was": "edi", "were": "edilar",
+            "the": "o'sha (aniqlovchi)", "a": "bir", "an": "bir",
+            "and": "va", "but": "ammo/lekin", "or": "yoki", "so": "shunday",
+            "to": "ga", "in": "ichida/-da", "on": "ustida", "at": "da",
+            "of": "ning", "from": "dan", "by": "tomonidan", "with": "bilan",
+            "without": "siz/-siz", "for": "uchun", "about": "haqida",
+            "it": "u", "its": "uning", "they": "ular", "them": "ularni", "their": "ularning",
+            "you": "siz", "your": "sizning", "we": "biz", "our": "bizning",
+            "he": "u (erkak)", "she": "u (ayol)", "his": "uning", "her": "uning",
+            "many": "ko'plab", "much": "ko'p", "more": "ko'proq", "most": "eng",
+            "some": "ba'zi", "any": "har qanday", "all": "barcha",
+            "one": "bir", "two": "ikki", "first": "birinchi",
+            "very": "juda", "really": "haqiqatdan", "too": "juda/ham",
+            "well": "yaxshi/ham", "also": "shuningdek", "even": "hatto",
+            "still": "hali ham", "just": "shunchaki", "only": "faqat",
+            "now": "hozir", "then": "keyin/o'shanda", "when": "qachonki",
+            "where": "qayerda", "how": "qanday", "why": "nega", "what": "nima",
+            "maybe": "balki", "perhaps": "ehtimol", "however": "biroq",
+            "instead": "o'rniga", "fact": "fakt", "actually": "aslida",
+            "can": "qila olmoq", "could": "qila olardi", "will": "bo'ladi", "would": "bo'lardi",
+            "do": "qilish", "did": "qildi", "does": "qiladi", "doing": "qilayotgan",
+            "have": "bor/ega bo'lmoq", "has": "bor", "had": "bor edi",
+            "make": "qilish/yasash", "made": "qilingan", "making": "qilish",
+            "get": "olish", "got": "olgan", "getting": "olayotgan",
+            "go": "borish", "went": "borgan", "come": "kelish", "came": "kelgan",
+            "see": "ko'rish", "saw": "ko'rgan", "look": "qarash", "looking": "qarab",
+            "think": "o'ylash", "thought": "o'ylagan", "know": "bilish", "knew": "bilgan",
+            "say": "aytish", "said": "aytdi", "tell": "aytish", "told": "aytdi",
+            "ask": "so'rash", "give": "berish", "gave": "berdi", "given": "berilgan",
+            "take": "olish", "took": "olgan", "put": "qo'yish",
+            "use": "ishlatish", "used": "ishlatilgan", "using": "ishlatib",
+            "find": "topish", "found": "topilgan",
+            "become": "bo'lish", "became": "bo'ldi",
+            "begin": "boshlash", "began": "boshlandi",
+            "create": "yaratish", "created": "yaratilgan",
+            "change": "o'zgarish", "changed": "o'zgargan",
+            "important": "muhim", "popular": "mashhur", "different": "turli",
+            "same": "bir xil", "other": "boshqa", "another": "boshqa bir",
+            "new": "yangi", "old": "eski", "good": "yaxshi", "bad": "yomon",
+            "large": "katta", "small": "kichik", "long": "uzun", "short": "qisqa",
+            "high": "baland", "low": "past", "beautiful": "chiroyli",
+            "ago": "oldin", "today": "bugun", "yesterday": "kecha",
+            "often": "tez-tez", "usually": "odatda", "sometimes": "ba'zan",
+            "never": "hech qachon", "always": "doim",
+            "less": "kamroq", "least": "eng kam", "few": "kam",
+            "lot": "ko'p", "plenty": "ko'p/yetarli",
+            "part": "qism", "example": "misol", "way": "yo'l/usul",
+            "life": "hayot", "day": "kun", "year": "yil", "time": "vaqt"
+        };
+
+        function makeWordsClickable(containerId) {
+            const container = document.getElementById(containerId);
+            const sentences = container.getElementsByClassName('sentence');
+            
+            for (let sentence of sentences) {
+                if (!originalTexts[sentence.innerText]) {
+                    originalTexts[sentence.innerText] = sentence.innerText;
+                }
+                
+                const text = sentence.innerText;
+                // So'zlarni ajratish (tinish belgilarini hisobga olib)
+                const wordsArray = text.split(/(\s+|[,.?!:;()""—-])/);
+                sentence.innerHTML = '';
+                
+                wordsArray.forEach(word => {
+                    // Agar bo'sh joy yoki belgi bo'lmasa, so'z deb qabul qilamiz
+                    if (word.trim() && !/[,.?!:;()""—-]/.test(word)) {
+                        const span = document.createElement('span');
+                        span.className = 'word';
+                        span.innerText = word;
+                        
+                        // Lug'atdan qidirish uchun tozalash
+                        const lowerWord = word.toLowerCase().replace(/[^a-z0-9'-]/g, '');
+                        // Tarjimani topish yoki '...' qo'yish
+                        const translation = words[lowerWord] || '...';
+                        
+                        const tooltip = document.createElement('span');
+                        tooltip.className = 'tooltip';
+                        tooltip.innerText = translation;
+                        
+                        span.appendChild(tooltip);
+                        
+                        // Ovozli o'qish funksiyasi
+                        span.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            if (typeof responsiveVoice !== 'undefined') {
+                                responsiveVoice.speak(word, "UK English Female");
+                            }
+                        });
+                        
+                        sentence.appendChild(span);
+                    } else {
+                        sentence.appendChild(document.createTextNode(word));
+                    }
+                });
+            }
+        }
+
+        // Timer Logic
+        let seconds = 0;
+        setInterval(() => {
+            seconds++;
+            const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const secs = (seconds % 60).toString().padStart(2, '0');
+            document.getElementById('time-display').textContent = `${mins}:${secs}`;
+        }, 1000);
+
+        // Language Toggle
+        const toggleButton = document.getElementById('toggle-lang-button');
+        const englishText = document.getElementById('english-text');
+        const uzbekText = document.getElementById('uzbek-text');
+        let isEnglish = true;
+
+        toggleButton.addEventListener('click', () => {
+            if (isEnglish) {
+                englishText.style.display = 'none';
+                uzbekText.style.display = 'block';
+                toggleButton.textContent = 'English';
+                isEnglish = false;
+                makeWordsClickable('uzbek-text');
+            } else {
+                englishText.style.display = 'block';
+                uzbekText.style.display = 'none';
+                toggleButton.textContent = 'O\'zbekcha';
+                isEnglish = true;
+                makeWordsClickable('english-text');
+            }
+        });
+
+        // Theme Toggle
+        const toggleThemeButton = document.getElementById('toggle-theme-button');
+        let currentThemeIndex = 0;
+        const themes = ['light-mode', 'dark-mode', 'sepia-mode'];
+        const themeTexts = ['Qorong\'u rejim', 'Qizg\'ich rejim', 'Kun rejimi'];
+
+        toggleThemeButton.addEventListener('click', () => {
+            document.body.classList.remove(...themes);
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+            if (themes[currentThemeIndex] !== 'light-mode') {
+                document.body.classList.add(themes[currentThemeIndex]);
+            }
+            toggleThemeButton.textContent = themeTexts[currentThemeIndex];
+        });
+
+        // Init
+        window.onload = () => {
+            makeWordsClickable('english-text');
+            if (typeof responsiveVoice !== 'undefined') responsiveVoice.enableSpeech();
+        };
+    </script>
+</body>
+</html>
