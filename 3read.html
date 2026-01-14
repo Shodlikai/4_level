@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interesting Dining Manners - Interactive Reader</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://code.responsivevoice.org/responsivevoice.js?key=ftro4Sxr"></script>
+<style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #334155;
+            --heading-color: #1e293b;
+            --tooltip-bg: #1e293b;
+            --tooltip-text: #ffffff;
+            --timer-bg: rgba(255, 255, 255, 0.9);
+            --border-color: #e2e8f0;
+            --highlight-color: rgba(37, 99, 235, 0.1);
+            --word-hover-color: #2563eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        body.dark-mode {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #cbd5e1;
+            --heading-color: #f1f5f9;
+            --tooltip-bg: #f1f5f9;
+            --tooltip-text: #0f172a;
+            --timer-bg: rgba(15, 23, 42, 0.9);
+            --border-color: #334155;
+            --highlight-color: rgba(147, 197, 253, 0.15);
+            --word-hover-color: #60a5fa;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        }
+
+        body.sepia-mode {
+            --bg-color: #f5e6d3;
+            --card-bg: #fdf6e3;
+            --text-color: #5f4b32;
+            --heading-color: #433422;
+            --tooltip-bg: #433422;
+            --tooltip-text: #fdf6e3;
+            --timer-bg: rgba(245, 230, 211, 0.95);
+            --border-color: #d6c4a6;
+            --highlight-color: rgba(95, 75, 50, 0.1);
+            --word-hover-color: #8c6b4a;
+        }
+
+        * {
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        body {
+            font-family: 'Merriweather', serif;
+            line-height: 1.8;
+            margin: 0;
+            padding-top: 70px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        #sticky-timer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background-color: var(--timer-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: var(--heading-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        #timer-icon { margin-right: 10px; color: var(--primary-color); }
+
+        .container {
+            max-width: 750px;
+            margin: 30px auto 60px;
+            background: var(--card-bg);
+            padding: 40px 50px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .content-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin: 20px 0;
+            background-color: var(--border-color);
+        }
+
+        h1 { font-family: 'Montserrat', sans-serif; text-align: center; color: var(--primary-color); margin-bottom: 10px; }
+        h2 { font-family: 'Montserrat', sans-serif; font-weight: 700; text-align: center; color: var(--heading-color); margin-top: 40px; margin-bottom: 20px; font-size: 1.8rem; border-bottom: 2px solid var(--primary-color); display: inline-block; width: 100%; padding-bottom: 10px; }
+        h3 { font-family: 'Montserrat', sans-serif; color: var(--primary-color); margin-top: 30px; text-align: center; }
+
+        p { margin-bottom: 20px; font-size: 1.1rem; text-align: justify; }
+
+        .word {
+            cursor: pointer;
+            position: relative;
+            display: inline-block;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+            padding: 0 1px;
+        }
+
+        .word:hover {
+            color: var(--word-hover-color);
+            background-color: var(--highlight-color);
+            border-bottom-color: var(--word-hover-color);
+            border-radius: 3px;
+        }
+
+        .tooltip {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            bottom: 140%;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background-color: var(--tooltip-bg);
+            color: var(--tooltip-text);
+            text-align: center;
+            border-radius: 6px;
+            padding: 6px 12px;
+            z-index: 1000;
+            white-space: nowrap;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+        }
+
+        .tooltip::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -6px;
+            border-width: 6px;
+            border-style: solid;
+            border-color: var(--tooltip-bg) transparent transparent transparent;
+        }
+
+        .word:hover .tooltip { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .button-group button {
+            padding: 12px 24px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+            font-size: 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .button-group button:hover { background-color: var(--primary-hover); transform: translateY(-2px); }
+
+        .button-group button.secondary { background-color: transparent; color: var(--text-color); border: 2px solid var(--border-color); }
+
+        @media (max-width: 600px) {
+            .container { padding: 25px; }
+            .content-image { height: 250px; }
+            .button-group { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="sticky-timer">
+        <span id="timer-icon">⏱</span>
+        <span id="time-display">00:00</span>
+    </div>
+
+    <div class="container">
+        <div id="english-text" class="text-section">
+            <h1>Interesting Dining Manners in Different Cultures</h1>
+            <img class="content-image" src="https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1000&q=80" alt="French Dining" style="width:100%; border-radius:10px; margin: 20px 0;">
+            
+            <p>
+                <span class="sentence">Around the world, people gather to eat lunch or dinner.</span>
+                <span class="sentence">Every culture has developed this social ritual in different ways, so today there are certain rules that need to be respected while eating — for example, how to use utensils (knife, fork, spoon) correctly or when to ask to be served.</span>
+                <span class="sentence">We call them dining or table manners.</span>
+                <span class="sentence">These rules differ from one culture to another, so what is considered to be polite in one society can be seen as very rude somewhere else!</span>
+            </p>
+
+            <h2>A Brief History of Table Manners in Europe</h2>
+            <p>
+                <span class="sentence">Most table manners that Europeans and North Americans practice today originate from the Age of Exploration in the 1500s.</span>
+                <span class="sentence">It is believed that dinners became more refined when Catherine de' Medici, who was the Pope's niece, married the future King of France Henry II.</span>
+                <span class="sentence">She was appalled by the fact that French people did not use forks, and had greasy hands from cutting the meat.</span>
+            </p>
+            <p>
+                <span class="sentence">Around that time, a few more educated people, like Erasmus of Rotterdam (a Dutch scholar), had already written about the use of utensils and restraining oneself from eating quickly.</span>
+                <span class="sentence">At that time, knives, spoons and cups were shared among all those sitting at the table, and soups were drunk directly from the bowl.</span>
+                <span class="sentence">Soon after, individual cutlery was introduced, and napkins were adopted to protect the diners' clothes.</span>
+                <span class="sentence">Even today, it is a good table manner to put the napkin on the lap.</span>
+            </p>
+
+            <h2>Hands Up, France</h2>
+            <p>
+                <span class="sentence">When in France, you might be advised to always rest your wrists or forearms (but not elbows) on the table while you are not using utensils to eat.</span>
+                <span class="sentence">Keeping your hands under the table where nobody can see them is considered a bad dining manner.</span>
+                <span class="sentence">In many other countries in Europe and North America, "hands on the table" is one of the basic dining rules, particularly reiterated to children.</span>
+                <span class="sentence">Why is that?</span>
+                <span class="sentence">Some people suggest this tradition started because people were afraid of what other people might be doing under the table, like holding a weapon.</span>
+            </p>
+
+            <h2>Siesta, Spain</h2>
+            <p>
+            	<img class="content-image" src="https://images.unsplash.com/photo-1541518763669-27fef04b14ea?auto=format&fit=crop&w=1000&q=80" alt="Ethiopian Injera" style="width:100%; border-radius:10px; margin: 20px 0;">
+            
+                <span class="sentence">If you find yourself in Spain during the summer, you will notice that many shops are closed in the early afternoon, even on a regular work day.</span>
+                <span class="sentence">The reason they are closed is siesta, a short nap people take after lunch.</span>
+                <span class="sentence">The word siesta, meaning "nap" in Spanish, derives from the Latin word sexta, meaning the sixth hour (counting from the dawn), which explains why siesta is usually taken around noon.</span>
+                <span class="sentence">This particular dining ritual can be explained by the very high temperatures during the summer, and the great amount of food a typical midday meal in Spain includes.</span>
+                <span class="sentence">These two together make people very sleepy, so they made it a nation-wide acceptable habit to take a break from work in the middle of the day and get some rest.</span>
+            </p>
+
+            <h2>Slurping, East and South Asia</h2>
+            <p>
+            	<img class="content-image" src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=1000&q=80" alt="Asian Noodles Slurping" style="width:100%; border-radius:10px; margin: 20px 0;">
+                <span class="sentence">While in most European cultures making any noise while drinking or chewing is considered to be very rude, in places like Japan and China those who slurp their soups have good dining manners.</span>
+                <span class="sentence">In other words, slurping your soup or noodles very loudly sends a message to the chef or the host that the food is delicious.</span>
+                <span class="sentence">The more loudly you slurp it, the more appreciation for the meal you show.</span>
+                <span class="sentence">If by any chance you forget to do it, the cook could be very offended or hurt thinking that you did not enjoy their meal!</span>
+            </p>
+
+            <h2>Eating With Hands, Ethiopia</h2>
+            <p>
+                <span class="sentence">Traditionally, Ethiopian food is eaten with hands, usually from a large communal plate.</span>
+                <span class="sentence">Several delicious meals are put together in a plate with some injera, a flat Ethiopian bread, and the guests sit around it.</span>
+                <span class="sentence">The proper way to eat Ethiopian food is to tear off a piece of the bread, grab some food that is close to you with it, and put it in your mouth.</span>
+                <span class="sentence">Because you are touching the food with your hands, make sure that you always wash them before and after the meal.</span>
+                <span class="sentence">The left hand is considered unclean, so it is advisable and polite to only use your right hand to eat.</span>
+            </p>
+
+            <h2>No Extra Cheese, Italy</h2>
+            <p>
+                <span class="sentence">Italian cuisine is known for using a great variety of cheese in large quantities.</span>
+                <span class="sentence">Italian pizzas and pastas are particularly rich in cheese.</span>
+                <span class="sentence">In an Italian restaurant anywhere in the world, the parmesan cheese might even be freshly grated in front of you on your plate.</span>
+                <span class="sentence">However, unless cheese is offered to you, you should not ask for extra cheese for a dish like pizza which already has a lot of cheese.</span>
+                <span class="sentence">Such an act is considered to be an insult to the cook, so most waiters will simply refuse to bring more cheese.</span>
+                <span class="sentence">Another cheese-related rule in Italy applies to seafood — adding cheese to a seafood pasta is unimaginable according to traditional dining manners, so it is best you avoid it.</span>
+            </p>
+        </div>
+
+        <div id="uzbek-text" class="text-section" style="display:none;">
+            <h1>Turli Madaniyatlardagi Qiziqarli Ovqatlanish Odoblari</h1>
+            
+            <p>
+                <span class="sentence">Dunyo bo'ylab odamlar tushlik yoki kechki ovqat uchun yig'ilishadi.</span>
+                <span class="sentence">Har bir madaniyat ushbu ijtimoiy ritualni turlicha rivojlantirgan, shuning uchun bugungi kunda ovqatlanish paytida hurmat qilinishi kerak bo'lgan ma'lum qoidalar mavjud — masalan, asboblardan (pichoq, sanchqi, qoshiq) qanday to'g'ri foydalanish yoki qachon xizmat ko'rsatishni so'rash.</span>
+                <span class="sentence">Biz ularni ovqatlanish yoki stol odoblari deb ataymiz.</span>
+                <span class="sentence">Ushbu qoidalar bir madaniyatdan boshqasiga farq qiladi, shuning uchun bir jamiyatda xushmuomalalik deb hisoblangan narsa boshqa joyda juda qo'pol deb ko'rinishi mumkin!</span>
+            </p>
+
+            <h2>Yevropadagi Stol Odoblarining Qisqacha Tarixi</h2>
+            <p>
+                <span class="sentence">Yevropaliklar va Shimoliy amerikaliklar bugungi kunda amal qiladigan stol odoblarining aksariyati 1500-yillardagi Kashfiyotlar davridan kelib chiqqan.</span>
+                <span class="sentence">Kechki ovqatlar Papa jiyani bo'lgan Katerina de Medichi bo'lajak Fransiya qiroli Genrix II ga turmushga chiqqanida yanada nafisroq bo'lgan deb ishoniladi.</span>
+                <span class="sentence">U fransuzlarning sanchqi ishlatmasligidan va go'shtni kesishda qo'llari yog' bo'lishidan hayratda qolgan.</span>
+            </p>
+            <p>
+                <span class="sentence">O'sha paytlarda Rotterdamlik Erasmus (gollandiyalik olim) kabi bir necha o'qimishli odamlar asboblardan foydalanish va ovqatni tez yeyishdan tiyilish haqida yozishgan edi.</span>
+                <span class="sentence">O'sha paytda pichoq, qoshiq va finjonlar stolda o'tirganlar orasida umumiy bo'lgan va sho'rvalar to'g'ridan-to'g'ri idishdan ichilgan.</span>
+                <span class="sentence">Ko'p o'tmay, shaxsiy asboblar joriy etildi va ovqatlanuvchilarning kiyimlarini himoya qilish uchun salfetkalar qabul qilindi.</span>
+                <span class="sentence">Hatto bugun ham salfetkani tizzaga qo'yish yaxshi odob hisoblanadi.</span>
+            </p>
+
+            <h2>Qo'llar Tepada, Fransiya</h2>
+            <p>
+                <span class="sentence">Fransiyada bo'lganingizda, ovqatlanish uchun asboblardan foydalanmayotgan paytingizda bilaklaringizni yoki tirsak osti qismini (lekin tirsaklarni emas) har doim stol ustida tutish tavsiya etiladi.</span>
+                <span class="sentence">Qo'llaringizni stol ostida, hech kim ko'rmaydigan joyda saqlash yomon odob hisoblanadi.</span>
+                <span class="sentence">Yevropa va Shimoliy Amerikaning ko'plab boshqa mamlakatlarida "qo'llar stolda" qoidasi asosiy ovqatlanish qoidalaridan biri bo'lib, ayniqsa bolalarga qayta-qayta uqtiriladi.</span>
+                <span class="sentence">Nega shunday?</span>
+                <span class="sentence">Ba'zi odamlarning fikricha, bu an'ana odamlar stol ostida boshqalar nima qilayotganidan, masalan, qurol ushlab turganidan qo'rqqanlari uchun boshlangan.</span>
+            </p>
+
+            <h2>Siesta, Ispaniya</h2>
+            <p>
+                <span class="sentence">Agar yozda Ispaniyada bo'lib qolsangiz, ko'plab do'konlar oddiy ish kunida ham tushdan keyin yopiq ekanligini sezasiz.</span>
+                <span class="sentence">Ularning yopiqligining sababi - siesta, odamlar tushlikdan keyin qiladigan qisqa uyqudir.</span>
+                <span class="sentence">Ispancha "siesta" so'zi "mudrash" degan ma'noni anglatadi va lotincha "sexta" - oltinchi soat (tongdan boshlab hisoblaganda) so'zidan kelib chiqqan bo'lib, bu siesta nima uchun tush vaqtida qilinishini tushuntiradi.</span>
+                <span class="sentence">Bu ovqatlanish ritualini yozdagi juda yuqori harorat va Ispaniyadagi odatiy tushlik taomlarining ko'pligi bilan tushuntirish mumkin.</span>
+                <span class="sentence">Bu ikki omil odamlarni juda uyquchan qilib qo'yadi, shuning uchun ular kunning o'rtasida ishdan tanaffus qilish va dam olishni umummilliy odatga aylantirishgan.</span>
+            </p>
+
+            <h2>Ho'rillatib ichish, Sharqiy va Janubiy Osiyo</h2>
+            <p>
+                <span class="sentence">Aksariyat Yevropa madaniyatlarida ichish yoki chaynash paytida har qanday shovqin chiqarish juda qo'pol deb hisoblansa-da, Yaponiya va Xitoy kabi joylarda sho'rvani ho'rillatib ichganlar yaxshi odobli hisoblanadi.</span>
+                <span class="sentence">Boshqacha qilib aytganda, sho'rva yoki lag'monni baland ovozda ho'rillatib ichish oshpazga yoki mezbonga taom mazali ekanligi haqida xabar beradi.</span>
+                <span class="sentence">Qanchalik baland ho'rillatsangiz, taomga shunchalik ko'p minnatdorchilik bildirgan bo'lasiz.</span>
+                <span class="sentence">Agar mabodo buni unutsangiz, oshpaz taomdan zavqlanmadi deb o'ylab, xafa bo'lishi yoki ko'ngli og'rishi mumkin!</span>
+            </p>
+
+            <h2>Qo'lda ovqatlanish, Efiopiya</h2>
+            <p>
+                <span class="sentence">An'anaga ko'ra, Efiopiya taomlari qo'lda, odatda katta umumiy lagandan yeyiladi.</span>
+                <span class="sentence">Bir necha mazali taomlar bir laganga injera - yassi Efiopiya noni bilan birga qo'yiladi va mehmonlar uning atrofida o'tirishadi.</span>
+                <span class="sentence">Efiopiya taomini yeyishning to'g'ri usuli - nondan bir bo'lak uzib olish, u bilan o'zingizga yaqin bo'lgan ovqatni ilib olish va og'izga solishdir.</span>
+                <span class="sentence">Ovqatga qo'lingiz bilan tegayotganingiz sababli, ovqatdan oldin va keyin ularni yuvishga ishonch hosil qiling.</span>
+                <span class="sentence">Chap qo'l nopok hisoblanadi, shuning uchun faqat o'ng qo'ldan foydalanish tavsiya etiladi va xushmuomalalikdir.</span>
+            </p>
+
+            <h2>Qo'shimcha pishloq yo'q, Italiya</h2>
+            <p>
+                <span class="sentence">Italiya oshxonasi pishloqning juda ko'p turlarini katta miqdorda ishlatishi bilan mashhur.</span>
+                <span class="sentence">Italiya pitsalari va pastalari ayniqsa pishloqga boy.</span>
+                <span class="sentence">Dunyoning istalgan joyidagi Italiya restoranida parmesan pishlog'i hatto ko'z o'ngingizda laganingizga yangi qirg'ichdan o'tkazilishi mumkin.</span>
+                <span class="sentence">Biroq, agar sizga pishloq taklif qilinmasa, pitsa kabi allaqachon pishlog'i ko'p bo'lgan taomga qo'shimcha pishloq so'ramasligingiz kerak.</span>
+                <span class="sentence">Bunday harakat oshpazga nisbatan haqorat hisoblanadi, shuning uchun ko'pchilik ofitsiantlar shunchaki ko'proq pishloq keltirishni rad etishadi.</span>
+                <span class="sentence">Italiyadagi yana bir pishloq bilan bog'liq qoida dengiz mahsulotlariga tegishli — dengiz mahsulotlari qo'shilgan pastaga pishloq qo'shish an'anaviy odobga ko'ra tasavvur qilib bo'lmaydigan holat, shuning uchun undan qochganingiz ma'qul.</span>
+            </p>
+        </div>
+
+        <div class="button-group">
+            <button id="toggle-lang-button">O'zbekcha</button>
+            <button id="toggle-theme-button" class="secondary">Qorong'u rejim</button>
+        </div>
+    </div>
+
+    <script>
+        // LUG'AT QISMI - MATNDAGI DEYARLI HAR BIR SO'Z UCHUN
+        const words = {
+            "interesting": "qiziqarli", "dining": "ovqatlanish", "manners": "odoblar", "different": "turli xil", "cultures": "madaniyatlar",
+            "around": "atrofida", "world": "dunyo", "people": "odamlar", "gather": "yig'ilishmoq", "eat": "yemoq", "lunch": "tushlik",
+            "dinner": "kechki ovqat", "every": "har bir", "culture": "madaniyat", "developed": "rivojlantirgan", "social": "ijtimoiy",
+            "ritual": "marosim/odat", "ways": "usullar", "today": "bugun", "certain": "ma'lum", "rules": "qoidalar", "respected": "hurmat qilinadigan",
+            "example": "misol", "use": "foydalanish", "utensils": "asboblar", "knife": "pichoq", "fork": "sanchqi", "spoon": "qoshiq",
+            "correctly": "to'g'ri", "ask": "so'ramoq", "served": "xizmat ko'rsatish", "call": "atamoq", "table": "stol", "differ": "farq qilmoq",
+            "another": "boshqa", "considered": "hisoblanadi", "polite": "xushmuomala", "society": "jamiyat", "seen": "ko'riladi",
+            "rude": "qo'pol", "somewhere": "qayerdadir", "else": "boshqa", "brief": "qisqacha", "history": "tarix", "europe": "yevropa",
+            "most": "ko'pchilik", "europeans": "yevropaliklar", "north": "shimoliy", "americans": "amerikaliklar", "practice": "amal qilish",
+            "originate": "kelib chiqmoq", "age": "davr", "exploration": "kashfiyot", "believed": "ishoniladi", "became": "bo'ldi",
+            "refined": "nafis/yaxshilangan", "niece": "jiyan", "married": "turmush qurgan", "future": "kelajak", "king": "qirol",
+            "france": "fransiya", "appalled": "dahshatga tushgan", "fact": "fakt/haqiqat", "forks": "sanchqilar", "greasy": "yog'li",
+            "hands": "qo'llar", "cutting": "kesish", "meat": "go'sht", "educated": "o'qimishli", "scholar": "olim", "written": "yozilgan",
+            "restraining": "tiyilish", "oneself": "o'zini", "quickly": "tezda", "knives": "pichoqlar", "spoons": "qoshiqlar", "cups": "finjonlar",
+            "shared": "bo'lishilgan", "sitting": "o'tirgan", "soups": "sho'rvalar", "drunk": "ichilgan", "directly": "to'g'ridan-to'g'ri",
+            "bowl": "idish/kosa", "soon": "tezda", "individual": "shaxsiy/alohida", "cutlery": "oshxona asboblari", "introduced": "joriy etildi",
+            "napkins": "salfetkalar", "adopted": "qabul qilingan", "protect": "himoya qilish", "diners": "ovqatlanuvchilar", "clothes": "kiyimlar",
+            "even": "hatto", "good": "yaxshi", "lap": "tizza", "advised": "tavsiya qilingan", "always": "doimo", "rest": "dam oldirmoq/qo'ymoq",
+            "wrists": "bilaklar", "forearms": "tirsak osti", "elbows": "tirsaklar", "under": "ostida", "nobody": "hech kim", "bad": "yomon",
+            "countries": "mamlakatlar", "basic": "asosiy", "particularly": "ayniqsa", "reiterated": "qayta-qayta aytilgan", "children": "bolalar",
+            "suggest": "ta'kidlamoq", "tradition": "an'ana", "afraid": "qo'rqqan", "holding": "ushlab turish", "weapon": "qurol",
+            "summer": "yoz", "notice": "sezmoq", "shops": "do'konlar", "closed": "yopiq", "early": "erta", "afternoon": "tushdan keyin",
+            "regular": "oddiy", "work": "ish", "reason": "sabab", "siesta": "siesta (tushlik uyqusi)", "short": "qisqa", "nap": "mudrash",
+            "meaning": "ma'no", "spanish": "ispancha", "derives": "kelib chiqqan", "latin": "lotincha", "sixth": "oltinchi", "hour": "soat",
+            "dawn": "tong", "explains": "tushuntiradi", "usually": "odatda", "noon": "tush vaqti", "particular": "o'ziga xos",
+            "high": "yuqori", "temperatures": "haroratlar", "great": "katta", "amount": "miqdor", "food": "ovqat", "typical": "odatiy",
+            "midday": "kun o'rtasi", "includes": "o'z ichiga oladi", "together": "birgalikda", "make": "qilmoq", "sleepy": "uyquchan",
+            "nation-wide": "umummilliy", "acceptable": "maqbul", "habit": "odat", "break": "tanaffus", "noise": "shovqin", "drinking": "ichish",
+            "chewing": "chaynash", "places": "joylar", "japan": "yaponiya", "china": "xitoy", "slurp": "ho'rillatib ichish", "words": "so'zlar",
+            "slurping": "ho'rillash", "noodles": "lag'mon", "loudly": "baland ovozda", "sends": "yuboradi", "message": "xabar", "chef": "oshpaz",
+            "host": "mezbon", "delicious": "mazali", "appreciation": "minnatdorchilik", "meal": "taom", "show": "ko'rsatmoq", "chance": "imkoniyat",
+            "forget": "unutmoq", "cook": "oshpaz", "offended": "xafa bo'lgan", "hurt": "ko'ngli og'rigan", "enjoy": "zavqlanmoq",
+            "traditionally": "an'anaga ko'ra", "ethiopian": "efiopiya", "large": "katta", "communal": "umumiy", "plate": "lagan/tovoq",
+            "several": "bir necha", "meals": "taomlar", "injera": "injera (non)", "flat": "yassi", "bread": "non", "guests": "mehmonlar",
+            "proper": "to'g'ri", "tear": "uzib olmoq", "piece": "bo'lak", "grab": "ushlamoq", "close": "yaqin", "mouth": "og'iz",
+            "touching": "tegish", "wash": "yuvmoq", "before": "oldin", "after": "keyin", "left": "chap", "unclean": "nopok",
+            "advisable": "tavsiya etiladi", "right": "o'ng", "cuisine": "oshxona", "known": "mashhur", "variety": "turli xillik",
+            "cheese": "pishloq", "quantities": "miqdorlar", "pizzas": "pitsalar", "pastas": "pastalar", "rich": "boy", "restaurant": "restoran",
+            "anywhere": "har qayerda", "parmesan": "parmesan", "freshly": "yangi", "grated": "qirg'ichdan o'tkazilgan", "front": "oldida",
+            "unless": "agar ...masa", "offered": "taklif qilingan", "extra": "qo'shimcha", "dish": "taom", "act": "harakat", "insult": "haqorat",
+            "waiters": "ofitsiantlar", "refuse": "rad etish", "bring": "keltirish", "related": "bog'liq", "applies": "tegishli",
+            "seafood": "dengiz mahsulotlari", "adding": "qo'shish", "unimaginable": "tasavvur qilib bo'lmaydigan", "traditional": "an'anaviy",
+            "best": "eng yaxshisi", "avoid": "qochmoq/cheklanmoq"
+        };
+
+        function makeWordsClickable(containerId) {
+            const container = document.getElementById(containerId);
+            const sentences = container.getElementsByClassName('sentence');
+            
+            for (let sentence of sentences) {
+                const text = sentence.innerText;
+                // So'zlarni va tinish belgilarini ajratish
+                const wordsArray = text.split(/(\s+|[,.?!:;()""—-])/);
+                sentence.innerHTML = '';
+                
+                wordsArray.forEach(word => {
+                    if (word.trim() && !/[,.?!:;()""—-]/.test(word)) {
+                        const span = document.createElement('span');
+                        span.className = 'word';
+                        span.innerText = word;
+                        
+                        const lowerWord = word.toLowerCase().replace(/[^a-z0-9'-]/g, '');
+                        const translation = words[lowerWord] || '...';
+                        
+                        const tooltip = document.createElement('span');
+                        tooltip.className = 'tooltip';
+                        tooltip.innerText = translation;
+                        
+                        span.appendChild(tooltip);
+                        
+                        span.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            if (typeof responsiveVoice !== 'undefined') {
+                                responsiveVoice.speak(word, "UK English Female");
+                            }
+                        });
+                        
+                        sentence.appendChild(span);
+                    } else {
+                        sentence.appendChild(document.createTextNode(word));
+                    }
+                });
+            }
+        }
+
+        // Timer funksiyasi
+        let seconds = 0;
+        setInterval(() => {
+            seconds++;
+            const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const secs = (seconds % 60).toString().padStart(2, '0');
+            document.getElementById('time-display').textContent = `${mins}:${secs}`;
+        }, 1000);
+
+        // Tilni o'zgartirish
+        const toggleButton = document.getElementById('toggle-lang-button');
+        const englishText = document.getElementById('english-text');
+        const uzbekText = document.getElementById('uzbek-text');
+        let isEnglish = true;
+
+        toggleButton.addEventListener('click', () => {
+            if (isEnglish) {
+                englishText.style.display = 'none';
+                uzbekText.style.display = 'block';
+                toggleButton.textContent = 'English';
+                isEnglish = false;
+                makeWordsClickable('uzbek-text');
+            } else {
+                englishText.style.display = 'block';
+                uzbekText.style.display = 'none';
+                toggleButton.textContent = 'O\'zbekcha';
+                isEnglish = true;
+                makeWordsClickable('english-text');
+            }
+        });
+
+        // Mavzuni o'zgartirish (Light/Dark/Sepia)
+        const toggleThemeButton = document.getElementById('toggle-theme-button');
+        let currentThemeIndex = 0;
+        const themes = ['light-mode', 'dark-mode', 'sepia-mode'];
+        const themeTexts = ['Qorong\'u rejim', 'Qizg\'ich rejim', 'Kun rejimi'];
+
+        toggleThemeButton.addEventListener('click', () => {
+            document.body.classList.remove(...themes);
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+            if (themes[currentThemeIndex] !== 'light-mode') {
+                document.body.classList.add(themes[currentThemeIndex]);
+            }
+            toggleThemeButton.textContent = themeTexts[currentThemeIndex];
+        });
+
+        // Sahifa yuklanganda ishga tushirish
+        window.onload = () => {
+            makeWordsClickable('english-text');
+            if (typeof responsiveVoice !== 'undefined') {
+                responsiveVoice.enableSpeech();
+            }
+        };
+    </script>
+</body>
+</html>
