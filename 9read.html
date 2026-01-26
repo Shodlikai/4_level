@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canada: Fun & Interesting Facts - Interactive Reader</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://code.responsivevoice.org/responsivevoice.js?key=ftro4Sxr"></script>
+    <style>
+        /* DIZAYN (CSS) KODLARI - ESKI FAYLDAN NUSXALANGAN */
+        :root {
+            --primary-color: #ef4444; /* Kanada bayrog'i qizil rangi */
+            --primary-hover: #b91c1c;
+            --bg-color: #fff1f2;
+            --card-bg: #ffffff;
+            --text-color: #334155;
+            --heading-color: #1e293b;
+            --tooltip-bg: #1e293b;
+            --tooltip-text: #ffffff;
+            --timer-bg: rgba(255, 255, 255, 0.9);
+            --border-color: #e2e8f0;
+            --highlight-color: rgba(239, 68, 68, 0.1);
+            --word-hover-color: #ef4444;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        body.dark-mode {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #cbd5e1;
+            --heading-color: #f1f5f9;
+            --tooltip-bg: #f1f5f9;
+            --tooltip-text: #0f172a;
+            --timer-bg: rgba(15, 23, 42, 0.9);
+            --border-color: #334155;
+            --highlight-color: rgba(239, 68, 68, 0.15);
+            --word-hover-color: #f87171;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        }
+
+        * { box-sizing: border-box; transition: all 0.3s ease; }
+        body { font-family: 'Merriweather', serif; line-height: 1.8; margin: 0; padding-top: 70px; background-color: var(--bg-color); color: var(--text-color); }
+        #sticky-timer { position: fixed; top: 0; left: 0; width: 100%; height: 60px; background-color: var(--timer-bg); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; z-index: 1000; font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 1.2rem; color: var(--heading-color); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        #timer-icon { margin-right: 10px; color: var(--primary-color); }
+        .container { max-width: 750px; margin: 30px auto 60px; background: var(--card-bg); padding: 40px 50px; border-radius: 16px; box-shadow: var(--shadow); }
+        .content-image { width: 100%; height: 400px; object-fit: cover; border-radius: 12px; margin: 30px 0; background-color: var(--border-color); }
+        h1 { font-family: 'Montserrat', sans-serif; text-align: center; color: var(--primary-color); margin-bottom: 10px; }
+        h2 { font-family: 'Montserrat', sans-serif; font-weight: 700; color: var(--heading-color); margin-top: 40px; margin-bottom: 20px; font-size: 1.5rem; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; }
+        p { margin-bottom: 20px; font-size: 1.1rem; text-align: justify; }
+        .word { cursor: pointer; position: relative; display: inline-block; border-bottom: 2px solid transparent; padding: 0 1px; }
+        .word:hover { color: var(--word-hover-color); background-color: var(--highlight-color); border-bottom-color: var(--word-hover-color); border-radius: 3px; }
+        .tooltip { visibility: hidden; opacity: 0; position: absolute; bottom: 140%; left: 50%; transform: translateX(-50%) translateY(10px); background-color: var(--tooltip-bg); color: var(--tooltip-text); text-align: center; border-radius: 6px; padding: 6px 12px; z-index: 1000; white-space: nowrap; font-family: 'Montserrat', sans-serif; font-size: 0.9rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .tooltip::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -6px; border-width: 6px; border-style: solid; border-color: var(--tooltip-bg) transparent transparent transparent; }
+        .word:hover .tooltip { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(0); }
+        .button-group { display: flex; justify-content: center; gap: 20px; margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border-color); }
+        .button-group button { padding: 12px 24px; font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 15px; background-color: var(--primary-color); color: white; border: none; border-radius: 50px; cursor: pointer; }
+        .button-group button.secondary { background-color: transparent; color: var(--text-color); border: 2px solid var(--border-color); }
+        @media (max-width: 600px) { .container { padding: 25px; } .content-image { height: 250px; } .button-group { flex-direction: column; } }
+    </style>
+</head>
+<body>
+
+    <div id="sticky-timer">
+        <span id="timer-icon">⏱</span>
+        <span id="time-display">00:00</span>
+    </div>
+
+    <div class="container">
+        
+        <div id="english-text" class="text-section">
+            <h1>Canada: Fun & Interesting facts about the "Great White North!"</h1>
+            
+            <p>
+                <span class="sentence">Did you know Canada is the second biggest country in the world, second only to Russia?</span>
+                <span class="sentence">In fact, Canada is bigger than the entire European Union put together!</span>
+                <span class="sentence">There are many interesting facts about Canada, some that may surprise you!</span>
+                <span class="sentence">Maybe you'd like to visit Canada some day, or maybe you already have and some of these facts will be familiar to you.</span>
+                <span class="sentence">Today we're going to learn some fun and interesting facts about the country commonly called "The Great White North!"</span>
+            </p>
+
+            <img class="content-image" src="https://images.unsplash.com/photo-1517935706615-2717063c2225?auto=format&fit=crop&w=1000&q=80" alt="Canada Map or Flag">
+
+            <h2>Geography & History</h2>
+            <p>
+                <span class="sentence">Canada has ten provinces and three territories.</span>
+                <span class="sentence">It also has six time zones!</span>
+                <span class="sentence">Its capital city is Ottawa.</span>
+                <span class="sentence">Ottawa is in the province of Ontario.</span>
+                <span class="sentence">It has a population of 36 million people.</span>
+                <span class="sentence">This is small compared to other countries.</span>
+                <span class="sentence">It is also small considering its large size!</span>
+            </p>
+            <p>
+                <span class="sentence">Over 80% of the population live near the United States border.</span>
+                <span class="sentence">The Canadian and US border is the largest border in the world.</span>
+                <span class="sentence">Over 30% of the country is forest.</span>
+                <span class="sentence">And Canada has 10% of the world's forests!</span>
+                <span class="sentence">Canada also has more lake area than any other country in the world.</span>
+            </p>
+             <img class="content-image" src="https://images.unsplash.com/photo-1503614472-8c93d56e92ce?auto=format&fit=crop&w=1000&q=80" alt="Lake in Canada">
+
+            <p>
+                <span class="sentence">Canada is a very young country.</span>
+                <span class="sentence">Canada only became a country in 1867.</span>
+                <span class="sentence">The country celebrated its 150th birthday in July 2017.</span>
+                <span class="sentence">July 1st is Canada Day.</span>
+                <span class="sentence">People all across the country celebrate by wearing red and white.</span>
+                <span class="sentence">Red and white are the national colors shown on its flag.</span>
+            </p>
+            <p>
+                <span class="sentence">Canada was first discovered by the French explorer, Jacques Cartier in 1534.</span>
+                <span class="sentence">However, people had been living in Canada long before that.</span>
+                <span class="sentence">Indigenous people had been living in North America for centuries.</span>
+                <span class="sentence">Indigenous people still live in Canada today.</span>
+            </p>
+            <p>
+                <span class="sentence">Canada's national animal is a beaver!</span>
+                <span class="sentence">And it has two national languages, both English and French.</span>
+                <span class="sentence">However, only two provinces are officially French speaking, Quebec and New Brunswick.</span>
+                <span class="sentence">Canada is still strongly tied to the country of England.</span>
+                <span class="sentence">Like Australia, Canada celebrates the Queen of England as their Queen too!</span>
+            </p>
+
+            <h2>Maple Syrup</h2>
+            <p>
+                <span class="sentence">When many people think of Canada, they think of maple syrup.</span>
+                <span class="sentence">Did you know that the Canadian province of Quebec is responsible for 70% of the world's maple syrup?</span>
+                <span class="sentence">Maple syrup is a delicious sweet and runny sauce used commonly on pancakes, waffles, french toast and oatmeal.</span>
+            </p>
+            <p>
+                <span class="sentence">Historically, indigenous people started producing maple syrup.</span>
+                <span class="sentence">When Europeans first came to Canada and met these indigenous people, they adopted some of their practices, including how to make maple syrup.</span>
+            </p>
+            <p>
+                <span class="sentence">In July 2013, there was a maple syrup robbery.</span>
+                <span class="sentence">A group of thieves stole $18 million worth of maple syrup!</span>
+                <span class="sentence">Can you believe that?</span>
+                <span class="sentence">They took 3,000 tons of maple syrup from a warehouse in Quebec.</span>
+                <span class="sentence">The man in charge was fined nearly $10 million and is facing 9 years in prison.</span>
+            </p>
+            <img class="content-image" src="https://images.unsplash.com/photo-1596450628269-83955627237b?auto=format&fit=crop&w=1000&q=80" alt="Maple Syrup">
+            <p>
+                <span class="sentence">Maple syrup robbery is a serious crime in Canada!</span>
+                <span class="sentence">Maple syrup is worth more than oil!</span>
+            </p>
+
+            <h2>Money</h2>
+            <p>
+                <span class="sentence">Canada has its own currency.</span>
+                <span class="sentence">It is the Canadian dollar.</span>
+                <span class="sentence">If you travel to Canada, you will hear Canadians use the words "loonie" and "toonie."</span>
+                <span class="sentence">A "loonie" is a one dollar coin.</span>
+                <span class="sentence">It is called a "loonie" because there is a loon on one of its faces.</span>
+                <span class="sentence">A loon is a type of water bird, similar to a goose or a duck.</span>
+                <span class="sentence">They are commonly found in Canada.</span>
+                <span class="sentence">Can you guess what a "toonie" is?</span>
+                <span class="sentence">It's a two dollar coin!</span>
+            </p>
+            <img class="content-image" src="https://upload.wikimedia.org/wikipedia/commons/e/e0/Common_Loon_with_chick_crop.jpg" alt="Loon Bird">
+
+            <h2>Weather</h2>
+            <p>
+                <span class="sentence">People often think of Canada as being very cold.</span>
+                <span class="sentence">This is true for some parts of Canada.</span>
+                <span class="sentence">In Ottawa, the average low temperature in the month of January is -14.4 degrees Celsius.</span>
+                <span class="sentence">That may seem very cold to you.</span>
+                <span class="sentence">But the Yukon is a northern territory in Canada.</span>
+                <span class="sentence">Their coldest recorded temperature is -63 degrees Celsius.</span>
+                <span class="sentence">It was recorded in 1947.</span>
+                <span class="sentence">That's almost as cold as planet Mars!</span>
+            </p>
+            <img class="content-image" src="https://images.unsplash.com/photo-1579033461380-adb47c3eb938?auto=format&fit=crop&w=1000&q=80" alt="Northern Lights">
+            <p>
+                <span class="sentence">Canada isn't always cold however.</span>
+                <span class="sentence">In the summer months, it can get quite hot.</span>
+                <span class="sentence">On the west coast of Canada in fact, there are places where it rarely snows.</span>
+                <span class="sentence">Instead, in the winter months these areas get lots of rain.</span>
+            </p>
+
+            <h2>Santa Claus</h2>
+            <p>
+                <span class="sentence">The Canadian postal service assigned an official address for Santa Claus in the North Pole.</span>
+                <span class="sentence">They even gave him a postal code of H0H 0H0!</span>
+                <span class="sentence">Every Christmas, Canadian children send letters to this address.</span>
+                <span class="sentence">They are all read and answered by the postal service!</span>
+            </p>
+
+            <h2>Some More Fun Facts</h2>
+            <p>
+                <span class="sentence">The world's largest coin is found in Canada.</span>
+                <span class="sentence">It is a reproduction of a nickel.</span>
+                <span class="sentence">A nickel is a five cent coin.</span>
+                <span class="sentence">It is located in the province of Ontario and it measures 9 meters!</span>
+            </p>
+            <p>
+                <span class="sentence">Canadians love ice hockey and most Canadians play it.</span>
+                <span class="sentence">Canada holds the record for the most gold medals ever won at the Winter Olympics.</span>
+                <span class="sentence">In 2010, the Winter Olympics were hosted in the Canadian city of Vancouver.</span>
+                <span class="sentence">Canada won 14 gold medals.</span>
+            </p>
+            <p>
+                <span class="sentence">The name "Canada" is actually a mistake.</span>
+                <span class="sentence">Remember Jacques Cartier, the explorer who discovered Canada?</span>
+                <span class="sentence">Well, he spoke with indigenous people when he found Canada.</span>
+                <span class="sentence">They spoke a different language, and their word for "village" was "kanata" or "canada."</span>
+                <span class="sentence">Cartier thought that this word was the name of where he was.</span>
+                <span class="sentence">From this, the country of "Canada" was born!</span>
+            </p>
+            <p>
+                <span class="sentence">Do you know the Netherlands?</span>
+                <span class="sentence">It is a country in Europe.</span>
+                <span class="sentence">Well, the Netherlands and Canada have a very good relationship.</span>
+                <span class="sentence">In fact, the Netherlands commonly gives Canada a gift each year of thousands of tulip flowers.</span>
+                <span class="sentence">In 1943, a princess from the Netherlands was in Ottawa and about to give birth to her daughter.</span>
+                <span class="sentence">But according to their laws, if the baby was born outside of the Netherlands, she would not be a citizen of the country.</span>
+                <span class="sentence">So Ottawa turned the princess' hospital room into official international ground.</span>
+                <span class="sentence">This means that the hospital room was now "international" territory and not just Canadian.</span>
+                <span class="sentence">The baby could be a citizen of the Netherlands.</span>
+                <span class="sentence">Because of this, Canada and the Netherlands are very good friends.</span>
+            </p>
+            <img class="content-image" src="https://images.unsplash.com/photo-1590403758364-77a3d3c8c729?auto=format&fit=crop&w=1000&q=80" alt="Tulips">
+
+            <h2>Visit Canada</h2>
+            <p>
+                <span class="sentence">As you've read, Canada is big and interesting country.</span>
+                <span class="sentence">If you should every want to visit Canada, cities like Toronto, Montreal and Vancouver are very big tourist destinations.</span>
+                <span class="sentence">You can also go to coastal cities like St. John's or Victoria and spend time with ocean wildlife.</span>
+                <span class="sentence">There is something to see and do for everyone in Canada.</span>
+            </p>
+        </div>
+        
+        <div id="uzbek-text" class="text-section" style="display:none;">
+            <h1>Kanada: "Buyuk Oq Shimol" haqida qiziqarli faktlar!</h1>
+            
+            <p>
+                <span class="sentence">Kanada Rossiyadan keyin dunyodagi ikkinchi eng katta davlat ekanligini bilarmidingiz?</span>
+                <span class="sentence">Aslida, Kanada butun Yevropa Ittifoqini qo'shib hisoblaganda ham kattaroqdir!</span>
+                <span class="sentence">Kanada haqida ko'plab qiziqarli faktlar mavjud, ba'zilari sizni hayratda qoldirishi mumkin!</span>
+                <span class="sentence">Balki bir kun kelib Kanadaga tashrif buyurishni xohlarsiz, yoki balki allaqachon borgan bo'lsangiz, ushbu faktlarning ba'zilari sizga tanish bo'lishi mumkin.</span>
+                <span class="sentence">Bugun biz odatda "Buyuk Oq Shimol" deb ataladigan mamlakat haqida qiziqarli faktlarni o'rganamiz!</span>
+            </p>
+
+            <img class="content-image" src="https://images.unsplash.com/photo-1517935706615-2717063c2225?auto=format&fit=crop&w=1000&q=80" alt="Kanada Xaritasi yoki Bayrog'i">
+
+            <h2>Geografiya va Tarix</h2>
+            <p>
+                <span class="sentence">Kanada o'nta provinsiya va uchta hududga (territoriya) ega.</span>
+                <span class="sentence">Shuningdek, u oltita vaqt zonasiga ega!</span>
+                <span class="sentence">Uning poytaxti Ottava shahridir.</span>
+                <span class="sentence">Ottava Ontario provinsiyasida joylashgan.</span>
+                <span class="sentence">Uning aholisi 36 million kishini tashkil etadi.</span>
+                <span class="sentence">Bu boshqa mamlakatlarga nisbatan kichik ko'rsatkich.</span>
+                <span class="sentence">Uning katta o'lchamini hisobga olganda ham bu juda kam!</span>
+            </p>
+            <p>
+                <span class="sentence">Aholining 80 foizidan ortig'i Amerika Qo'shma Shtatlari chegarasi yaqinida yashaydi.</span>
+                <span class="sentence">Kanada va AQSh chegarasi dunyodagi eng uzun chegaradir.</span>
+                <span class="sentence">Mamlakatning 30 foizidan ortig'i o'rmondir.</span>
+                <span class="sentence">Va Kanada dunyo o'rmonlarining 10 foiziga egalik qiladi!</span>
+                <span class="sentence">Shuningdek, Kanada dunyodagi boshqa har qanday mamlakatdan ko'ra ko'proq ko'l maydoniga ega.</span>
+            </p>
+             <img class="content-image" src="https://images.unsplash.com/photo-1503614472-8c93d56e92ce?auto=format&fit=crop&w=1000&q=80" alt="Kanadadagi ko'l">
+
+            <p>
+                <span class="sentence">Kanada juda yosh mamlakat.</span>
+                <span class="sentence">Kanada faqat 1867-yildagina davlatga aylangan.</span>
+                <span class="sentence">Mamlakat 2017-yil iyul oyida o'zining 150 yoshini nishonladi.</span>
+                <span class="sentence">1-iyul — Kanada kuni.</span>
+                <span class="sentence">Butun mamlakat bo'ylab odamlar qizil va oq kiyim kiyib bayram qilishadi.</span>
+                <span class="sentence">Qizil va oq ranglar uning bayrog'ida aks etgan milliy ranglardir.</span>
+            </p>
+            <p>
+                <span class="sentence">Kanada birinchi bo'lib 1534-yilda fransuz tadqiqotchisi Jak Kartye tomonidan kashf etilgan.</span>
+                <span class="sentence">Biroq, odamlar Kanadada undan ancha oldin yashab kelgan.</span>
+                <span class="sentence">Mahalliy xalqlar (tubjoy aholi) Shimoliy Amerikada asrlar davomida yashab kelgan.</span>
+                <span class="sentence">Mahalliy xalqlar bugungi kunda ham Kanadada yashamoqda.</span>
+            </p>
+            <p>
+                <span class="sentence">Kanadaning milliy hayvoni — bu qunduz!</span>
+                <span class="sentence">Va uning ikkita davlat tili bor: ingliz va fransuz tillari.</span>
+                <span class="sentence">Biroq, faqat ikkita provinsiya rasmiy ravishda fransuz tilida so'zlashadi: Kvebek va Nyu-Brunsvik.</span>
+                <span class="sentence">Kanada hamon Angliya bilan mustahkam bog'langan.</span>
+                <span class="sentence">Avstraliya singari, Kanada ham Angliya qirolichasini (qirolini) o'z qirolichasi (qiroli) sifatida ulug'laydi!</span>
+            </p>
+
+            <h2>Zarang Sharbati (Maple Syrup)</h2>
+            <p>
+                <span class="sentence">Ko'pchilik Kanada haqida o'ylaganda, zarang sharbatini esga oladi.</span>
+                <span class="sentence">Kanadaning Kvebek provinsiyasi dunyodagi zarang sharbatining 70 foiziga javobgar ekanligini bilarmidingiz?</span>
+                <span class="sentence">Zarang sharbati mazali shirin va suyuq sous bo'lib, odatda quymoqlar, vaflilar, fransuz tostlari va suli bo'tqasi ustiga quyib iste'mol qilinadi.</span>
+            </p>
+            <p>
+                <span class="sentence">Tarixiy jihatdan, mahalliy xalqlar zarang sharbati ishlab chiqarishni boshlaganlar.</span>
+                <span class="sentence">Yevropaliklar birinchi marta Kanadaga kelib, bu mahalliy xalqlar bilan uchrashganda, ular ba'zi urf-odatlarni, shu jumladan zarang sharbatini qanday tayyorlashni o'zlashtirdilar.</span>
+            </p>
+            <p>
+                <span class="sentence">2013-yil iyul oyida zarang sharbati o'g'irligi sodir bo'ldi.</span>
+                <span class="sentence">Bir guruh o'g'rilar 18 million dollarlik zarang sharbatini o'g'irlashdi!</span>
+                <span class="sentence">Bunga ishonasizmi?</span>
+                <span class="sentence">Ular Kvebekdagi ombordan 3000 tonna zarang sharbatini olib ketishdi.</span>
+                <span class="sentence">Mas'ul shaxs qariyb 10 million dollar jarimaga tortildi va 9 yillik qamoq jazosiga hukm qilindi.</span>
+            </p>
+            <img class="content-image" src="https://images.unsplash.com/photo-1596450628269-83955627237b?auto=format&fit=crop&w=1000&q=80" alt="Zarang sharbati">
+            <p>
+                <span class="sentence">Zarang sharbati o'g'irligi Kanadada jiddiy jinoyat hisoblanadi!</span>
+                <span class="sentence">Zarang sharbati neftdan ham qimmatroq!</span>
+            </p>
+
+            <h2>Pul</h2>
+            <p>
+                <span class="sentence">Kanadaning o'z valyutasi bor.</span>
+                <span class="sentence">Bu Kanada dollari.</span>
+                <span class="sentence">Agar siz Kanadaga sayohat qilsangiz, kanadaliklarning "loonie" va "toonie" so'zlarini ishlatishini eshitasiz.</span>
+                <span class="sentence">"Loonie" — bu bir dollarlik tanga.</span>
+                <span class="sentence">U "loonie" deb ataladi, chunki uning bir tomonida g'ag'ara (loon) qushi tasvirlangan.</span>
+                <span class="sentence">G'ag'ara — g'oz yoki o'rdakka o'xshash suv qushi turi.</span>
+                <span class="sentence">Ular Kanadada keng tarqalgan.</span>
+                <span class="sentence">"Toonie" nima ekanligini topa olasizmi?</span>
+                <span class="sentence">Bu ikki dollarlik tanga!</span>
+            </p>
+            <img class="content-image" src="https://upload.wikimedia.org/wikipedia/commons/e/e0/Common_Loon_with_chick_crop.jpg" alt="G'ag'ara qushi">
+
+            <h2>Ob-havo</h2>
+            <p>
+                <span class="sentence">Odamlar ko'pincha Kanadani juda sovuq deb o'ylashadi.</span>
+                <span class="sentence">Bu Kanadaning ba'zi qismlari uchun to'g'ri.</span>
+                <span class="sentence">Ottavada yanvar oyidagi o'rtacha eng past harorat -14,4 daraja Selsiyni tashkil qiladi.</span>
+                <span class="sentence">Bu sizga juda sovuq tuyulishi mumkin.</span>
+                <span class="sentence">Ammo Yukon Kanadadagi shimoliy hududdir.</span>
+                <span class="sentence">Ularning qayd etilgan eng sovuq harorati -63 daraja Selsiy bo'lgan.</span>
+                <span class="sentence">U 1947-yilda qayd etilgan.</span>
+                <span class="sentence">Bu deyarli Mars sayyorasidek sovuq!</span>
+            </p>
+            <img class="content-image" src="https://images.unsplash.com/photo-1579033461380-adb47c3eb938?auto=format&fit=crop&w=1000&q=80" alt="Shimol yog'dusi">
+            <p>
+                <span class="sentence">Biroq, Kanada har doim ham sovuq emas.</span>
+                <span class="sentence">Yoz oylarida havo ancha isishi mumkin.</span>
+                <span class="sentence">Aslida, Kanadaning g'arbiy qirg'og'ida qor kamdan-kam yog'adigan joylar mavjud.</span>
+                <span class="sentence">Buning o'rniga, qish oylarida bu hududlarda ko'p yomg'ir yog'adi.</span>
+            </p>
+
+            <h2>Qorbobo (Santa Claus)</h2>
+            <p>
+                <span class="sentence">Kanada pochta xizmati Qorbobo uchun Shimoliy Qutbda rasmiy manzil belgiladi.</span>
+                <span class="sentence">Ular unga hatto H0H 0H0 pochta indeksini ham berishdi!</span>
+                <span class="sentence">Har Rojdestvoda kanadalik bolalar ushbu manzilga xat yozishadi.</span>
+                <span class="sentence">Ularning barchasi o'qiladi va pochta xizmati tomonidan javob beriladi!</span>
+            </p>
+
+            <h2>Yana Ba'zi Qiziqarli Faktlar</h2>
+            <p>
+                <span class="sentence">Dunyodagi eng katta tanga Kanadada joylashgan.</span>
+                <span class="sentence">Bu nikelning (5 sentlik tanga) reproduksiyasidir.</span>
+                <span class="sentence">Nikel — bu besh sentlik tanga.</span>
+                <span class="sentence">U Ontario provinsiyasida joylashgan va o'lchami 9 metrni tashkil qiladi!</span>
+            </p>
+            <p>
+                <span class="sentence">Kanadaliklar muz usti xokkeyini yaxshi ko'rishadi va ko'pchilik kanadaliklar uni o'ynashadi.</span>
+                <span class="sentence">Kanada Qishki Olimpiya o'yinlarida eng ko'p oltin medal yutish bo'yicha rekordchi hisoblanadi.</span>
+                <span class="sentence">2010-yilda Qishki Olimpiya o'yinlari Kanadaning Vankuver shahrida o'tkazildi.</span>
+                <span class="sentence">Kanada 14 ta oltin medalni qo'lga kiritdi.</span>
+            </p>
+            <p>
+                <span class="sentence">"Kanada" nomi aslida xatodir.</span>
+                <span class="sentence">Kanadani kashf etgan tadqiqotchi Jak Kartyeni eslaysizmi?</span>
+                <span class="sentence">Xo'sh, u Kanadani topganda mahalliy xalqlar bilan gaplashgan.</span>
+                <span class="sentence">Ular boshqa tilda gaplashishgan va ularning "qishloq" so'zi "kanata" yoki "canada" edi.</span>
+                <span class="sentence">Kartye bu so'zni o'zi turgan joyning nomi deb o'ylagan.</span>
+                <span class="sentence">Shundan so'ng "Kanada" mamlakati dunyoga keldi!</span>
+            </p>
+            <p>
+                <span class="sentence">Siz Niderlandiyani bilasizmi?</span>
+                <span class="sentence">Bu Yevropadagi mamlakat.</span>
+                <span class="sentence">Xo'sh, Niderlandiya va Kanada o'rtasida juda yaxshi munosabatlar mavjud.</span>
+                <span class="sentence">Aslida, Niderlandiya odatda har yili Kanadaga minglab lola gullarini sovg'a qiladi.</span>
+                <span class="sentence">1943-yilda Niderlandiya malikasi Ottavada edi va qizini dunyoga keltirish arafasida edi.</span>
+                <span class="sentence">Ammo ularning qonunlariga ko'ra, agar chaqaloq Niderlandiyadan tashqarida tug'ilsa, u mamlakat fuqarosi bo'la olmas edi.</span>
+                <span class="sentence">Shunday qilib, Ottava malikaning kasalxona xonasini rasmiy xalqaro hududga aylantirdi.</span>
+                <span class="sentence">Bu shuni anglatadiki, kasalxona xonasi endi shunchaki Kanada emas, balki "xalqaro" hudud edi.</span>
+                <span class="sentence">Chaqaloq Niderlandiya fuqarosi bo'lishi mumkin edi.</span>
+                <span class="sentence">Shu sababli, Kanada va Niderlandiya juda yaxshi do'stlardir.</span>
+            </p>
+            <img class="content-image" src="https://images.unsplash.com/photo-1590403758364-77a3d3c8c729?auto=format&fit=crop&w=1000&q=80" alt="Lolalar">
+
+            <h2>Kanadaga Tashrif Buyuring</h2>
+            <p>
+                <span class="sentence">O'qiganingizdek, Kanada katta va qiziqarli mamlakat.</span>
+                <span class="sentence">Agar siz Kanadaga tashrif buyurishni xohlasangiz, Toronto, Monreal va Vankuver kabi shaharlar juda katta sayyohlik maskanlaridir.</span>
+                <span class="sentence">Siz shuningdek, Sent-Jons yoki Viktoriya kabi qirg'oq bo'yidagi shaharlarga borishingiz va okean yovvoyi tabiatidan bahramand bo'lishingiz mumkin.</span>
+                <span class="sentence">Kanadada hamma uchun ko'radigan va qiladigan narsa topiladi.</span>
+            </p>
+        </div>
+
+        <div class="button-group">
+            <button id="toggle-lang-button">O'zbekcha</button>
+            <button id="toggle-theme-button" class="secondary">Qorong'u rejim</button>
+        </div>
+    </div>
+
+    <script>
+        const originalTexts = {};
+        const words = {
+            // SIZ SO'RAGAN SO'ZLAR (USER REQUESTED)
+            "considering": "hisobga olganda",
+            "celebrated": "nishonladi",
+            "second": "ikkinchi",
+            "bigges": "eng katta (biggest)", // Xatoni inobatga oldim
+            "biggest": "eng katta",
+            "together": "birgalikda",
+            "interesting": "qiziqarli",
+            "already": "allaqachon",
+            "commonly": "odatda/ko'pincha",
+            "ontario": "Ontario (provinsiya)",
+            "over": "ortiq/ustida",
+            "across": "bo'ylab/orqali",
+            "national": "milliy",
+            "shown": "ko'rsatilgan",
+            "cartier": "Kartye (ism)",
+            "before": "oldin",
+            "strongly": "kuchli/qat'iy",
+            "tied": "bog'langan",
+            "celebrates": "nishonlaydi",
+            "quebec": "Kvebek (provinsiya)",
+            "pancakes": "quymoqlar",
+            "waffles": "vaflilar",
+            "french": "fransuz",
+            "toast": "tost (qovurilgan non)",
+            "oatmeal": "suli bo'tqasi",
+            "historically": "tarixiy jihatdan",
+            "producing": "ishlab chiqarish",
+            "adopted": "qabul qilgan/o'zlashtirgan",
+            "practices": "amaliyotlar/urf-odatlar",
+            "worth": "arziydigan/qiymatga ega",
+            "fined": "jarimaga tortilgan",
+
+            // KANADA MAVZUSI BO'YICHA QO'SHIMCHA LUG'AT
+            "canada": "kanada",
+            "country": "mamlakat/davlat",
+            "world": "dunyo",
+            "russia": "rossiya",
+            "fact": "fakt",
+            "facts": "faktlar",
+            "bigger": "kattaroq",
+            "entire": "butun/to'liq",
+            "european": "yevropa",
+            "union": "ittifoq",
+            "surprise": "hayratda qoldirmoq",
+            "visit": "tashrif buyurmoq",
+            "familiar": "tanish",
+            "learn": "o'rganmoq",
+            "north": "shimol",
+            "white": "oq",
+            "great": "buyuk",
+            "geography": "geografiya",
+            "history": "tarix",
+            "province": "provinsiya (viloyat)",
+            "provinces": "provinsiyalar",
+            "territory": "hudud",
+            "territories": "hududlar",
+            "time": "vaqt",
+            "zone": "zona/mintaqa",
+            "zones": "zonalar",
+            "capital": "poytaxt",
+            "city": "shahar",
+            "population": "aholi",
+            "people": "odamlar/xalq",
+            "small": "kichik",
+            "large": "katta",
+            "size": "o'lcham",
+            "border": "chegara",
+            "forest": "o'rmon",
+            "forests": "o'rmonlar",
+            "lake": "ko'l",
+            "area": "maydon/hudud",
+            "young": "yosh",
+            "birthday": "tug'ilgan kun",
+            "celebrate": "nishonlamoq",
+            "flag": "bayroq",
+            "explorer": "tadqiqotchi",
+            "indigenous": "mahalliy/tubjoy",
+            "century": "asr",
+            "centuries": "asrlar",
+            "animal": "hayvon",
+            "beaver": "qunduz",
+            "language": "til",
+            "languages": "tillar",
+            "official": "rasmiy",
+            "queen": "qirolicha",
+            "maple": "zarang (daraxti)",
+            "syrup": "sharbat/qiyom",
+            "responsible": "javobgar",
+            "delicious": "mazali",
+            "sweet": "shirin",
+            "sauce": "sous",
+            "pancake": "quymoq",
+            "robbery": "o'g'irlik",
+            "thief": "o'g'ri",
+            "thieves": "o'g'rilar",
+            "stole": "o'g'irladi",
+            "warehouse": "ombor",
+            "prison": "qamoqxona",
+            "crime": "jinoyat",
+            "oil": "neft",
+            "money": "pul",
+            "currency": "valyuta",
+            "dollar": "dollar",
+            "coin": "tanga",
+            "loon": "g'ag'ara (qush)",
+            "water": "suv",
+            "bird": "qush",
+            "goose": "g'oz",
+            "duck": "o'rdak",
+            "weather": "ob-havo",
+            "cold": "sovuq",
+            "hot": "issiq",
+            "temperature": "harorat",
+            "record": "qayd etmoq/rekord",
+            "recorded": "qayd etilgan",
+            "summer": "yoz",
+            "winter": "qish",
+            "snow": "qor",
+            "rain": "yomg'ir",
+            "address": "manzil",
+            "letter": "xat",
+            "letters": "xatlar",
+            "hockey": "xokkey",
+            "gold": "oltin",
+            "medal": "medal",
+            "medals": "medallar",
+            "mistake": "xato",
+            "village": "qishloq",
+            "born": "tug'ilgan",
+            "gift": "sovg'a",
+            "flower": "gul",
+            "tulip": "lola",
+            "princess": "malika",
+            "baby": "chaqaloq",
+            "citizen": "fuqaro",
+            "hospital": "kasalxona",
+            "room": "xona",
+            "international": "xalqaro",
+            "friend": "do'st",
+            "friends": "do'stlar",
+            "tourist": "sayyoh",
+            "destination": "manzil/boradigan joy",
+            "coastal": "qirg'oq bo'yi",
+            "ocean": "okean",
+            "wildlife": "yovvoyi tabiat",
+            "everyone": "hamma",
+            "mars": "mars",
+            "olympics": "olimpiada",
+            "host": "mezbonlik qilmoq",
+            "hosted": "mezbonlik qilgan",
+            "mistake": "xato",
+            "relationship": "munosabat",
+            "law": "qonun",
+            "laws": "qonunlar",
+            "ground": "yer/hudud",
+
+            // UMUMIY SO'ZLAR (COMMON WORDS)
+            "this": "bu", "that": "o'sha", "these": "bular", "those": "anavilar",
+            "is": "-dir", "are": "-dirlar", "was": "edi", "were": "edilar",
+            "the": "o'sha (aniqlovchi)", "a": "bir", "an": "bir",
+            "and": "va", "but": "ammo/lekin", "or": "yoki", "so": "shunday",
+            "to": "ga", "in": "ichida/-da", "on": "ustida", "at": "da",
+            "of": "ning", "from": "dan", "by": "tomonidan", "with": "bilan",
+            "without": "siz/-siz", "for": "uchun", "about": "haqida",
+            "it": "u", "its": "uning", "they": "ular", "them": "ularni", "their": "ularning",
+            "you": "siz", "your": "sizning", "we": "biz", "our": "bizning",
+            "he": "u (erkak)", "she": "u (ayol)", "his": "uning", "her": "uning",
+            "many": "ko'plab", "much": "ko'p", "more": "ko'proq", "most": "eng",
+            "some": "ba'zi", "any": "har qanday", "all": "barcha",
+            "one": "bir", "two": "ikki", "first": "birinchi",
+            "very": "juda", "really": "haqiqatdan", "too": "juda/ham",
+            "well": "yaxshi/ham", "also": "shuningdek", "even": "hatto",
+            "still": "hali ham", "just": "shunchaki", "only": "faqat",
+            "now": "hozir", "then": "keyin/o'shanda", "when": "qachonki",
+            "where": "qayerda", "how": "qanday", "why": "nega", "what": "nima",
+            "maybe": "balki", "perhaps": "ehtimol", "however": "biroq",
+            "actually": "aslida",
+            "can": "qila olmoq", "could": "qila olardi", "will": "bo'ladi", "would": "bo'lardi",
+            "do": "qilish", "did": "qildi", "does": "qiladi", "doing": "qilayotgan",
+            "have": "bor/ega bo'lmoq", "has": "bor", "had": "bor edi",
+            "make": "qilish/yasash", "made": "qilingan", "making": "qilish",
+            "get": "olish", "got": "olgan", "getting": "olayotgan",
+            "go": "borish", "went": "borgan", "come": "kelish", "came": "kelgan",
+            "see": "ko'rish", "saw": "ko'rgan", "look": "qarash", "looking": "qarab",
+            "think": "o'ylash", "thought": "o'ylagan", "know": "bilish", "knew": "bilgan",
+            "say": "aytish", "said": "aytdi", "tell": "aytish", "told": "aytdi",
+            "ask": "so'rash", "give": "berish", "gave": "berdi", "given": "berilgan",
+            "take": "olish", "took": "olgan", "put": "qo'yish",
+            "use": "ishlatish", "used": "ishlatilgan", "using": "ishlatib",
+            "find": "topish", "found": "topilgan",
+            "become": "bo'lish", "became": "bo'ldi",
+            "begin": "boshlash", "began": "boshlandi",
+            "create": "yaratish", "created": "yaratilgan",
+            "change": "o'zgarish", "changed": "o'zgargan",
+            "important": "muhim", "popular": "mashhur", "different": "turli",
+            "same": "bir xil", "other": "boshqa", "another": "boshqa bir",
+            "new": "yangi", "old": "eski", "good": "yaxshi", "bad": "yomon",
+            "large": "katta", "long": "uzun", "short": "qisqa",
+            "high": "baland", "low": "past", "beautiful": "chiroyli",
+            "ago": "oldin", "today": "bugun", "yesterday": "kecha",
+            "often": "tez-tez", "usually": "odatda", "sometimes": "ba'zan",
+            "never": "hech qachon", "always": "doim",
+            "less": "kamroq", "least": "eng kam", "few": "kam",
+            "lot": "ko'p", "plenty": "ko'p/yetarli",
+            "part": "qism", "example": "misol", "way": "yo'l/usul",
+            "life": "hayot", "day": "kun", "year": "yil",
+            "month": "oy", "months": "oylar"
+        };
+
+        function makeWordsClickable(containerId) {
+            const container = document.getElementById(containerId);
+            const sentences = container.getElementsByClassName('sentence');
+            
+            for (let sentence of sentences) {
+                if (!originalTexts[sentence.innerText]) {
+                    originalTexts[sentence.innerText] = sentence.innerText;
+                }
+                
+                const text = sentence.innerText;
+                const wordsArray = text.split(/(\s+|[,.?!:;()""—-])/);
+                sentence.innerHTML = '';
+                
+                wordsArray.forEach(word => {
+                    if (word.trim() && !/[,.?!:;()""—-]/.test(word)) {
+                        const span = document.createElement('span');
+                        span.className = 'word';
+                        span.innerText = word;
+                        
+                        const lowerWord = word.toLowerCase().replace(/[^a-z0-9'-]/g, '');
+                        const translation = words[lowerWord] || '...';
+                        
+                        const tooltip = document.createElement('span');
+                        tooltip.className = 'tooltip';
+                        tooltip.innerText = translation;
+                        
+                        span.appendChild(tooltip);
+                        
+                        span.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            if (typeof responsiveVoice !== 'undefined') {
+                                responsiveVoice.speak(word, "UK English Female");
+                            }
+                        });
+                        
+                        sentence.appendChild(span);
+                    } else {
+                        sentence.appendChild(document.createTextNode(word));
+                    }
+                });
+            }
+        }
+
+        // Timer Logic
+        let seconds = 0;
+        setInterval(() => {
+            seconds++;
+            const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const secs = (seconds % 60).toString().padStart(2, '0');
+            document.getElementById('time-display').textContent = `${mins}:${secs}`;
+        }, 1000);
+
+        // Language Toggle
+        const toggleButton = document.getElementById('toggle-lang-button');
+        const englishText = document.getElementById('english-text');
+        const uzbekText = document.getElementById('uzbek-text');
+        let isEnglish = true;
+
+        toggleButton.addEventListener('click', () => {
+            if (isEnglish) {
+                englishText.style.display = 'none';
+                uzbekText.style.display = 'block';
+                toggleButton.textContent = 'English';
+                isEnglish = false;
+                makeWordsClickable('uzbek-text');
+            } else {
+                englishText.style.display = 'block';
+                uzbekText.style.display = 'none';
+                toggleButton.textContent = 'O\'zbekcha';
+                isEnglish = true;
+                makeWordsClickable('english-text');
+            }
+        });
+
+        // Theme Toggle
+        const toggleThemeButton = document.getElementById('toggle-theme-button');
+        let currentThemeIndex = 0;
+        const themes = ['light-mode', 'dark-mode', 'sepia-mode'];
+        const themeTexts = ['Qorong\'u rejim', 'Qizg\'ich rejim', 'Kun rejimi'];
+
+        toggleThemeButton.addEventListener('click', () => {
+            document.body.classList.remove(...themes);
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+            if (themes[currentThemeIndex] !== 'light-mode') {
+                document.body.classList.add(themes[currentThemeIndex]);
+            }
+            toggleThemeButton.textContent = themeTexts[currentThemeIndex];
+        });
+
+        // Init
+        window.onload = () => {
+            makeWordsClickable('english-text');
+            if (typeof responsiveVoice !== 'undefined') responsiveVoice.enableSpeech();
+        };
+    </script>
+</body>
+</html>
