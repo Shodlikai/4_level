@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Guide to South American Cuisine - Interactive Reader</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://code.responsivevoice.org/responsivevoice.js?key=ftro4Sxr"></script>
+    <style>
+        /* DIZAYN (CSS) - Responsive va Avvalgi Style bilan bir xil */
+        :root {
+            --primary-color: #d97706;
+            --primary-hover: #b45309;
+            --bg-color: #fffbeb;
+            --card-bg: #ffffff;
+            --text-color: #334155;
+            --heading-color: #1e293b;
+            --tooltip-bg: #1e293b;
+            --tooltip-text: #ffffff;
+            --timer-bg: rgba(255, 255, 255, 0.9);
+            --border-color: #e2e8f0;
+            --highlight-color: rgba(217, 119, 6, 0.1);
+            --word-hover-color: #d97706;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        body.dark-mode {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #cbd5e1;
+            --heading-color: #f1f5f9;
+            --tooltip-bg: #f1f5f9;
+            --tooltip-text: #0f172a;
+            --timer-bg: rgba(15, 23, 42, 0.9);
+            --border-color: #334155;
+            --highlight-color: rgba(217, 119, 6, 0.15);
+            --word-hover-color: #fbbf24;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        }
+
+        * { box-sizing: border-box; transition: all 0.3s ease; }
+        body { font-family: 'Merriweather', serif; line-height: 1.8; margin: 0; padding-top: 70px; background-color: var(--bg-color); color: var(--text-color); }
+        #sticky-timer { position: fixed; top: 0; left: 0; width: 100%; height: 60px; background-color: var(--timer-bg); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; z-index: 1000; font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 1.2rem; color: var(--heading-color); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        #timer-icon { margin-right: 10px; color: var(--primary-color); }
+        .container { max-width: 750px; margin: 30px auto 60px; background: var(--card-bg); padding: 40px 50px; border-radius: 16px; box-shadow: var(--shadow); }
+        
+        .content-image { 
+            width: 100%; 
+            height: 400px; 
+            object-fit: cover; 
+            border-radius: 12px; 
+            margin: 30px 0; 
+            background-color: var(--border-color); 
+            transition: transform 0.3s ease;
+        }
+        .content-image:hover { transform: scale(1.02); }
+
+        h1 { font-family: 'Montserrat', sans-serif; text-align: center; color: var(--primary-color); margin-bottom: 10px; }
+        h2 { font-family: 'Montserrat', sans-serif; font-weight: 700; color: var(--heading-color); margin-top: 40px; margin-bottom: 20px; font-size: 1.5rem; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; }
+        p { margin-bottom: 20px; font-size: 1.1rem; text-align: justify; }
+        .word { cursor: pointer; position: relative; display: inline-block; border-bottom: 2px solid transparent; padding: 0 1px; }
+        .word:hover { color: var(--word-hover-color); background-color: var(--highlight-color); border-bottom-color: var(--word-hover-color); border-radius: 3px; }
+        .tooltip { visibility: hidden; opacity: 0; position: absolute; bottom: 140%; left: 50%; transform: translateX(-50%) translateY(10px); background-color: var(--tooltip-bg); color: var(--tooltip-text); text-align: center; border-radius: 6px; padding: 6px 12px; z-index: 1000; white-space: nowrap; font-family: 'Montserrat', sans-serif; font-size: 0.9rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .tooltip::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -6px; border-width: 6px; border-style: solid; border-color: var(--tooltip-bg) transparent transparent transparent; }
+        .word:hover .tooltip { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(0); }
+        .button-group { display: flex; justify-content: center; gap: 20px; margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border-color); }
+        .button-group button { padding: 12px 24px; font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 15px; background-color: var(--primary-color); color: white; border: none; border-radius: 50px; cursor: pointer; }
+        .button-group button.secondary { background-color: transparent; color: var(--text-color); border: 2px solid var(--border-color); }
+        @media (max-width: 600px) { .container { padding: 25px; } .content-image { height: 250px; } .button-group { flex-direction: column; } }
+    </style>
+</head>
+<body>
+
+    <div id="sticky-timer">
+        <span id="timer-icon">⏱</span>
+        <span id="time-display">00:00</span>
+    </div>
+
+    <div class="container">
+        
+        <div id="english-text" class="text-section">
+            <h1>A Guide to South American Cuisine</h1>
+            
+            <p>
+                <span class="sentence">South America is a continent made out of 12 different countries, famous for football, carnivals, numerous tourist attractions and delicious food.</span>
+                <span class="sentence">With their rich history and diverse populations, South American countries offer delicious traditional dishes suited for everyone's taste and budget.</span>
+            </p>
+
+            <img class="content-image" id="img-main" src="https://via.placeholder.com/640x360?text=Loading+Image..." alt="South American Cuisine" loading="lazy">
+
+            <h2>A Brief History of South American Food</h2>
+            <p>
+                <span class="sentence">Corn and potato are the staple of native South American food.</span>
+                <span class="sentence">Many South Americans make fresh cornbread and corn tortillas (thin flatbread) every day.</span>
+                <span class="sentence">When it comes to potatoes, chuño is definitely worth mentioning.</span>
+                <span class="sentence">Chuño is a freeze-dried potato product which originates before the 13th century.</span>
+                <span class="sentence">Due to its nutritional value and portability, chuño was a favorite dish of South American soldiers.</span>
+            </p>
+            <p>
+                <span class="sentence">When the first Europeans arrived to South America, they introduced new foods.</span>
+                <span class="sentence">In particular, they brought animals that were not native to South America, like pigs, chickens, cows and goats.</span>
+                <span class="sentence">South Americans also adopted wheat and almonds from the Europeans, while the Europeans brought potato and corn back to Europe.</span>
+            </p>
+            <p>
+                <span class="sentence">European occupying powers also shipped slaves from Africa.</span>
+                <span class="sentence">Over the years, African populations also made an impact on South American cuisine.</span>
+                <span class="sentence">For example, Menudo, a traditional soup, derived from the Spaniards' habit of giving cow's intestines (stomach) to their slaves, so the slaves learned how to season it well and make it tasty.</span>
+            </p>
+            <p>
+                <span class="sentence">Today, foods such as quinoa or chia seeds, originating from South America, are universally accepted as super foods, popular for their great nutritional value.</span>
+            </p>
+
+            <h2>Soups and Stews</h2>
+            <p>
+                <span class="sentence">Sopa de mondongo is one of the soups that are eaten across the continent.</span>
+                <span class="sentence">There are many variations of this slow-cooked tripe (cow's or pig's stomach) and vegetables soup.</span>
+                <span class="sentence">While in Colombia this soup is considered to be an addition to a larger meal, the Venezuelans see this soup as being too heavy for the stomach, so they eat it as the main course.</span>
+            </p>
+            <p>
+                <span class="sentence">Sea food is eaten all over South America.</span>
+                <span class="sentence">In Brazil, fish stew called Moqueca is particularly popular.</span>
+                <span class="sentence">This dish is made with salt water fish, and optionally served with prawns.</span>
+                <span class="sentence">Records show that people in Brazil have been making this dish for at least 300 years.</span>
+            </p>
+            
+            <img class="content-image" id="img-moqueca" src="https://via.placeholder.com/640x360?text=Loading+Image..." alt="Moqueca Fish Stew" loading="lazy">
+            
+            <p>
+                <span class="sentence">Fun fact: Paraguayan dish called sopa paraguaya (Paraguyan soup) is actually not a soup, but a spongy corn cake, made with cheese and milk.</span>
+            </p>
+
+            <h2>Main Course Meat Dishes</h2>
+            <p>
+                <span class="sentence">Originating from Peru, ceviche is one of the dishes whose popularity has spread across the world.</span>
+                <span class="sentence">This very unique dish is typically made from fresh raw fish cured in lemon or lime juice.</span>
+                <span class="sentence">Although it is delicious, you must be very careful with this dish, because not preparing and consuming it fresh could lead to food poisoning.</span>
+            </p>
+            
+            <img class="content-image" id="img-ceviche" src="https://via.placeholder.com/640x360?text=Loading+Image..." alt="Ceviche Dish" loading="lazy">
+            
+            <p>
+                <span class="sentence">Churrasco refers to beef or, more generally, grilled meat, sometimes also called asado in countries such as Uruguay.</span>
+                <span class="sentence">In Chile, churrasco sandwich is accompanied with tomato, avocado and mayonnaise, while churrasco a lo pobre (poor man's churrasco) is eaten with French fries, fried egg and onions.</span>
+                <span class="sentence">Churrascarias are popular fast food restaurants which serve all-you-can-eat grilled meat for a fixed price.</span>
+            </p>
+
+            <h2>Desserts</h2>
+            <p>
+                <span class="sentence">South Americans love desserts.</span>
+                <span class="sentence">In Brazil, the most popular ones are brigadeiros.</span>
+                <span class="sentence">This dessert can come in different colors and flavors, but the base is always the same: sweetened condensed milk is heated with cocoa powder until they form a paste, which is then rolled into small balls, and covered with toppings such as sprinkles or coconut shavings.</span>
+                <span class="sentence">Brigadeiros are often served at birthday parties.</span>
+            </p>
+            
+            <img class="content-image" id="img-brigadeiro" src="https://via.placeholder.com/640x360?text=Loading+Image..." alt="Brigadeiros Dessert" loading="lazy">
+            
+            <p>
+                <span class="sentence">Picarones, originating from Peru, are one of the oldest desserts, dating back to Peru's colonial days.</span>
+                <span class="sentence">Since there are more than 3,800 types of potatoes growing in Peru, desserts are often made with potatoes.</span>
+                <span class="sentence">Sweet potato, mixed with squash, is used for picarones.</span>
+                <span class="sentence">In combination with flour, sweet potatoes are turned into light and airy deep-fried doughnuts and served with syrup.</span>
+            </p>
+            <p>
+                <span class="sentence">Fun fact: Wheat did not grow in South America, so white flour was very expensive.</span>
+                <span class="sentence">Two Venezuelan sisters invented a cake that did not need flour, but was based on mashed plantains (bananas) and corn instead.</span>
+                <span class="sentence">The cake, called Torta Bejarana, is still very popular, normally showered with sesame seeds.</span>
+            </p>
+        </div>
+        
+        <div id="uzbek-text" class="text-section" style="display:none;">
+            <h1>Janubiy Amerika Oshxonasi Bo'yicha Qo'llanma</h1>
+            
+            <p>
+                <span class="sentence">Janubiy Amerika — 12 xil davlatdan tashkil topgan qit'a bo'lib, futbol, karnavallar, ko'plab sayyohlik maskanlari va mazali taomlari bilan mashhur.</span>
+                <span class="sentence">Boy tarixi va xilma-xil aholisi bilan Janubiy Amerika mamlakatlari har kimning ta'bi va hamyoniga mos keladigan mazali an'anaviy taomlarni taklif etadi.</span>
+            </p>
+
+             <img class="content-image" id="img-main-uz" src="" alt="Janubiy Amerika Taomlari" loading="lazy">
+
+            <h2>Janubiy Amerika Taomlarining Qisqacha Tarixi</h2>
+            <p>
+                <span class="sentence">Makka jo'xori va kartoshka mahalliy Janubiy Amerika taomlarining asosiy mahsulotidir.</span>
+                <span class="sentence">Ko'plab janubiy amerikaliklar har kuni yangi makkajo'xori noni va makkajo'xori tortilyalari (yupqa non) tayyorlaydilar.</span>
+                <span class="sentence">Kartoshka haqida gap ketganda, chuñoni alohida ta'kidlash joiz.</span>
+                <span class="sentence">Chuño — 13-asrdan oldin paydo bo'lgan muzlatib quritilgan kartoshka mahsuloti.</span>
+                <span class="sentence">Oziqaviy qiymati va olib yurishga qulayligi tufayli chuño Janubiy Amerika askarlarining sevimli taomi bo'lgan.</span>
+            </p>
+            <p>
+                <span class="sentence">Birinchi yevropaliklar Janubiy Amerikaga kelganda, ular yangi oziq-ovqatlarni olib kirishdi.</span>
+                <span class="sentence">Xususan, ular Janubiy Amerikada bo'lmagan cho'chqalar, tovuqlar, sigirlar va echkilar kabi hayvonlarni olib kelishdi.</span>
+                <span class="sentence">Janubiy amerikaliklar yevropaliklardan bug'doy va bodomni o'zlashtirdilar, yevropaliklar esa kartoshka va makkajo'xorini Yevropaga olib ketishdi.</span>
+            </p>
+            <p>
+                <span class="sentence">Yevropa bosqinchi kuchlari Afrikadan qullarni ham olib kelishgan.</span>
+                <span class="sentence">Yillar davomida Afrika aholisi ham Janubiy Amerika oshxonasiga ta'sir o'tkazdi.</span>
+                <span class="sentence">Masalan, an'anaviy sho'rva bo'lgan Menudo ispanlarning qullarga sigir ichak-chavoqlarini (oshqozonini) berish odatidan kelib chiqqan, shuning uchun qullar uni qanday qilib yaxshi ziravorlashni va mazali qilishni o'rganib olishgan.</span>
+            </p>
+            <p>
+                <span class="sentence">Bugungi kunda Janubiy Amerikadan kelib chiqqan kinoa yoki chia urug'lari kabi oziq-ovqatlar butun dunyoda "super taomlar" (super foods) sifatida qabul qilinib, yuqori oziqaviy qiymati bilan mashhurdir.</span>
+            </p>
+
+            <h2>Sho'rvalar va Qaynatmalar (Stews)</h2>
+            <p>
+                <span class="sentence">Sopa de mondongo — butun qit'a bo'ylab iste'mol qilinadigan sho'rvalardan biri.</span>
+                <span class="sentence">Bu sekin pishiriladigan qorinch (sigir yoki cho'chqa oshqozoni) va sabzavotli sho'rvaning ko'plab turlari mavjud.</span>
+                <span class="sentence">Kolumbiyada bu sho'rva kattaroq ovqatga qo'shimcha deb hisoblansa, venesuelaliklar bu sho'rvani oshqozon uchun juda og'ir deb bilishadi, shuning uchun ular uni asosiy taom sifatida iste'mol qilishadi.</span>
+            </p>
+            <p>
+                <span class="sentence">Dengiz mahsulotlari butun Janubiy Amerika bo'ylab iste'mol qilinadi.</span>
+                <span class="sentence">Braziliyada Moqueca deb ataladigan baliqli ragu (qaynatma) ayniqsa mashhur.</span>
+                <span class="sentence">Bu taom sho'r suv baliqlaridan tayyorlanadi va ixtiyoriy ravishda krevetkalar (prawns) bilan tortiladi.</span>
+                <span class="sentence">Ma'lumotlar shuni ko'rsatadiki, Braziliyadagi odamlar bu taomni kamida 300 yildan beri tayyorlab kelishmoqda.</span>
+            </p>
+            
+             <img class="content-image" id="img-moqueca-uz" src="" alt="Moqueca" loading="lazy">
+
+            <p>
+                <span class="sentence">Qiziqarli fakt: Sopa paraguaya (Paragvay sho'rvasi) deb ataladigan Paragvay taomi aslida sho'rva emas, balki pishloq va sut qo'shilgan g'ovak makkajo'xori pirogidir.</span>
+            </p>
+
+            <h2>Asosiy Go'shtli Taomlar</h2>
+            <p>
+                <span class="sentence">Perudan kelib chiqqan seviche (ceviche) mashhurligi butun dunyoga tarqalgan taomlardan biridir.</span>
+                <span class="sentence">Bu juda o'ziga xos taom odatda limon yoki laym sharbatida "pishirilgan" (cured) yangi xom baliqdan tayyorlanadi.</span>
+                <span class="sentence">Garchi u mazali bo'lsa-da, siz bu taom bilan juda ehtiyot bo'lishingiz kerak, chunki uni yangi holda tayyorlamaslik va iste'mol qilmaslik oziq-ovqatdan zaharlanishga olib kelishi mumkin.</span>
+            </p>
+            
+             <img class="content-image" id="img-ceviche-uz" src="" alt="Seviche" loading="lazy">
+
+            <p>
+                <span class="sentence">Churrasco mol go'shti yoki umuman olganda, panjarada pishirilgan go'shtni anglatadi, Urugvay kabi mamlakatlarda ba'zan asado deb ham ataladi.</span>
+                <span class="sentence">Chilida churrasco sendvichi pomidor, avokado va mayonez bilan birga tortiladi, churrasco a lo pobre (kambag'al odam churrascosi) esa qovurilgan kartoshka (fri), qovurilgan tuxum va piyoz bilan iste'mol qilinadi.</span>
+                <span class="sentence">Churrascarias — bu belgilangan narx evaziga xohlagancha panjarada pishirilgan go'sht tortiladigan mashhur tez ovqatlanish restoranlari.</span>
+            </p>
+
+            <h2>Shirinliklar</h2>
+            <p>
+                <span class="sentence">Janubiy amerikaliklar shirinliklarni yaxshi ko'radilar.</span>
+                <span class="sentence">Braziliyada eng mashhurlari bu brigadeirosdir.</span>
+                <span class="sentence">Bu shirinlik turli xil ranglar va ta'mlarda bo'lishi mumkin, ammo asosi har doim bir xil: shirin quyultirilgan sut kakao kukuni bilan pasta hosil bo'lguncha qizdiriladi, keyin kichik sharchalar shaklida dumaloqlanadi va ustiga qandolat bezaklari yoki kokos qirindisi sepiladi.</span>
+                <span class="sentence">Brigadeiros ko'pincha tug'ilgan kunlarda tortiladi.</span>
+            </p>
+            
+             <img class="content-image" id="img-brigadeiro-uz" src="" alt="Brigadeiros" loading="lazy">
+
+            <p>
+                <span class="sentence">Perudan kelib chiqqan Picarones eng qadimgi shirinliklardan biri bo'lib, Peruning mustamlaka davriga borib taqaladi.</span>
+                <span class="sentence">Peruda 3800 dan ortiq turdagi kartoshka o'sganligi sababli, shirinliklar ko'pincha kartoshkadan tayyorlanadi.</span>
+                <span class="sentence">Picarones uchun qovoq bilan aralashtirilgan shirin kartoshka ishlatiladi.</span>
+                <span class="sentence">Un bilan aralashtirilib, shirin kartoshka yengil va havodor, yog'da qovurilgan ponchiklar (doughnuts)ga aylantiriladi va qiyom (sirop) bilan tortiladi.</span>
+            </p>
+            <p>
+                <span class="sentence">Qiziqarli fakt: Janubiy Amerikada bug'doy o'smagan, shuning uchun oq un juda qimmat edi.</span>
+                <span class="sentence">Ikki venesuelalik opa-singil un talab qilmaydigan, balki uning o'rniga ezilgan plantayn (banan turi) va makkajo'xoriga asoslangan pirog ixtiro qilishdi.</span>
+                <span class="sentence">Torta Bejarana deb ataladigan bu pirog hali ham juda mashhur bo'lib, odatda ustiga kunjut urug'lari sepiladi.</span>
+            </p>
+        </div>
+
+        <div class="button-group">
+            <button id="toggle-lang-button">O'zbekcha</button>
+            <button id="toggle-theme-button" class="secondary">Qorong'u rejim</button>
+        </div>
+    </div>
+
+    <script>
+        // PIXABAY IMAGE FETCHING LOGIC
+        const PIXABAY_API_KEY = "49146347-e05e26bd1aae0010e8163774c";
+
+        async function fetchImage(query, elementId) {
+            try {
+                const response = await fetch(`https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(query)}&image_type=photo&per_page=3`);
+                const data = await response.json();
+                if (data.hits && data.hits.length > 0) {
+                    // OPTIMIZATSIYA: 'largeImageURL' o'rniga 'webformatURL' ishlatildi
+                    // Bu internetni kamroq sarflaydi va tezroq yuklanadi
+                    const imgUrl = data.hits[0].webformatURL; 
+                    document.getElementById(elementId).src = imgUrl;
+                    
+                    // Also update the Uzbek version image if it exists
+                    const uzId = elementId + '-uz';
+                    const uzElem = document.getElementById(uzId);
+                    if(uzElem) uzElem.src = imgUrl;
+                } else {
+                    console.log(`No image found for ${query}`);
+                }
+            } catch (error) {
+                console.error("Error fetching image:", error);
+            }
+        }
+
+        // Fetch all images on load
+        function loadImages() {
+            fetchImage("South American Food", "img-main");
+            fetchImage("Moqueca Fish Stew", "img-moqueca");
+            fetchImage("Ceviche", "img-ceviche");
+            fetchImage("Brigadeiro", "img-brigadeiro");
+        }
+
+        const originalTexts = {};
+        // 100% COMPLETE VOCABULARY LIST
+        const words = {
+            // ORIGINAL REQUEST WORDS & SIMPLE WORDS
+            "tortilla": "tortilya (yupqa non)",
+            "tortillas": "tortilyalar (yupqa nonlar)",
+            "potato": "kartoshka",
+            "potatoes": "kartoshkalar",
+            "definitely": "shubhasiz/albatta",
+            "chuno": "chuno (muzlatilgan kartoshka)",
+            "chuño": "chuño (muzlatilgan kartoshka)",
+            "before": "oldin/ilgari",
+            "soldier": "askar",
+            "soldiers": "askarlar",
+            "arrived": "yetib kelgan",
+            "adopted": "o'zlashtirgan/qabul qilgan",
+
+            // FULL TEXT VOCABULARY
+            "guide": "qo'llanma/yo'riqnoma",
+            "south": "janub",
+            "america": "amerika",
+            "american": "amerikalik",
+            "americans": "amerikaliklar",
+            "cuisine": "oshxona/taomlar",
+            "is": "-dir (bo'lmoq)",
+            "a": "bir",
+            "continent": "qit'a",
+            "made": "tayyorlangan/tuzilgan",
+            "out": "tashqari/dan",
+            "of": "ning/dan",
+            "12": "o'n ikki",
+            "different": "turli/har xil",
+            "country": "mamlakat",
+            "countries": "mamlakatlar",
+            "famous": "mashhur",
+            "for": "uchun",
+            "football": "futbol",
+            "carnival": "karnaval",
+            "carnivals": "karnavallar",
+            "numerous": "ko'plab/sanoqsiz",
+            "tourist": "sayyoh/turist",
+            "attraction": "diqqatga sazovor joy",
+            "attractions": "diqqatga sazovor joylar",
+            "and": "va",
+            "delicious": "mazali",
+            "food": "oziq-ovqat/taom",
+            "foods": "oziq-ovqatlar/taomlar",
+            "with": "bilan",
+            "their": "ularning",
+            "rich": "boy",
+            "history": "tarix",
+            "diverse": "xilma-xil",
+            "population": "aholi",
+            "populations": "aholilar",
+            "offer": "taklif qilmoq",
+            "traditional": "an'anaviy",
+            "dish": "taom",
+            "dishes": "taomlar",
+            "suited": "mos keladigan/moslashtirilgan",
+            "everyone's": "hammaning",
+            "taste": "ta'b/ta'm",
+            "budget": "byudjet/hamyon",
+            "brief": "qisqacha",
+            "corn": "makkajo'xori",
+            "staple": "asosiy mahsulot",
+            "native": "mahalliy/tubjoy",
+            "many": "ko'p",
+            "make": "tayyorlamoq/qilmoq",
+            "fresh": "yangi/sarxil",
+            "cornbread": "makkajo'xori noni",
+            "thin": "yupqa",
+            "flatbread": "yupqa non",
+            "every": "har",
+            "day": "kun",
+            "when": "qachonki",
+            "it": "u",
+            "comes": "keladi",
+            "to": "ga",
+            "worth": "arziydigan",
+            "mentioning": "eslatib o'tish",
+            "freeze-dried": "muzlatib quritilgan",
+            "product": "mahsulot",
+            "which": "qaysiki",
+            "originates": "kelib chiqadi",
+            "the": "o'sha (aniqlovchi)",
+            "13th": "13-chi",
+            "century": "asr",
+            "due": "tufayli",
+            "nutritional": "oziqaviy",
+            "value": "qiymat",
+            "portability": "olib yurishga qulaylik",
+            "was": "edi",
+            "favorite": "sevimli",
+            "first": "birinchi",
+            "europeans": "yevropaliklar",
+            "they": "ular",
+            "introduced": "tanishtirgan/olib kirgan",
+            "new": "yangi",
+            "in": "ichida",
+            "particular": "xususan",
+            "brought": "olib kelgan",
+            "animal": "hayvon",
+            "animals": "hayvonlar",
+            "that": "ki/o'sha",
+            "were": "edilar",
+            "not": "emas",
+            "like": "kabi/yoqtirmoq",
+            "pigs": "cho'chqalar",
+            "chickens": "tovuqlar",
+            "cows": "sigirlar",
+            "goats": "echkilar",
+            "also": "shuningdek",
+            "wheat": "bug'doy",
+            "almonds": "bodomlar",
+            "from": "dan",
+            "while": "holbuki/vaqtida",
+            "back": "orqaga/qaytib",
+            "europe": "yevropa",
+            "occupying": "bosqinchi/egallab olgan",
+            "powers": "kuchlar/davlatlar",
+            "shipped": "kema bilan tashigan/yuborgan",
+            "slaves": "qullar",
+            "africa": "afrika",
+            "over": "davomida/ustida",
+            "years": "yillar",
+            "african": "afrikalik",
+            "impact": "ta'sir",
+            "on": "ustida/bo'yicha",
+            "example": "misol",
+            "menudo": "menudo (sho'rva nomi)",
+            "soup": "sho'rva",
+            "derived": "kelib chiqqan",
+            "spaniards'": "ispanlarning",
+            "habit": "odat",
+            "giving": "berish",
+            "cow's": "sigirning",
+            "intestines": "ichaklar",
+            "stomach": "oshqozon",
+            "so": "shunday ekan/shuning uchun",
+            "learned": "o'rgangan",
+            "how": "qanday",
+            "season": "ziravorlamoq",
+            "well": "yaxshi",
+            "tasty": "mazali",
+            "today": "bugun",
+            "such": "shunday/kabi",
+            "as": "sifatida/kabi",
+            "quinoa": "kinoa (don)",
+            "chia": "chia (urug')",
+            "seeds": "urug'lar",
+            "originating": "kelib chiqadigan",
+            "are": "-dirlar",
+            "universally": "universal/umumiy",
+            "accepted": "qabul qilingan",
+            "super": "super/ajoyib",
+            "popular": "mashhur",
+            "great": "buyuk/katta",
+            "soups": "sho'rvalar",
+            "stews": "ragular/qaynatmalar",
+            "sopa": "sho'rva (ispancha)",
+            "de": "ning (ispancha)",
+            "mondongo": "mondongo (taom)",
+            "one": "bir",
+            "eaten": "yeyilgan",
+            "across": "bo'ylab",
+            "there": "u yerda/bor",
+            "variations": "turlar/variatsiyalar",
+            "this": "bu",
+            "slow-cooked": "sekin pishirilgan",
+            "tripe": "qorinch (oshqozon)",
+            "pig's": "cho'chqaning",
+            "vegetables": "sabzavotlar",
+            "colombia": "kolumbiya",
+            "considered": "hisoblangan",
+            "be": "bo'lmoq",
+            "an": "bir",
+            "addition": "qo'shimcha",
+            "larger": "kattaroq",
+            "meal": "ovqat",
+            "venezuelans": "venesuelaliklar",
+            "see": "ko'rmoq/bilmoq",
+            "being": "bo'lish",
+            "too": "juda/ham",
+            "heavy": "og'ir",
+            "eat": "yemoq",
+            "main": "asosiy",
+            "course": "taom (kurs)",
+            "sea": "dengiz",
+            "seafood": "dengiz mahsulotlari",
+            "all": "hamma/butun",
+            "brazil": "braziliya",
+            "fish": "baliq",
+            "stew": "ragu/qaynatma",
+            "called": "atalgan",
+            "moqueca": "moqueca (taom)",
+            "particularly": "ayniqsa",
+            "salt": "tuz",
+            "water": "suv",
+            "optionally": "ixtiyoriy ravishda",
+            "served": "tortilgan",
+            "prawns": "krevetkalar",
+            "records": "ma'lumotlar/qaydlar",
+            "show": "ko'rsatmoq",
+            "people": "odamlar",
+            "been": "bo'lgan",
+            "making": "qilish/tayyorlash",
+            "at": "da",
+            "least": "kamida",
+            "300": "uch yuz",
+            "fun": "qiziqarli/hazil",
+            "fact": "fakt",
+            "paraguayan": "paragvaylik/paragvaycha",
+            "paraguaya": "paragvaycha",
+            "actually": "aslida",
+            "but": "ammo/lekin",
+            "spongy": "g'ovak/yumshoq",
+            "cake": "pirog/tort",
+            "cheese": "pishloq",
+            "milk": "sut",
+            "meat": "go'sht",
+            "peru": "peru",
+            "ceviche": "seviche (taom)",
+            "whose": "kimningki",
+            "popularity": "mashhurlik",
+            "has": "bor (ega)",
+            "spread": "tarqalgan",
+            "world": "dunyo",
+            "very": "juda",
+            "unique": "o'ziga xos/noyob",
+            "typically": "odatda",
+            "raw": "xom",
+            "cured": "tuzlangan/ishlov berilgan",
+            "lemon": "limon",
+            "lime": "laym",
+            "juice": "sharbat",
+            "although": "garchi/agar",
+            "must": "shart/kerak",
+            "careful": "ehtiyotkor",
+            "because": "chunki",
+            "preparing": "tayyorlash",
+            "consuming": "iste'mol qilish",
+            "could": "qila olardi/mumkin edi",
+            "lead": "yetaklamoq/olib kelmoq",
+            "poisoning": "zaharlanish",
+            "churrasco": "churrasco (taom)",
+            "refers": "nazarda tutadi",
+            "beef": "mol go'shti",
+            "or": "yoki",
+            "more": "ko'proq",
+            "generally": "umumiy olganda",
+            "grilled": "panjarada pishirilgan",
+            "sometimes": "ba'zan",
+            "asado": "asado (taom)",
+            "uruguay": "uruguay",
+            "chile": "chili",
+            "sandwich": "sendvich",
+            "accompanied": "hamrohlik qilingan",
+            "tomato": "pomidor",
+            "avocado": "avokado",
+            "mayonnaise": "mayonez",
+            "lo": "lo (ispancha artikl)",
+            "pobre": "pobre (kambag'al)",
+            "poor": "kambag'al",
+            "man's": "erkakning/kishining",
+            "fries": "qovurilgan kartoshka (fri)",
+            "fried": "qovurilgan",
+            "egg": "tuxum",
+            "onions": "piyozlar",
+            "churrascarias": "churrascaria restoranlari",
+            "fast": "tez",
+            "restaurants": "restoranlar",
+            "serve": "tortmoq/xizmat qilmoq",
+            "all-you-can-eat": "yeya olganingizcha (cheksiz)",
+            "fixed": "belgilangan/o'zgarmas",
+            "price": "narx",
+            "desserts": "shirinliklar",
+            "dessert": "shirinlik",
+            "love": "sevmoq",
+            "ones": "birlar (narsalar)",
+            "brigadeiros": "brigadeiros (shirinlik)",
+            "can": "qila olmoq",
+            "come": "kelmoq",
+            "colors": "ranglar",
+            "flavors": "ta'mlar",
+            "base": "asos",
+            "always": "har doim",
+            "same": "bir xil",
+            "sweetened": "shirin qilingan",
+            "condensed": "quyultirilgan",
+            "heated": "qizdirilgan",
+            "cocoa": "kakao",
+            "powder": "kukun",
+            "until": "gacha",
+            "form": "shakllantirmoq",
+            "paste": "pasta/aralashma",
+            "then": "keyin",
+            "rolled": "dumaloqlangan",
+            "into": "ichiga/ga",
+            "small": "kichik",
+            "balls": "sharchalar",
+            "covered": "qoplangan",
+            "toppings": "ustiga sepiladigan narsa",
+            "sprinkles": "qandolat bezaklari",
+            "coconut": "kokos",
+            "shavings": "qirindi",
+            "often": "tez-tez",
+            "birthday": "tug'ilgan kun",
+            "parties": "bazmlar",
+            "picarones": "picarones (shirinlik)",
+            "oldest": "eng qadimgi",
+            "dating": "sanasi borib taqalmoq",
+            "colonial": "mustamlaka",
+            "days": "kunlar",
+            "since": "chunki/beri",
+            "than": "dan (ko'ra)",
+            "3800": "uch ming sakkiz yuz",
+            "types": "turlar",
+            "growing": "o'sayotgan",
+            "sweet": "shirin",
+            "mixed": "aralashtirilgan",
+            "squash": "qovoq",
+            "used": "ishlatilgan",
+            "combination": "kombinatsiya/aralashma",
+            "flour": "un",
+            "turned": "aylantirilgan",
+            "light": "yengil",
+            "airy": "havodor",
+            "deep-fried": "yog'da qovurilgan",
+            "doughnuts": "ponchiklar",
+            "syrup": "qiyom/sirop",
+            "white": "oq",
+            "expensive": "qimmat",
+            "two": "ikki",
+            "venezuelan": "venesuelalik",
+            "sisters": "opa-singillar",
+            "invented": "ixtiro qilgan",
+            "did": "qildi (inkorda: qilmadi)",
+            "need": "muhtoj bo'lmoq",
+            "mashed": "ezilgan (pyure)",
+            "plantains": "plantaynlar (banan turi)",
+            "bananas": "bananlar",
+            "instead": "o'rniga",
+            "torta": "tort/pirog",
+            "bejarana": "bejarana (nom)",
+            "still": "hali ham",
+            "normally": "odatda",
+            "showered": "sepilgan/yog'dirilgan",
+            "sesame": "kunjut"
+        };
+
+        function makeWordsClickable(containerId) {
+            const container = document.getElementById(containerId);
+            const sentences = container.getElementsByClassName('sentence');
+            
+            for (let sentence of sentences) {
+                if (!originalTexts[sentence.innerText]) {
+                    originalTexts[sentence.innerText] = sentence.innerText;
+                }
+                
+                const text = sentence.innerText;
+                const wordsArray = text.split(/(\s+|[,.?!:;()""—-])/);
+                sentence.innerHTML = '';
+                
+                wordsArray.forEach(word => {
+                    if (word.trim() && !/[,.?!:;()""—-]/.test(word)) {
+                        const span = document.createElement('span');
+                        span.className = 'word';
+                        span.innerText = word;
+                        
+                        const lowerWord = word.toLowerCase().replace(/[^a-z0-9'-]/g, '');
+                        // Check singular then plural forms, or exact match
+                        let translation = words[lowerWord];
+                        if (!translation && lowerWord.endsWith('s')) {
+                             translation = words[lowerWord.slice(0, -1)]; // Try singular
+                        }
+                        if (!translation) translation = '...';
+                        
+                        const tooltip = document.createElement('span');
+                        tooltip.className = 'tooltip';
+                        tooltip.innerText = translation;
+                        
+                        span.appendChild(tooltip);
+                        
+                        span.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            if (typeof responsiveVoice !== 'undefined') {
+                                // OVOZ: UK English Male (Erkak)
+                                responsiveVoice.speak(word, "UK English Male");
+                            }
+                        });
+                        
+                        sentence.appendChild(span);
+                    } else {
+                        sentence.appendChild(document.createTextNode(word));
+                    }
+                });
+            }
+        }
+
+        // Timer Logic
+        let seconds = 0;
+        setInterval(() => {
+            seconds++;
+            const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const secs = (seconds % 60).toString().padStart(2, '0');
+            document.getElementById('time-display').textContent = `${mins}:${secs}`;
+        }, 1000);
+
+        // Language Toggle
+        const toggleButton = document.getElementById('toggle-lang-button');
+        const englishText = document.getElementById('english-text');
+        const uzbekText = document.getElementById('uzbek-text');
+        let isEnglish = true;
+
+        toggleButton.addEventListener('click', () => {
+            if (isEnglish) {
+                englishText.style.display = 'none';
+                uzbekText.style.display = 'block';
+                toggleButton.textContent = 'English';
+                isEnglish = false;
+                makeWordsClickable('uzbek-text');
+            } else {
+                englishText.style.display = 'block';
+                uzbekText.style.display = 'none';
+                toggleButton.textContent = 'O\'zbekcha';
+                isEnglish = true;
+                makeWordsClickable('english-text');
+            }
+        });
+
+        // Theme Toggle
+        const toggleThemeButton = document.getElementById('toggle-theme-button');
+        let currentThemeIndex = 0;
+        const themes = ['light-mode', 'dark-mode', 'sepia-mode'];
+        const themeTexts = ['Qorong\'u rejim', 'Qizg\'ich rejim', 'Kun rejimi'];
+
+        toggleThemeButton.addEventListener('click', () => {
+            document.body.classList.remove(...themes);
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+            if (themes[currentThemeIndex] !== 'light-mode') {
+                document.body.classList.add(themes[currentThemeIndex]);
+            }
+            toggleThemeButton.textContent = themeTexts[currentThemeIndex];
+        });
+
+        // Init
+        window.onload = () => {
+            makeWordsClickable('english-text');
+            loadImages(); // Load Pixabay images
+            if (typeof responsiveVoice !== 'undefined') responsiveVoice.enableSpeech();
+        };
+    </script>
+</body>
+</html>
