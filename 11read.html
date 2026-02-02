@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Are you afraid of flying? - Interactive Reader</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://code.responsivevoice.org/responsivevoice.js?key=ftro4Sxr"></script>
+    <style>
+        :root {
+            --primary-color: #0284c7; /* Aviatsiya ko'ki */
+            --primary-hover: #0369a1;
+            --bg-color: #f0f9ff;
+            --card-bg: #ffffff;
+            --text-color: #334155;
+            --heading-color: #1e293b;
+            --tooltip-bg: #1e293b;
+            --tooltip-text: #ffffff;
+            --timer-bg: rgba(255, 255, 255, 0.9);
+            --border-color: #e2e8f0;
+            --highlight-color: rgba(2, 132, 199, 0.1);
+            --word-hover-color: #0284c7;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        body.dark-mode {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #cbd5e1;
+            --heading-color: #f1f5f9;
+            --tooltip-bg: #f1f5f9;
+            --tooltip-text: #0f172a;
+            --timer-bg: rgba(15, 23, 42, 0.9);
+            --border-color: #334155;
+            --highlight-color: rgba(2, 132, 199, 0.15);
+            --word-hover-color: #38bdf8;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        }
+            /* Samolyotlar yomg'iri effekti */
+        .plane-rain {
+            position: fixed;
+            top: -50px;
+            font-size: 24px;
+            z-index: 9999;
+            pointer-events: none;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(20deg); }
+        }
+        
+        * { box-sizing: border-box; transition: all 0.3s ease; }
+        body { font-family: 'Merriweather', serif; line-height: 1.8; margin: 0; padding-top: 70px; background-color: var(--bg-color); color: var(--text-color); }
+        #sticky-timer { position: fixed; top: 0; left: 0; width: 100%; height: 60px; background-color: var(--timer-bg); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; z-index: 1000; font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 1.2rem; color: var(--heading-color); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        #timer-icon { margin-right: 10px; color: var(--primary-color); }
+        .container { max-width: 750px; margin: 30px auto 60px; background: var(--card-bg); padding: 40px 50px; border-radius: 16px; box-shadow: var(--shadow); }
+        .content-image { width: 100%; height: 380px; object-fit: cover; border-radius: 12px; margin: 30px 0; background-color: var(--border-color); }
+        h1 { font-family: 'Montserrat', sans-serif; text-align: center; color: var(--primary-color); margin-bottom: 10px; }
+        h2 { font-family: 'Montserrat', sans-serif; font-weight: 700; color: var(--heading-color); margin-top: 40px; margin-bottom: 20px; font-size: 1.5rem; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; }
+        p { margin-bottom: 20px; font-size: 1.1rem; text-align: justify; }
+        .word { cursor: pointer; position: relative; display: inline-block; border-bottom: 2px solid transparent; padding: 0 1px; }
+        .word:hover { color: var(--word-hover-color); background-color: var(--highlight-color); border-bottom-color: var(--word-hover-color); border-radius: 3px; }
+        .tooltip { visibility: hidden; opacity: 0; position: absolute; bottom: 140%; left: 50%; transform: translateX(-50%) translateY(10px); background-color: var(--tooltip-bg); color: var(--tooltip-text); text-align: center; border-radius: 6px; padding: 6px 12px; z-index: 1000; white-space: nowrap; font-family: 'Montserrat', sans-serif; font-size: 0.9rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .tooltip::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -6px; border-width: 6px; border-style: solid; border-color: var(--tooltip-bg) transparent transparent transparent; }
+        .word:hover .tooltip { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(0); }
+        .button-group { display: flex; justify-content: center; gap: 20px; margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border-color); }
+        .button-group button { padding: 12px 24px; font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 15px; background-color: var(--primary-color); color: white; border: none; border-radius: 50px; cursor: pointer; }
+        .button-group button.secondary { background-color: transparent; color: var(--text-color); border: 2px solid var(--border-color); }
+        @media (max-width: 600px) { .container { padding: 25px; } .content-image { height: 250px; } .button-group { flex-direction: column; } }
+    </style>
+</head>
+<body>
+
+    <div id="sticky-timer">
+        <span id="timer-icon">⏱</span>
+        <span id="time-display">00:00</span>
+    </div>
+
+    <div class="container">
+        <div id="english-text" class="text-section">
+            <h1>Are you afraid of flying?</h1>
+            
+            <p>
+                <span class="sentence">Many people are afraid of flying in airplanes, but they shouldn't be.</span>
+                <span class="sentence">Flying is actually one of the safest ways to travel.</span>
+                <span class="sentence">In fact, when measured per mile, flying is actually far safer than driving, or travelling by train.</span>
+            </p>
+
+            <img class="content-image" id="img-airplane-1" src="https://via.placeholder.com/800x400?text=Loading+Image..." alt="Airplane in the sky" loading="lazy">
+
+            <p>
+                <span class="sentence">Not only is flying the safest mode of transport, but it is also the fastest.</span>
+                <span class="sentence">Just a hundred years ago if you wanted to travel from China to the United States, you would have to travel by boat for many weeks.</span>
+                <span class="sentence">Now, you can get there in less than 24 hours.</span>
+                <span class="sentence">Airplanes are also quite comfortable, and often offer in-flight entertainment, such as movies.</span>
+                <span class="sentence">This helps explain why travelling by plane is now the preferred choice for long distance journeys.</span>
+            </p>
+
+            <h2>Control and Intimidation</h2>
+            <p>
+                <span class="sentence">Of course, that doesn't stop some people from being afraid of flying.</span>
+                <span class="sentence">The idea of hurtling through the atmosphere at hundreds of miles per hour can be intimidating for many.</span>
+                <span class="sentence">One of the main reasons that people are afraid to fly is that passengers lack any control over the airplane, and have to place their trust in the hands of the pilots.</span>
+                <span class="sentence">Many people would prefer to remain in control!</span>
+            </p>
+
+            <h2>The Statistics</h2>
+            <p>
+                <span class="sentence">Comparing the number of deaths caused by cars, trains, and airplanes is very difficult.</span>
+                <span class="sentence">Many more people drive than fly.</span>
+                <span class="sentence">The easiest way to compare deaths is per billion kilometers.</span>
+                <span class="sentence">Motorcycles, for example, are very dangerous and 108.9 people will die per every billion kilometers traveled.</span>
+                <span class="sentence">Cars are less dangerous, with 3.1 people dying per billion kilometers.</span>
+                <span class="sentence">Trains are quite safe, with only 0.6 people dying per billion kilometers traveled.</span>
+                <span class="sentence">Subway and metro rails are even safer, with only 0.24 people dying per billion kilometers traveled.</span>
+                <span class="sentence">Do you know what's even safer? Air travel! Only 0.05 people were killed per billion kilometers.</span>
+            </p>
+
+            <img class="content-image" id="img-safety" src="https://via.placeholder.com/800x400?text=Loading+Image..." alt="Safety Statistics" loading="lazy">
+
+            <h2>Commercial Aviation Safety</h2>
+            <p>
+                <span class="sentence">Commercial flying is especially safe.</span>
+                <span class="sentence">When a commercial aircraft crashes, it gets a lot of attention.</span>
+                <span class="sentence">Yet part of the reason these crashes get so much attention is because they are so rare.</span>
+                <span class="sentence">In fact, aviation accidents involving civilian aircraft carrying 19 or more people have actually declined over the years.</span>
+                <span class="sentence">In 1972, there were more than 40 accidents. In 2014, there were fewer than ten.</span>
+                <span class="sentence">Most crashes that do occur actually involve smaller personal planes, which lack the advanced features found in modern commercial aircraft.</span>
+            </p>
+
+            <p>
+                <span class="sentence">Another reason people fear flying is "terrorist attacks".</span>
+                <span class="sentence">Terrorist attacks are extremely rare, however.</span>
+                <span class="sentence">You are far more likely to die of the common flu, than you are to die from a terrorist attack.</span>
+                <span class="sentence">Furthermore, increased security at airports and on airplanes makes it even less likely that a terrorist attack will bring down an airplane.</span>
+            </p>
+
+            <h2>The Safest Place to Be</h2>
+            <p>
+                <span class="sentence">When it comes to traveling, flying is arguably the safest, fastest, and most comfortable way to travel.</span>
+                <span class="sentence">While the concept may seem scary, the modern aviation industry takes safety very seriously and modern aircraft are now extremely safe.</span>
+                <span class="sentence">You would be more likely to die travelling by bicycle or even on foot.</span>
+                <span class="sentence">So don't worry!</span>
+                <span class="sentence">As the pilot says, "sit back, relax and enjoy your flight!"</span>
+            </p>
+        </div>
+
+        <div id="uzbek-text" class="text-section" style="display:none;">
+            <h1>Siz uchishdan qo'rqasizmi?</h1>
+            <p>
+                <span class="sentence">Ko'p odamlar samolyotda uchishdan qo'rqishadi, lekin aslida qo'rqmasliklari kerak.</span>
+                <span class="sentence">Uchish aslida sayohat qilishning eng xavfsiz usullaridan biridir.</span>
+                <span class="sentence">Darhaqiqat, mil hisobida o'lchanganda, uchish mashina haydashdan yoki poezdda sayohat qilishdan ko'ra ancha xavfsizroqdir.</span>
+            </p>
+
+            <p>
+                <span class="sentence">Uchish nafaqat eng xavfsiz transport turi, balki eng tezkoridir.</span>
+                <span class="sentence">Atigi yuz yil oldin, agar siz Xitoydan AQShga sayohat qilmoqchi bo'lsangiz, ko'p haftalar davomida qayiqda suzishingiz kerak edi.</span>
+                <span class="sentence">Endi siz u yerga 24 soatdan kamroq vaqt ichida yetib borishingiz mumkin.</span>
+                <span class="sentence">Samolyotlar ham ancha qulay va ko'pincha filmlar kabi parvoz ichidagi o'yin-kulgilarni taklif qiladi.</span>
+                <span class="sentence">Bu nima uchun samolyotda sayohat qilish uzoq masofali sayohatlar uchun afzal ko'rilgan tanlov ekanligini tushuntirishga yordam beradi.</span>
+            </p>
+
+            <h2>Nazorat va Qo'rquv</h2>
+            <p>
+                <span class="sentence">Albatta, bu ba'zi odamlarni uchishdan qo'rqishdan to'xtatmaydi.</span>
+                <span class="sentence">Atmosfera bo'ylab soatiga yuzlab mil tezlikda harakatlanish g'oyasi ko'pchilik uchun vahimali bo'lishi mumkin.</span>
+                <span class="sentence">Odamlar uchishdan qo'rqishining asosiy sabablaridan biri shundaki, yo'lovchilar samolyot ustidan hech qanday nazoratga ega emaslar va o'zlarini uchuvchilarning qo'liga ishonib topshirishga majburdirlar.</span>
+                <span class="sentence">Ko'p odamlar nazoratni o'z qo'llarida saqlashni afzal ko'radilar!</span>
+            </p>
+
+            <h2>Statistika</h2>
+            <p>
+                <span class="sentence">Avtomobillar, poezdlar va samolyotlar tufayli kelib chiqqan o'limlar sonini solishtirish juda qiyin.</span>
+                <span class="sentence">Samolyotga qaraganda mashina haydaydiganlar ancha ko'p.</span>
+                <span class="sentence">O'lim darajasini solishtirishning eng oson yo'li har milliard kilometrga to'g'ri keladigan raqamdir.</span>
+                <span class="sentence">Mototsikllar, masalan, juda xavfli va har milliard kilometrga 108,9 kishi halok bo'ladi.</span>
+                <span class="sentence">Mashinalar kamroq xavfli, har milliard kilometrga 3,1 kishi vafot etadi.</span>
+                <span class="sentence">Poezdlar ancha xavfsiz, har milliard kilometrga atigi 0,6 kishi vafot etadi.</span>
+                <span class="sentence">Metro va shahar atrofi poezdlari yanada xavfsizroq — atigi 0,24 kishi.</span>
+                <span class="sentence">Nima undan ham xavfsizroq ekanini bilasizmi? Havo sayohati! Atigi 0,05 kishi halok bo'lgan.</span>
+            </p>
+
+            <h2>Tijorat Aviatsiyasi Xavfsizligi</h2>
+            <p>
+                <span class="sentence">Tijorat maqsadidagi parvozlar ayniqsa xavfsizdir.</span>
+                <span class="sentence">Tijorat samolyoti halokatga uchrasa, bu juda katta e'tiborni tortadi.</span>
+                <span class="sentence">Biroq, bu halokatlarning shunchalik ko'p e'tiborga tushishiga sabab — ularning juda kam uchrashidir.</span>
+                <span class="sentence">Aslida, 19 va undan ortiq odam tashuvchi fuqaro aviatsiyasi halokatlari yillar o'tishi bilan kamaygan.</span>
+                <span class="sentence">1972-yilda 40 tadan ko'p halokat bo'lgan bo'lsa, 2014-yilda bu ko'rsatkich o'ntadan kam bo'ldi.</span>
+                <span class="sentence">Ko'pgina sodir bo'ladigan halokatlar aslida kichik shaxsiy samolyotlar bilan bog'liq bo'lib, ularda zamonaviy tijorat samolyotlarida mavjud bo'lgan ilg'or xususiyatlar mavjud emas.</span>
+            </p>
+
+            <p>
+                <span class="sentence">Odamlar uchishdan qo'rqishining yana bir sababi - "terrorchilik hujumlari".</span>
+                <span class="sentence">Biroq, terrorchilik hujumlari juda kam uchraydi.</span>
+                <span class="sentence">Siz terrorchi hujumidan ko'ra oddiy grippdan vafot etish ehtimolingiz ancha yuqori.</span>
+                <span class="sentence">Bundan tashqari, aeroportlar va samolyotlardagi kuchaytirilgan xavfsizlik choralari hujum sodir bo'lish ehtimolini yanada kamaytiradi.</span>
+            </p>
+
+            <h2>Eng xavfsiz joy</h2>
+            <p>
+                <span class="sentence">Sayohat haqida gap ketganda, uchish shubhasiz eng xavfsiz, eng tezkor va eng qulay usuldir.</span>
+                <span class="sentence">Garchi bu g'oya qo'rqinchli bo'lib tuyulsa-da, zamonaviy aviatsiya sanoati xavfsizlikka juda jiddiy qaraydi.</span>
+                <span class="sentence">Siz velosipedda yoki hatto piyoda ketayotganda vafot etishingiz ehtimoli ko'proq.</span>
+                <span class="sentence">Shunday ekan, xavotir olmang!</span>
+                <span class="sentence">Uchuvchi aytganidek: "O'rindiqqa suyaning, dam oling va parvozingizdan zavqlaning!"</span>
+            </p>
+        </div>
+
+        <div class="button-group">
+            <button id="toggle-lang-button">O'zbekcha</button>
+            <button id="toggle-theme-button" class="secondary">Qorong'u rejim</button>
+        </div>
+    </div>
+
+    <script>
+        const PIXABAY_API_KEY = "49146347-e05e26bd1aae0010e8163774c";
+
+        async function fetchImage(query, elementId) {
+            try {
+                const response = await fetch(`https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(query)}&image_type=photo&per_page=3&webformatURL=true`);
+                const data = await response.json();
+                if (data.hits && data.hits.length > 0) {
+                    const imgUrl = data.hits[0].webformatURL; 
+                    document.getElementById(elementId).src = imgUrl;
+                    const uzId = elementId + '-uz';
+                    if(document.getElementById(uzId)) document.getElementById(uzId).src = imgUrl;
+                }
+            } catch (error) { console.error("Error:", error); }
+        }
+
+        const originalTexts = {};
+        const words = {
+            "are": "bo'lmoq (are)", "you": "siz", "afraid": "qo'rqqan/qo'rqish", "of": "ning/dan", "flying": "uchish", "many": "ko'p", "people": "odamlar", "in": "ichida", "airplanes": "samolyotlar", "but": "ammo/lekin", "they": "ular", "shouldn't": "kerak emas (should not)", "be": "bo'lmoq", "actually": "aslida", "one": "bir/bittasi", "safest": "eng xavfsiz", "ways": "yo'llar/usullar", "to": "ga/uchun", "travel": "sayohat qilmoq", "fact": "fakt/haqiqat", "when": "qachonki", "measured": "o'lchanganda", "per": "har bir/boshiga", "mile": "milya", "far": "ancha/uzoq", "safer": "xavfsizroq", "than": "ko'ra/dan ko'ra", "driving": "haydash", "travelling": "sayohat qilish", "by": "bilan/tomonidan", "train": "poezd", "not": "emas", "only": "faqat", "mode": "turi/usuli", "transport": "transport", "also": "shuningdek", "fastest": "eng tezkor", "just": "shunchaki/atigi", "hundred": "yuz", "years": "yillar", "ago": "oldin", "if": "agar", "wanted": "xohlagan", "china": "xitoy", "united": "birlashgan", "states": "shtatlar", "would": "bo'lardi", "have": "bor/ega", "boat": "qayiq", "weeks": "haftalar", "now": "hozir", "get": "yetib bormoq/olmoq", "there": "u yerda", "less": "kamroq", "24": "yigirma to'rt", "hours": "soatlar", "quite": "ancha/juda", "comfortable": "qulay", "often": "tez-tez/ko'pincha", "offer": "taklif qilmoq", "in-flight": "parvoz davomidagi", "entertainment": "o'yin-kulgi", "such": "shunday/kabi", "movies": "filmlar", "helps": "yordam beradi", "explain": "tushuntirmoq", "why": "nega/nima uchun", "plane": "samolyot", "preferred": "afzal ko'rilgan", "choice": "tanlov", "long": "uzun/uzoq", "distance": "masofa", "journeys": "sayohatlar", "course": "kurs/albatta (of course)", "stop": "to'xtatmoq", "some": "ba'zi", "being": "bo'lish", "idea": "g'oya/fikr", "hurtling": "shiddat bilan uchish", "through": "orqali", "atmosphere": "atmosfera", "hundreds": "yuzlab", "miles": "milyalar", "hour": "soat", "intimidating": "vahimali/qo'rqinchli", "main": "asosiy", "reasons": "sabablar", "passengers": "yo'lovchilar", "lack": "yetishmasligi/yo'qligi", "any": "har qanday", "control": "nazorat", "over": "ustidan", "place": "joy/qo'ymoq", "trust": "ishonch", "hands": "qo'llar", "pilots": "uchuvchilar", "prefer": "afzal ko'rmoq", "remain": "qolmoq", "really": "haqiqatdan ham", "ask": "so'ramoq", "comparing": "solishtirish", "number": "soni/raqami", "deaths": "o'limlar", "caused": "sabab bo'lgan", "cars": "mashinalar", "trains": "poezdlar", "difficult": "qiyin", "drive": "haydamoq", "fly": "uchmoq", "easiest": "eng oson", "way": "yo'l", "compare": "solishtirmoq", "billion": "milliard", "kilometers": "kilometrlar", "traveled": "bosib o'tilgan/sayohat qilingan", "motorcycles": "mototsikllar", "dangerous": "xavfli", "108.9": "yuz sakkiz butun to'qqiz", "will": "bo'ladi", "die": "o'lmoq", "every": "har bir", "dying": "o'lish", "3.1": "uch butun bir", "safe": "xavfsiz", "0.6": "nol butun olti", "subway": "metro", "metro": "metro", "rails": "relslar", "even": "hatto", "safer": "xavfsizroq", "0.24": "nol butun yigirma to'rt", "know": "bilmoq", "what's": "nima (what is)", "air": "havo", "0.05": "nol butun nol besh", "killed": "o'ldirilgan/halok bo'lgan", "lower": "pastroq", "most": "eng/ko'p", "other": "boshqa", "forms": "turlari", "transportation": "transport/tashish", "commercial": "tijorat", "especially": "ayniqsa", "aircraft": "samolyot/texnika", "crashes": "halokatlar", "gets": "oladi", "lot": "ko'p", "attention": "e'tibor", "sometimes": "ba'zan", "single": "yagona/bitta", "crash": "halokat", "yet": "biroq/hali", "part": "qism", "rare": "kam uchraydigan", "aviation": "aviatsiya", "accidents": "baxtsiz hodisalar", "involving": "o'z ichiga olgan", "civilian": "fuqarolik", "carrying": "tashiyotgan", "19": "o'n to'qqiz", "declined": "kamaygan", "1972": "bir ming to'qqiz yuz yetmish ikki", "40": "qirq", "2014": "ikki ming o'n to'rt", "fewer": "kamroq", "ten": "o'n", "reassuring": "tinchlantiruvchi/ko'ngilni to'q qiluvchi", "given": "berilgan/hisobga olsak", "occur": "sodir bo'lmoq", "smaller": "kichikroq", "personal": "shaxsiy", "planes": "samolyotlar", "advanced": "ilg'or/zamonaviy", "features": "xususiyatlar", "found": "topilgan", "modern": "zamonaviy", "another": "boshqa/yana bir", "fear": "qo'rquv", "terrorist": "terrorchi", "attacks": "hujumlar", "extremely": "o'ta/juda", "likely": "ehtimol", "common": "oddiy", "flu": "gripp", "furthermore": "bundan tashqari", "increased": "oshirilgan/kuchaytirilgan", "security": "xavfsizlik", "airports": "aeroportlar", "makes": "qiladi", "bring": "olib kelmoq", "down": "pastga", "arguably": "shubhasiz/bahslashsa bo'ladigan", "concept": "tushuncha", "seem": "tuyulmoq", "scary": "qo'rqinchli", "industry": "sanoat", "takes": "oladi/qaraydi", "safety": "xavfsizlik", "seriously": "jiddiy", "bicycle": "velosiped", "foot": "oyoq (piyoda)", "don't": "emas (do not)", "worry": "xavotir olmoq", "pilot": "uchuvchi", "says": "aytadi", "sit": "o'tirmoq", "back": "orqaga", "relax": "dam olmoq", "enjoy": "zavqlanmoq", "flight": "parvoz"
+        };
+
+        function makeWordsClickable(containerId) {
+            const container = document.getElementById(containerId);
+            const sentences = container.getElementsByClassName('sentence');
+            for (let sentence of sentences) {
+                const text = sentence.innerText;
+                const wordsArray = text.split(/(\s+|[,.?!:;()""—-])/);
+                sentence.innerHTML = '';
+                wordsArray.forEach(word => {
+                    if (word.trim() && !/[,.?!:;()""—-]/.test(word)) {
+                        const span = document.createElement('span');
+                        span.className = 'word';
+                        span.innerText = word;
+                        const lowerWord = word.toLowerCase().replace(/[^a-z0-9'-]/g, '');
+                        let translation = words[lowerWord] || words[lowerWord.replace(/s$/, '')] || '...';
+                        const tooltip = document.createElement('span');
+                        tooltip.className = 'tooltip';
+                        tooltip.innerText = translation;
+                        span.appendChild(tooltip);
+                        span.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            if (typeof responsiveVoice !== 'undefined') {
+                                responsiveVoice.speak(word, "UK English Male");
+                            }
+                        });
+                        sentence.appendChild(span);
+                    } else {
+                        sentence.appendChild(document.createTextNode(word));
+                    }
+                });
+            }
+        }
+
+        // Timer
+        let seconds = 0;
+        setInterval(() => {
+            seconds++;
+            const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const secs = (seconds % 60).toString().padStart(2, '0');
+            document.getElementById('time-display').textContent = `${mins}:${secs}`;
+        }, 1000);
+
+        // Lang Toggle
+        const toggleButton = document.getElementById('toggle-lang-button');
+        const englishText = document.getElementById('english-text');
+        const uzbekText = document.getElementById('uzbek-text');
+        let isEnglish = true;
+
+        toggleButton.addEventListener('click', () => {
+            isEnglish = !isEnglish;
+            englishText.style.display = isEnglish ? 'block' : 'none';
+            uzbekText.style.display = isEnglish ? 'none' : 'block';
+            toggleButton.textContent = isEnglish ? "O'zbekcha" : "English";
+            makeWordsClickable(isEnglish ? 'english-text' : 'uzbek-text');
+        });
+
+        // Theme Toggle
+        const toggleThemeButton = document.getElementById('toggle-theme-button');
+        let currentThemeIndex = 0;
+        const themes = ['light-mode', 'dark-mode'];
+        const themeTexts = ['Qorong\'u rejim', 'Kun rejimi'];
+
+        toggleThemeButton.addEventListener('click', () => {
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+            document.body.className = themes[currentThemeIndex];
+            toggleThemeButton.textContent = themeTexts[currentThemeIndex];
+        });
+
+        window.onload = () => {
+            makeWordsClickable('english-text');
+            loadImages();
+            fetchImage("Airplane Cabin Interior", "img-airplane-1");
+            fetchImage("Statistic Safety Graph", "img-safety");
+            fetchImage("Airplane Wing Cloud", "img-ceviche"); // Reusing for diversity
+            fetchImage("Friendly Pilot", "img-brigadeiro"); // Reusing slots
+            if (typeof responsiveVoice !== 'undefined') responsiveVoice.enableSpeech();
+        };
+    </script>
+</body>
+</html>
