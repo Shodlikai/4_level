@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 12: Friends & Relations - Master Class</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #1e40af;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --error: #ef4444;
+            --bg: #f3f4f6;
+            --card: #ffffff;
+            --text: #1f2937;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--card);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* HEADER */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+            background: rgba(255,255,255,0.1);
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            font-size: 0.9rem;
+        }
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        /* CONTENT */
+        .content {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .question-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 20px;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #dbeafe;
+            color: var(--secondary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        /* INPUTS & BUTTONS */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        
+        @media (min-width: 600px) {
+            .options-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        button.option-btn {
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            background: #fff;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
+            color: var(--text);
+        }
+
+        button.option-btn:hover {
+            border-color: var(--primary);
+            background: #eff6ff;
+        }
+
+        input.text-answer {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            box-sizing: border-box;
+            outline: none;
+        }
+        input.text-answer:focus {
+            border-color: var(--primary);
+        }
+
+        /* SCRAMBLE STYLES */
+        .scramble-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+            min-height: 50px;
+            padding: 10px;
+            background: #f9fafb;
+            border-radius: 10px;
+            border: 2px dashed #cbd5e1;
+        }
+        .word-chip {
+            background: white;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            user-select: none;
+        }
+        .word-chip:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* FEEDBACK */
+        .feedback-box {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+            animation: slideUp 0.3s ease-out;
+        }
+        .feedback-box.correct {
+            background: #d1fae5;
+            border: 1px solid var(--success);
+            color: #064e3b;
+        }
+        .feedback-box.wrong {
+            background: #fee2e2;
+            border: 1px solid var(--error);
+            color: #7f1d1d;
+        }
+
+        .feedback-title { font-weight: bold; font-size: 1.1rem; margin-bottom: 5px; }
+        .feedback-detail { margin-top: 10px; font-size: 0.95rem; line-height: 1.4; }
+        .vocab-info { 
+            margin-top: 10px; 
+            padding-top: 10px; 
+            border-top: 1px solid rgba(0,0,0,0.1); 
+            font-style: italic;
+        }
+
+        /* FOOTER CONTROLS */
+        .footer-controls {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .action-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+        }
+        .action-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* RESULT MODAL */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+        .score-circle {
+            width: 120px; height: 120px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0 auto 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <header>
+        <h1>Unit 12: Friends & Relations</h1>
+        <p>100% Comprehensive Training</p>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <span>Savol</span>
+                <span class="stat-value"><span id="curr-q">1</span>/<span id="total-q">0</span></span>
+            </div>
+            <div class="stat-item">
+                <span>Ball</span>
+                <span class="stat-value" id="score">0</span>
+            </div>
+            <div class="stat-item">
+                <span>Xatolar</span>
+                <span class="stat-value" id="mistakes">0</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="content" id="quiz-area">
+        </div>
+
+    <div class="footer-controls">
+        <button id="check-btn" class="action-btn" onclick="checkAnswer()">Tekshirish</button>
+        <button id="next-btn" class="action-btn" onclick="nextQuestion()" style="display:none; background: var(--secondary)">Keyingi</button>
+    </div>
+</div>
+
+<div class="modal" id="result-modal">
+    <div class="modal-content">
+        <div class="score-circle" id="final-score-circle">85%</div>
+        <h2 id="final-title">Ajoyib!</h2>
+        <p id="final-desc">Siz Unit 12 ni deyarli to'liq o'zlashtirdingiz.</p>
+        <button class="action-btn" onclick="location.reload()">Qayta Boshlash</button>
+    </div>
+</div>
+
+<script>
+    /**
+     * DATABASE: Unit 12 Full Coverage
+     * Ma'lumotlar rasmlardan (1000002680.jpg) to'liq olindi.
+     */
+    const unit12Data = [
+        // --- TOPIC VOCABULARY (General) ---
+        {
+            id: 1, type: 'multi', cat: 'Topic Vocabulary',
+            q: "He is very ___ with his money. (He likes giving it to people)",
+            options: ["generous", "grateful", "independent", "private"],
+            ans: "generous",
+            word: "generous", trans: "saxiy",
+            exp: "<b>Generous</b> - qo'li ochiq, saxiy. <i>Grateful</i> - minnatdor."
+        },
+        {
+            id: 2, type: 'multi', cat: 'Topic Vocabulary',
+            q: "Agar kimdir yolg'iz yashasa va hech kimga suyanmasa, u ...",
+            options: ["independent", "patient", "loyal", "ordinary"],
+            ans: "independent",
+            word: "independent", trans: "mustaqil",
+            exp: "<b>Independent</b> - mustaqil. O'ziga ishonadigan va boshqalarga muhtoj bo'lmagan shaxs."
+        },
+        {
+            id: 3, type: 'multi', cat: 'Topic Vocabulary',
+            q: "Opposite of 'married':",
+            options: ["divorced", "single", "couple", "relation"],
+            ans: "single", // contextually opposite state
+            word: "single", trans: "bo'ydoq/yolg'iz",
+            exp: "<b>Single</b> - turmush qurmagan (bo'ydoq). <i>Divorced</i> - ajrashgan."
+        },
+        {
+            id: 4, type: 'input', cat: 'Topic Vocabulary',
+            q: "Tarjima qiling: 'Grateful'",
+            hint: "Minnatdor",
+            ans: ["minnatdor", "rahmat aytuvchi"],
+            word: "grateful", trans: "minnatdor",
+            exp: "<b>Grateful</b> - kimgadir qilgan yaxshiligi uchun minnatdor bo'lish."
+        },
+        {
+            id: 5, type: 'multi', cat: 'Topic Vocabulary',
+            q: "Someone you don't know is a ___.",
+            options: ["stranger", "guest", "neighbour", "flat"],
+            ans: "stranger",
+            word: "stranger", trans: "notanish inson",
+            exp: "<b>Stranger</b> - siz tanimaydigan inson."
+        },
+        {
+            id: 6, type: 'input', cat: 'Topic Vocabulary',
+            q: "Definition: 'To give reasons why you are right (himoya qilmoq)'",
+            hint: "d..... (verb)",
+            ans: ["defend"],
+            word: "defend", trans: "himoya qilmoq",
+            exp: "<b>Defend</b> - o'zini yoki boshqani himoya qilish (so'z bilan yoki jismonan)."
+        },
+        {
+            id: 7, type: 'scramble', cat: 'Topic Vocabulary',
+            q: "Gapni to'g'ri tartiblang:",
+            parts: ["I", "trust", "my", "best", "friend", "completely"],
+            ans: "i trust my best friend completely",
+            word: "trust", trans: "ishonmoq",
+            exp: "<b>Trust</b> - ishonch bildirmoq."
+        },
+        {
+            id: 8, type: 'multi', cat: 'Topic Vocabulary',
+            q: "Qaysi so'z 'odatiy, maxsus emas' (not special) ma'nosini bildiradi?",
+            options: ["ordinary", "private", "loyal", "loving"],
+            ans: "ordinary",
+            word: "ordinary", trans: "odatiy",
+            exp: "<b>Ordinary</b> - o'ziga xosligi yo'q, oddiy."
+        },
+        {
+            id: 9, type: 'multi', cat: 'Topic Vocabulary',
+            q: "You pay this to live in a house that isn't yours.",
+            options: ["rent", "mood", "relation", "flat"],
+            ans: "rent",
+            word: "rent", trans: "ijara haqi",
+            exp: "<b>Rent</b> - ijara haqi to'lash."
+        },
+
+        // --- PHRASAL VERBS ---
+        {
+            id: 10, type: 'multi', cat: 'Phrasal Verbs',
+            q: "Stop being friends after an argument:",
+            options: ["fall out", "get on", "split up", "bring up"],
+            ans: "fall out",
+            word: "fall out (with)", trans: "janjallashib qolmoq",
+            exp: "<b>Fall out</b> - urishib qolish va do'stlikni tugatish."
+        },
+        {
+            id: 11, type: 'multi', cat: 'Phrasal Verbs',
+            q: "Have a good relationship with someone:",
+            options: ["get on", "look after", "let down", "go out"],
+            ans: "get on",
+            word: "get on (with)", trans: "chiqishib ketmoq",
+            exp: "<b>Get on (with)</b> - kim bilandir yaxshi munosabatda bo'lish."
+        },
+        {
+            id: 12, type: 'multi', cat: 'Phrasal Verbs',
+            q: "Please ___ the children while I am away.",
+            options: ["look after", "bring up", "grow up", "let down"],
+            ans: "look after",
+            word: "look after", trans: "g'amxo'rlik qilmoq",
+            exp: "<b>Look after</b> - qarab turmoq, parvarishlash."
+        },
+        {
+            id: 13, type: 'input', cat: 'Phrasal Verbs',
+            q: "To disappoint someone (ko'nglini qoldirmoq). Phrasal verb yozing.",
+            hint: "l.. d...",
+            ans: ["let down"],
+            word: "let down", trans: "pand bermoq / uyaltirib qo'ymoq",
+            exp: "<b>Let down</b> - kutilgan narsani qilmasdan uyaltirib qo'yish."
+        },
+        {
+            id: 14, type: 'multi', cat: 'Phrasal Verbs',
+            q: "She was ___ by her grandmother. (Care for a child until adult)",
+            options: ["brought up", "grown up", "fallen out", "split up"],
+            ans: "brought up",
+            word: "bring up", trans: "tarbiyalamoq / voyaga yetkazmoq",
+            exp: "<b>Bring up</b> - bolani katta qilish, tarbiyalash. <i>Grow up</i> - bolaning o'zi katta bo'lishi."
+        },
+
+        // --- PREPOSITIONAL PHRASES ---
+        {
+            id: 15, type: 'multi', cat: 'Prepositions',
+            q: "We have nothing ___ common.",
+            options: ["in", "on", "at", "by"],
+            ans: "in",
+            word: "in common", trans: "umumiy jihat",
+            exp: "<b>In common</b> - o'xshashlik, umumiy qiziqishlarga ega bo'lish."
+        },
+        {
+            id: 16, type: 'multi', cat: 'Prepositions',
+            q: "Did you break the glass ___ purpose?",
+            options: ["on", "by", "in", "for"],
+            ans: "on",
+            word: "on purpose", trans: "ataylab",
+            exp: "<b>On purpose</b> - atayin, rejali ravishda (bexosdan emas)."
+        },
+        {
+            id: 17, type: 'multi', cat: 'Prepositions',
+            q: "He lives all ___ himself / his own.",
+            options: ["by", "on", "in", "with"],
+            ans: "by",
+            word: "by yourself", trans: "bir o'zi / yordamsiz",
+            exp: "<b>By yourself</b> - yolg'iz o'zi. Shuningdek <b>On your own</b> ham to'g'ri."
+        },
+        {
+            id: 18, type: 'multi', cat: 'Prepositions',
+            q: "They are ___ love.",
+            options: ["in", "on", "at", "with"],
+            ans: "in",
+            word: "in love (with)", trans: "sevib qolgan",
+            exp: "<b>In love</b> - sevgi muhabbatida bo'lmoq."
+        },
+
+        // --- WORD FORMATION ---
+        {
+            id: 19, type: 'input', cat: 'Word Formation',
+            q: "HONEST (Adjective) -> Noun (Ot) yasang.",
+            hint: "Halollik",
+            ans: ["honesty"],
+            word: "honesty", trans: "halollik",
+            exp: "<b>Honesty</b> - halollik (Ot). Honest - halol (Sifat)."
+        },
+        {
+            id: 20, type: 'input', cat: 'Word Formation',
+            q: "LIE (Verb/Noun) -> Person (Yolg'onchi)",
+            hint: "l...",
+            ans: ["liar"],
+            word: "liar", trans: "yolg'onchi",
+            exp: "<b>Liar</b> - yolg'on gapiradigan odam."
+        },
+        {
+            id: 21, type: 'multi', cat: 'Word Formation',
+            q: "He is very ___. (CARE)",
+            options: ["careless", "care", "careness", "caringly"],
+            ans: "careless",
+            word: "careless", trans: "etiborsiz",
+            exp: "<b>Careless</b> - e'tiborsiz. Yoki <b>Careful</b> (e'tiborli)."
+        },
+        {
+            id: 22, type: 'input', cat: 'Word Formation',
+            q: "INTRODUCE (Verb) -> Noun (Tanishtiruv)",
+            hint: "i...",
+            ans: ["introduction"],
+            word: "introduction", trans: "kirish / tanishtirish",
+            exp: "<b>Introduction</b> - tanishtirish marosimi yoki kitobning kirish qismi."
+        },
+        {
+            id: 23, type: 'multi', cat: 'Word Formation',
+            q: "ABLE (Adjective) -> Noun (Qobiliyat)",
+            options: ["ability", "enable", "unable", "ably"],
+            ans: "ability",
+            word: "ability", trans: "qobiliyat",
+            exp: "<b>Ability</b> - biror narsa qila olish qobiliyati."
+        },
+
+        // --- WORD PATTERNS ---
+        {
+            id: 24, type: 'multi', cat: 'Word Patterns',
+            q: "I am very fond ___ music.",
+            options: ["of", "in", "at", "about"],
+            ans: "of",
+            word: "fond of", trans: "ishqiboz bo'lmoq",
+            exp: "<b>Fond of</b> - biror narsani yoqtirmoq."
+        },
+        {
+            id: 25, type: 'multi', cat: 'Word Patterns',
+            q: "She is jealous ___ her sister's success.",
+            options: ["of", "with", "for", "to"],
+            ans: "of",
+            word: "jealous of", trans: "hasad qilmoq / qizg'anmoq",
+            exp: "<b>Jealous of</b> - birovga hasad yoki rashk qilish."
+        },
+        {
+            id: 26, type: 'multi', cat: 'Word Patterns',
+            q: "He is married ___ a doctor.",
+            options: ["to", "with", "for", "at"],
+            ans: "to",
+            word: "married to", trans: "turmush qurgan",
+            exp: "Eslatma: Ingliz tilida <b>Married TO</b> ishlatiladi, 'with' EMAS."
+        },
+        {
+            id: 27, type: 'multi', cat: 'Word Patterns',
+            q: "We had an argument ___ politics.",
+            options: ["about", "with", "for", "on"],
+            ans: "about",
+            word: "argument about", trans: "haqida bahs",
+            exp: "<b>Argue about / Argument about</b> - mavzu yuzasidan bahslashish."
+        },
+        {
+            id: 28, type: 'multi', cat: 'Word Patterns',
+            q: "Please apologise ___ your behaviour.",
+            options: ["for", "to", "about", "with"],
+            ans: "for",
+            word: "apologise for", trans: "uchun uzr so'ramoq",
+            exp: "Apologise <b>TO</b> someone <b>FOR</b> something."
+        },
+        {
+            id: 29, type: 'multi', cat: 'Word Patterns',
+            q: "You should be kind ___ animals.",
+            options: ["to", "with", "for", "of"],
+            ans: "to",
+            word: "kind to", trans: "ga mehribon",
+            exp: "<b>Kind to</b> - kimgadir mehribon bo'lmoq."
+        },
+            // --- PART 1: TOPIC VOCABULARY (Lug'at va Ma'no) ---
+    {
+        id: 1, type: 'input', cat: 'Topic Vocabulary',
+        q: "Tarjima qiling: 'Best friend'",
+        hint: "Eng yaqin ...",
+        ans: ["eng yaqin do'st", "eng yaqin dost"],
+        word: "best friend", trans: "eng yaqin do'st",
+        exp: "<b>Best friend</b> - sirlaringizni ishonadigan va sizga eng yaqin bo'lgan inson."
+    },
+    {
+        id: 2, type: 'multi', cat: 'Topic Vocabulary',
+        q: "Two people who are married or in a relationship are a ___.",
+        options: ["couple", "guest", "stranger", "neighbour"],
+        ans: "couple",
+        word: "couple", trans: "juftlik",
+        exp: "<b>Couple</b> - er-xotin yoki sevishganlar juftligi."
+    },
+    {
+        id: 3, type: 'scramble', cat: 'Topic Vocabulary',
+        q: "Gapni to'g'ri tartiblang (Himoya qilmoq):",
+        parts: ["I", "will", "defend", "my", "family"],
+        ans: "i will defend my family",
+        word: "defend", trans: "himoya qilmoq",
+        exp: "<b>Defend</b> - biror kishini yoki narsani hujumdan saqlash/himoya qilish."
+    },
+    {
+        id: 4, type: 'multi', cat: 'Topic Vocabulary',
+        q: "Opposite of 'married' (after ending a marriage):",
+        options: ["divorced", "single", "independent", "private"],
+        ans: "divorced",
+        word: "divorced", trans: "ajrashgan",
+        exp: "<b>Divorced</b> - rasman ajrashgan shaxs. <i>Single</i> - umuman turmush qurmagan bo'lishi mumkin."
+    },
+    {
+        id: 5, type: 'multi', cat: 'Topic Vocabulary',
+        q: "A set of rooms for living in (usually on one floor):",
+        options: ["flat", "house", "rent", "room"],
+        ans: "flat",
+        word: "flat", trans: "kvartira",
+        exp: "<b>Flat</b> - ko'p qavatli uydagi xonadon (British English)."
+    },
+    {
+        id: 6, type: 'multi', cat: 'Topic Vocabulary',
+        q: "He pays for everyone's lunch. He is very ___.",
+        options: ["generous", "selfish", "proud", "loyal"],
+        ans: "generous",
+        word: "generous", trans: "saxiy",
+        exp: "<b>Generous</b> - qo'li ochiq, pul yoki vaqtini ayamaydigan inson."
+    },
+    {
+        id: 7, type: 'input', cat: 'Topic Vocabulary',
+        q: "Tarjima qiling: 'Grateful'",
+        hint: "Rahmat aytuvchi...",
+        ans: ["minnatdor"],
+        word: "grateful", trans: "minnatdor",
+        exp: "<b>Grateful</b> - kimgadir qilgan yaxshiligi uchun rahmat hissini tuyish."
+    },
+    {
+        id: 8, type: 'multi', cat: 'Topic Vocabulary',
+        q: "Someone you invite to your house is a ___.",
+        options: ["guest", "host", "stranger", "tenant"],
+        ans: "guest",
+        word: "guest", trans: "mehmon",
+        exp: "<b>Guest</b> - mehmonga kelgan shaxs."
+    },
+    {
+        id: 9, type: 'multi', cat: 'Topic Vocabulary',
+        q: "Not depending on other people:",
+        options: ["independent", "patient", "ordinary", "single"],
+        ans: "independent",
+        word: "independent", trans: "mustaqil",
+        exp: "<b>Independent</b> - o'zini o'zi eplaydigan, boshqalarga qaram bo'lmagan."
+    },
+    {
+        id: 10, type: 'input', cat: 'Topic Vocabulary',
+        q: "Verb: To tell someone another person's name (Tanishtirmoq)",
+        hint: "i...",
+        ans: ["introduce"],
+        word: "introduce", trans: "tanishtirmoq",
+        exp: "<b>Introduce</b> - ikki notanish insonni bir-biriga tanishtirish."
+    },
+    {
+        id: 11, type: 'multi', cat: 'Topic Vocabulary',
+        q: "Feeling or showing love (mehribon):",
+        options: ["loving", "kind", "loyal", "fond"],
+        ans: "loving",
+        word: "loving", trans: "mehribon / sevikli",
+        exp: "<b>Loving</b> - sevgi va g'amxo'rlik ko'rsatuvchi."
+    },
+    {
+        id: 12, type: 'multi', cat: 'Topic Vocabulary',
+        q: "Always supporting your friends (sodiq):",
+        options: ["loyal", "honest", "polite", "private"],
+        ans: "loyal",
+        word: "loyal", trans: "sodiq",
+        exp: "<b>Loyal</b> - do'stlikda yoki munosabatda sotmaydigan, vafodor."
+    },
+    {
+        id: 13, type: 'input', cat: 'Topic Vocabulary',
+        q: "Tarjima qiling: 'Mood'",
+        hint: "Kayfiyat",
+        ans: ["kayfiyat", "xulq"],
+        word: "mood", trans: "kayfiyat",
+        exp: "<b>Mood</b> - insonning ayni vaqtdagi hissiy holati."
+    },
+    {
+        id: 14, type: 'multi', cat: 'Topic Vocabulary',
+        q: "The area where you live:",
+        options: ["neighbourhood", "flat", "city", "village"],
+        ans: "neighbourhood",
+        word: "neighbourhood", trans: "mahalla / qo'shnichilik",
+        exp: "<b>Neighbourhood</b> - siz yashaydigan hudud va atrof-muhit."
+    },
+    {
+        id: 15, type: 'multi', cat: 'Topic Vocabulary',
+        q: "Normal, not special:",
+        options: ["ordinary", "strange", "private", "famous"],
+        ans: "ordinary",
+        word: "ordinary", trans: "odatiy / oddiy",
+        exp: "<b>Ordinary</b> - hech qanday o'ziga xosligi yo'q, oddiy."
+    },
+    {
+        id: 16, type: 'multi', cat: 'Topic Vocabulary',
+        q: "Able to wait without getting angry:",
+        options: ["patient", "calm", "slow", "kind"],
+        ans: "patient",
+        word: "patient", trans: "sabrli",
+        exp: "<b>Patient</b> - sabr-toqatli inson."
+    },
+    {
+        id: 17, type: 'multi', cat: 'Topic Vocabulary',
+        q: "A ___ person does not like talking about themselves.",
+        options: ["private", "public", "shy", "proud"],
+        ans: "private",
+        word: "private", trans: "shaxsiy / bosiq",
+        exp: "<b>Private</b> - shaxsiy hayotini sir tutadigan inson."
+    },
+    {
+        id: 18, type: 'input', cat: 'Topic Vocabulary',
+        q: "Verb: To know someone because you have seen them before (Tanimoq)",
+        hint: "r...",
+        ans: ["recognise", "recognize"],
+        word: "recognise", trans: "tanimoq",
+        exp: "<b>Recognise</b> - ko'rinishidan yoki ovozidan tanib olmoq."
+    },
+    {
+        id: 19, type: 'input', cat: 'Topic Vocabulary',
+        q: "Money you pay to live in a house:",
+        hint: "Ijara haqi",
+        ans: ["rent"],
+        word: "rent", trans: "ijara haqi",
+        exp: "<b>Rent</b> - uydan foydalangani uchun to'lanadigan pul."
+    },
+    {
+        id: 20, type: 'multi', cat: 'Topic Vocabulary',
+        q: "To be polite to someone:",
+        options: ["respect", "defend", "trust", "admire"],
+        ans: "respect",
+        word: "respect", trans: "hurmat qilmoq",
+        exp: "<b>Respect</b> - hurmat bajo keltirmoq."
+    },
+    {
+        id: 21, type: 'multi', cat: 'Topic Vocabulary',
+        q: "Someone you do not know:",
+        options: ["stranger", "guest", "foreigner", "enemy"],
+        ans: "stranger",
+        word: "stranger", trans: "notanish inson",
+        exp: "<b>Stranger</b> - sizga tanish bo'lmagan odam."
+    },
+    {
+        id: 22, type: 'scramble', cat: 'Topic Vocabulary',
+        q: "Gapni tuzing (Ishonch):",
+        parts: ["You", "can", "trust", "me"],
+        ans: "you can trust me",
+        word: "trust", trans: "ishonmoq",
+        exp: "<b>Trust</b> - kimgadir ishonch bildirmoq."
+    },
+
+    // --- PART 2: PHRASAL VERBS (Ma'no va Ishlatilish) ---
+    {
+        id: 23, type: 'multi', cat: 'Phrasal Verb',
+        q: "To look after a child until he/she becomes an adult:",
+        options: ["bring up", "grow up", "take after", "look for"],
+        ans: "bring up",
+        word: "bring up", trans: "tarbiyalamoq",
+        exp: "<b>Bring up</b> - bolani katta qilish, tarbiyalash. <i>Grow up</i> - bolaning o'zi katta bo'lishi."
+    },
+    {
+        id: 24, type: 'multi', cat: 'Phrasal Verb',
+        q: "To stop being friends after an argument:",
+        options: ["fall out", "split up", "get off", "break down"],
+        ans: "fall out",
+        word: "fall out (with)", trans: "urishib qolmoq",
+        exp: "<b>Fall out</b> - janjallashib munosabatni uzish."
+    },
+    {
+        id: 25, type: 'multi', cat: 'Phrasal Verb',
+        q: "I ___ well with my colleagues. (Have a good relationship)",
+        options: ["get on", "go on", "carry on", "hold on"],
+        ans: "get on",
+        word: "get on (with)", trans: "chiqishib ketmoq",
+        exp: "<b>Get on (with)</b> - kimdir bilan yaxshi munosabatda bo'lish."
+    },
+    {
+        id: 26, type: 'multi', cat: 'Phrasal Verb',
+        q: "To have a romantic relationship (boyfriend/girlfriend):",
+        options: ["go out with", "fall out with", "date with", "meet up"],
+        ans: "go out with",
+        word: "go out with", trans: "uchrashib yurmoq",
+        exp: "<b>Go out with</b> - sevgi munosabatida bo'lish."
+    },
+    {
+        id: 27, type: 'input', cat: 'Phrasal Verb',
+        q: "What do children do when they become adults? (Phrasal verb)",
+        hint: "g... u...",
+        ans: ["grow up"],
+        word: "grow up", trans: "ulg'aymoq",
+        exp: "<b>Grow up</b> - voyaga yetmoq, katta bo'lmoq."
+    },
+    {
+        id: 28, type: 'multi', cat: 'Phrasal Verb',
+        q: "Don't ___ me ___ ! (Disappoint)",
+        options: ["let / down", "put / down", "bring / down", "fall / down"],
+        ans: "let / down",
+        word: "let down", trans: "pand bermoq",
+        exp: "<b>Let down</b> - birovning ishonchini oqlamaslik, uyaltirib qo'yish."
+    },
+    {
+        id: 29, type: 'multi', cat: 'Phrasal Verb',
+        q: "Can you ___ my dog while I am on holiday?",
+        options: ["look after", "look for", "look at", "look up"],
+        ans: "look after",
+        word: "look after", trans: "qarab turmoq / g'amxo'rlik qilmoq",
+        exp: "<b>Look after</b> - parvarish qilish."
+    },
+    {
+        id: 30, type: 'multi', cat: 'Phrasal Verb',
+        q: "They decided to ___ after 10 years of marriage.",
+        options: ["split up", "fall out", "break out", "run away"],
+        ans: "split up",
+        word: "split up", trans: "ajrashmoq",
+        exp: "<b>Split up</b> - munosabatni yoki turmushni tugatish."
+    },
+
+    // --- PART 3: PREPOSITIONAL PHRASES (Predloglar) ---
+    {
+        id: 31, type: 'multi', cat: 'Prepositions',
+        q: "He finished the project all ___ himself.",
+        options: ["by", "on", "with", "in"],
+        ans: "by",
+        word: "by yourself", trans: "mustaqil / bir o'zi",
+        exp: "<b>By yourself</b> - yordamsiz, yolg'iz o'zi."
+    },
+    {
+        id: 32, type: 'multi', cat: 'Prepositions',
+        q: "We have a lot ___ common.",
+        options: ["in", "on", "at", "with"],
+        ans: "in",
+        word: "in common", trans: "umumiy jihat",
+        exp: "<b>In common</b> - o'xshash qiziqishlarga ega bo'lmoq."
+    },
+    {
+        id: 33, type: 'multi', cat: 'Prepositions',
+        q: "Are you still ___ contact with your school friends?",
+        options: ["in", "on", "at", "by"],
+        ans: "in",
+        word: "in contact (with)", trans: "aloqada",
+        exp: "<b>In contact</b> - aloqada bo'lib turish."
+    },
+    {
+        id: 34, type: 'scramble', cat: 'Prepositions',
+        q: "Gapni tuzing (Sevgi):",
+        parts: ["They", "are", "in", "love"],
+        ans: "they are in love",
+        word: "in love (with)", trans: "sevib qolgan",
+        exp: "<b>In love (with)</b> - birovni sevib qolish holati."
+    },
+    {
+        id: 35, type: 'multi', cat: 'Prepositions',
+        q: "I'm sorry, I didn't do it ___ purpose.",
+        options: ["on", "in", "by", "for"],
+        ans: "on",
+        word: "on purpose", trans: "ataylab",
+        exp: "<b>On purpose</b> - ataylab, rejali tarzda (bexosdan emas)."
+    },
+    {
+        id: 36, type: 'multi', cat: 'Prepositions',
+        q: "She lives ___ her own.",
+        options: ["on", "by", "in", "with"],
+        ans: "on",
+        word: "on your own", trans: "yolg'iz o'zi",
+        exp: "<b>On your own</b> - xuddi 'by yourself' kabi, yolg'iz degan ma'noda."
+    },
+
+    // --- PART 4: WORD FORMATION (So'z Yasash) ---
+    {
+        id: 37, type: 'input', cat: 'Word Formation',
+        q: "ABLE (Adjective) -> Noun (Ot):",
+        hint: "Qobiliyat",
+        ans: ["ability"],
+        word: "ability", trans: "qobiliyat",
+        exp: "<b>Ability</b> - biror narsa qila olish qobiliyati."
+    },
+    {
+        id: 38, type: 'input', cat: 'Word Formation',
+        q: "ABLE -> Negative Adjective:",
+        hint: "Qodir emas",
+        ans: ["unable"],
+        word: "unable", trans: "qodir bo'lmagan",
+        exp: "<b>Unable</b> - biror narsani qila olmaydigan."
+    },
+    {
+        id: 39, type: 'input', cat: 'Word Formation',
+        q: "ADMIRE (Verb) -> Noun (Ot):",
+        hint: "Havas/Tahsin",
+        ans: ["admiration"],
+        word: "admiration", trans: "havas",
+        exp: "<b>Admiration</b> - kimgadir bo'lgan yuqori hurmat va havas."
+    },
+    {
+        id: 40, type: 'multi', cat: 'Word Formation',
+        q: "Please be ___. (CARE)",
+        options: ["careful", "careless", "care", "caringly"],
+        ans: "careful",
+        word: "careful", trans: "e'tiborli",
+        exp: "<b>Careful</b> - ehtiyotkor."
+    },
+    {
+        id: 41, type: 'multi', cat: 'Word Formation',
+        q: "Don't be so ___ with your work. (CARE - Negative)",
+        options: ["careless", "careful", "unchare", "carefully"],
+        ans: "careless",
+        word: "careless", trans: "e'tiborsiz",
+        exp: "<b>Careless</b> - e'tiborsiz, pala-partish."
+    },
+    {
+        id: 42, type: 'input', cat: 'Word Formation',
+        q: "CONFIDENT (Adjective) -> Noun (Ot):",
+        hint: "Ishonch",
+        ans: ["confidence"],
+        word: "confidence", trans: "o'ziga ishonch",
+        exp: "<b>Confidence</b> - o'ziga bo'lgan ishonch."
+    },
+    {
+        id: 43, type: 'input', cat: 'Word Formation',
+        q: "FORGIVE (Verb) -> Noun (Ot):",
+        hint: "Kechirim",
+        ans: ["forgiveness"],
+        word: "forgiveness", trans: "kechirim",
+        exp: "<b>Forgiveness</b> - gunoh yoki xatoni kechirish."
+    },
+    {
+        id: 44, type: 'input', cat: 'Word Formation',
+        q: "HONEST (Adjective) -> Noun (Ot):",
+        hint: "Halollik",
+        ans: ["honesty"],
+        word: "honesty", trans: "halollik",
+        exp: "<b>Honesty</b> - rostgo'ylik."
+    },
+    {
+        id: 45, type: 'input', cat: 'Word Formation',
+        q: "HONEST -> Negative Adjective:",
+        hint: "Yolg'onchi/G'irrom",
+        ans: ["dishonest"],
+        word: "dishonest", trans: "g'irrom",
+        exp: "<b>Dishonest</b> - aldoqchi, halol emas."
+    },
+    {
+        id: 46, type: 'input', cat: 'Word Formation',
+        q: "LIE (Verb) -> Noun (Person):",
+        hint: "Yolg'onchi odam",
+        ans: ["liar"],
+        word: "liar", trans: "yolg'onchi",
+        exp: "<b>Liar</b> - yolg'on gapiradigan shaxs."
+    },
+    {
+        id: 47, type: 'multi', cat: 'Word Formation',
+        q: "She has a very friendly ___. (PERSON)",
+        options: ["personality", "personal", "personally", "person"],
+        ans: "personality",
+        word: "personality", trans: "xarakter",
+        exp: "<b>Personality</b> - insonning tabiati va xarakteri."
+    },
+    {
+        id: 48, type: 'multi', cat: 'Word Formation',
+        q: "Are you a ___ of his? (RELATE)",
+        options: ["relative", "relation", "relationship", "relating"],
+        ans: "relative",
+        word: "relative", trans: "qarindosh",
+        exp: "<b>Relative</b> - qon-qarindosh."
+    },
+
+    // --- PART 5: WORD PATTERNS (Grammatik Birikmalar) ---
+    {
+        id: 49, type: 'scramble', cat: 'Word Patterns',
+        q: "Gapni tuzing (Admire):",
+        parts: ["I", "admire", "him", "for", "his", "talent"],
+        ans: "i admire him for his talent",
+        word: "admire sb for", trans: "uchun havas qilmoq",
+        exp: "<b>Admire for</b> - biror kishining xususiyatiga havas qilish."
+    },
+    {
+        id: 50, type: 'multi', cat: 'Word Patterns',
+        q: "You must apologise ___ Jane ___ breaking her pen.",
+        options: ["to / for", "for / to", "with / about", "at / on"],
+        ans: "to / for",
+        word: "apologise to sb for sth", trans: "uzr so'ramoq",
+        exp: "Kimgadir: <b>TO</b> someone, Nima uchundir: <b>FOR</b> something."
+    },
+    {
+        id: 51, type: 'multi', cat: 'Word Patterns',
+        q: "They are arguing ___ money again.",
+        options: ["about", "with", "for", "on"],
+        ans: "about",
+        word: "argue about", trans: "haqida bahslashmoq",
+        exp: "<b>Argue about</b> - biror mavzu ustida tortishmoq."
+    },
+    {
+        id: 52, type: 'multi', cat: 'Word Patterns',
+        q: "She cares deeply ___ environmental issues.",
+        options: ["about", "for", "in", "with"],
+        ans: "about",
+        word: "care about", trans: "qayg'urmoq / muhim deb bilmoq",
+        exp: "<b>Care about</b> - biror narsaga befarq bo'lmaslik."
+    },
+    {
+        id: 53, type: 'multi', cat: 'Word Patterns',
+        q: "I was chatting ___ my neighbour ___ the weather.",
+        options: ["to / about", "with / for", "on / in", "at / with"],
+        ans: "to / about",
+        word: "chat (to/with) sb about", trans: "haqida suhbatlashmoq",
+        exp: "<b>Chat to</b> someone <b>about</b> something."
+    },
+    {
+        id: 54, type: 'input', cat: 'Word Patterns',
+        q: "I am very fond ___ classical music. (Predlog)",
+        hint: "Preposition",
+        ans: ["of"],
+        word: "fond of", trans: "ishqiboz",
+        exp: "<b>Fond of</b> - biror narsani yoqtirmoq."
+    },
+    {
+        id: 55, type: 'input', cat: 'Word Patterns',
+        q: "She is jealous ___ her friend. (Predlog)",
+        hint: "Preposition",
+        ans: ["of"],
+        word: "jealous of", trans: "hasad qilmoq",
+        exp: "<b>Jealous of</b> - kimgadir hasad yoki rashk qilish."
+    },
+    {
+        id: 56, type: 'input', cat: 'Word Patterns',
+        q: "Please be kind ___ the new student. (Predlog)",
+        hint: "Preposition",
+        ans: ["to"],
+        word: "kind to", trans: "ga mehribon",
+        exp: "<b>Kind to</b> - kimgadir yaxshi munosabatda bo'lmoq."
+    },
+    {
+        id: 57, type: 'input', cat: 'Word Patterns',
+        q: "He is married ___ a famous singer. (Predlog)",
+        hint: "Preposition (Not 'with'!)",
+        ans: ["to"],
+        word: "married to", trans: "turmush qurgan",
+        exp: "Eslatma: Ingliz tilida <b>Married TO</b> ishlatiladi (With xato)."
+    },
+    {
+        id: 58, type: 'input', cat: 'Word Patterns',
+        q: "I am very proud ___ you! (Predlog)",
+        hint: "Preposition",
+        ans: ["of"],
+        word: "proud of", trans: "faxrlanmoq",
+        exp: "<b>Proud of</b> - kimdandir faxrlanish."
+    },
+        // --- PART 6: REVISION & HARD MODE (Tuzatilgan va To'liq) ---
+    // Bu qismda endi "undefined" chiqmaydi, har birida lug'at bor.
+
+    {
+        id: 59, type: 'scramble', cat: 'Revision',
+        q: "Gapni tuzing (Phrasal Verb):",
+        parts: ["I", "don't", "want", "to", "fall", "out", "with", "you"],
+        ans: "i don't want to fall out with you",
+        word: "fall out (with)", trans: "janjallashib qolmoq",
+        exp: "<b>Fall out with</b> - munosabatlarni buzib, aytishib qolish."
+    },
+    {
+        id: 60, type: 'multi', cat: 'Revision',
+        q: "Diqqat! Qaysi gap GRAMMATIK jihatdan to'g'ri?",
+        options: ["He is married with a doctor.", "He is married to a doctor."],
+        ans: "He is married to a doctor.",
+        word: "married to", trans: "turmush qurgan",
+        exp: "To'g'ri: <b>Married TO</b>. (Ingliz tilida 'with' ishlatilmaydi!)."
+    },
+    {
+        id: 61, type: 'input', cat: 'Revision',
+        q: "Word Formation: 'Don't be a ___!' (LIE)",
+        hint: "Person",
+        ans: ["liar"],
+        word: "liar", trans: "yolg'onchi",
+        exp: "<b>Liar</b> - yolg'on gapiradigan odam (Noun)."
+    },
+    {
+        id: 62, type: 'multi', cat: 'Revision',
+        q: "Synonym check: Which word is closest to 'Ordinary'?",
+        options: ["Normal", "Special", "Rare", "Strange"],
+        ans: "Normal",
+        word: "ordinary", trans: "odatiy / oddiy",
+        exp: "<b>Ordinary</b> - maxsus bo'lmagan, oddiy (not special)."
+    },
+    {
+        id: 63, type: 'scramble', cat: 'Revision',
+        q: "Gap tuzing (Passive Voice + Phrasal Verb):",
+        parts: ["She", "was", "brought", "up", "by", "her", "aunt"],
+        ans: "she was brought up by her aunt",
+        word: "bring up", trans: "tarbiyalamoq",
+        exp: "<b>Brought up</b> (Passive) - xolasi tomonidan tarbiyalangan."
+    },
+    {
+        id: 64, type: 'multi', cat: 'Revision',
+        q: "Context: You see someone breaking a window. Did they do it ___?",
+        options: ["on purpose", "in common", "by yourself", "in love"],
+        ans: "on purpose",
+        word: "on purpose", trans: "ataylab",
+        exp: "<b>On purpose</b> - atayin, rejali ravishda (accident emas)."
+    },
+    {
+        id: 65, type: 'input', cat: 'Revision',
+        q: "Opposite of 'Loyal': (Word Formation: DIS...)",
+        hint: "d...",
+        ans: ["disloyal"],
+        word: "loyal", trans: "sodiq (Disloyal - vafosiz)",
+        exp: "<b>Disloyal</b> - vafosiz, sotqin. (Asl so'z: Loyal)."
+    },
+    {
+        id: 66, type: 'multi', cat: 'Revision',
+        q: "Confusing Words: 'I live ___.' (Yolg'iz o'zim)",
+        options: ["on my own", "by my own", "with myself", "in my own"],
+        ans: "on my own",
+        word: "on your own", trans: "mustaqil / bir o'zi",
+        exp: "To'g'ri shakl: <b>On my own</b> yoki <b>By myself</b>."
+    },
+    {
+        id: 67, type: 'scramble', cat: 'Revision',
+        q: "Gap tuzing (Prepositions):",
+        parts: ["We", "have", "nothing", "in", "common"],
+        ans: "we have nothing in common",
+        word: "in common", trans: "umumiy jihat",
+        exp: "<b>Nothing in common</b> - hech qanday umumiy jihatimiz/qiziqishimiz yo'q."
+    },
+    {
+        id: 68, type: 'input', cat: 'Revision',
+        q: "Complete the phrase: 'Please f___ my mistake.' (Kechirmoq)",
+        hint: "Verb",
+        ans: ["forgive"],
+        word: "forgive", trans: "kechirmoq",
+        exp: "<b>Forgive</b> - gunoh yoki xatoni kechirish."
+    },
+    {
+        id: 69, type: 'multi', cat: 'Revision',
+        q: "Word Pattern: 'It was very kind ___ you to help me.'",
+        options: ["of", "to", "for", "with"],
+        ans: "of",
+        word: "kind", trans: "mehribon / iltifotli",
+        exp: "Eslatma: It was kind <b>OF</b> you (Sizning olijanobligingiz). Ammo: Be kind <b>TO</b> others."
+    },
+    {
+        id: 70, type: 'scramble', cat: 'Revision',
+        q: "Gap tuzing (Complex):",
+        parts: ["I", "am", "really", "grateful", "for", "your", "help"],
+        ans: "i am really grateful for your help",
+        word: "grateful", trans: "minnatdor",
+        exp: "<b>Grateful for</b> - yordamingiz uchun minnatdorman."
+    },
+    {
+        id: 71, type: 'multi', cat: 'Revision',
+        q: "Find the odd one out (Mantiqan mos kelmaydiganini toping):",
+        options: ["Divorced", "Single", "Married", "Flat"],
+        ans: "Flat",
+        word: "flat", trans: "kvartira",
+        exp: "<b>Flat</b> - bu uy (narsa). Qolganlari insonning oilaviy holati (Topic Vocabulary)."
+    },
+    {
+        id: 72, type: 'input', cat: 'Revision',
+        q: "To make something look more attractive (Bezamoq):",
+        hint: "d...",
+        ans: ["decorate"],
+        word: "decorate", trans: "bezamoq",
+        exp: "<b>Decorate</b> - bezatmoq (Topic Vocabulary ro'yxatidan)."
+    },
+    {
+        id: 73, type: 'multi', cat: 'Revision',
+        q: "Which represents 'Confidence'?",
+        options: ["Believing in yourself", "Hating everyone", "Being shy", "Living alone"],
+        ans: "Believing in yourself",
+        word: "confident", trans: "o'ziga ishongan",
+        exp: "<b>Confidence</b> - o'ziga ishonch (Word Formation)."
+    },
+    {
+        id: 74, type: 'input', cat: 'Revision',
+        q: "Tarjima: 'Begona/Notanish inson' (S...)",
+        hint: "s...",
+        ans: ["stranger"],
+        word: "stranger", trans: "notanish inson",
+        exp: "<b>Stranger</b> - siz tanimaydigan shaxs."
+    },
+    {
+        id: 75, type: 'scramble', cat: 'Revision',
+        q: "Final Challenge (Hammasi birda):",
+        parts: ["I", "admire", "my", "best", "friend", "for", "her", "honesty"],
+        ans: "i admire my best friend for her honesty",
+        word: "admire", trans: "havas qilmoq",
+        exp: "<b>Admire + Best Friend + Honesty</b> - Unit 12 ning barcha qismlarini jamlagan gap."
+    },
+    // --- PART 7: CORRECT THE MISTAKE (Grammatika va So'z Xatolarini Tuzatish) ---
+    {
+        id: 76, type: 'correct_mistake', cat: 'Correct Mistake',
+        wrong: "I am married with a dentist.",
+        ans: "I am married to a dentist",
+        word: "married to", trans: "turmush qurgan",
+        exp: "Ingliz tilida 'married with' deyilmaydi. To'g'risi: <b>Married TO</b>."
+    },
+    {
+        id: 77, type: 'correct_mistake', cat: 'Correct Mistake',
+        wrong: "He cares for the environment very much.",
+        ans: "He cares about the environment very much",
+        word: "care about", trans: "qayg'urmoq",
+        exp: "Atrof-muhit haqida qayg'urish: <b>Care ABOUT</b>. (Care for - g'amxo'rlik qilish/qarash)."
+    },
+    {
+        id: 78, type: 'correct_mistake', cat: 'Correct Mistake',
+        wrong: "We have nothing on common.",
+        ans: "We have nothing in common",
+        word: "in common", trans: "umumiy jihat",
+        exp: "To'g'ri predlog: <b>IN</b> common."
+    },
+    {
+        id: 79, type: 'correct_mistake', cat: 'Correct Mistake',
+        wrong: "Don't be unhonest with me.",
+        ans: "Don't be dishonest with me",
+        word: "dishonest", trans: "g'irrom/yolg'onchi",
+        exp: "Honest so'zining inkor shakli 'unhonest' emas, balki <b>Dishonest</b>."
+    },
+    {
+        id: 80, type: 'correct_mistake', cat: 'Correct Mistake',
+        wrong: "I did it by purpose.",
+        ans: "I did it on purpose",
+        word: "on purpose", trans: "ataylab",
+        exp: "Ataylab qilish: <b>ON</b> purpose."
+    },
+    {
+        id: 81, type: 'correct_mistake', cat: 'Correct Mistake',
+        wrong: "She leaves by her own.",
+        ans: "She lives on her own",
+        word: "on your own", trans: "bir o'zi / mustaqil",
+        exp: "To'g'ri shakl: <b>On her own</b> (yoki <i>By herself</i>)."
+    },
+    {
+        id: 82, type: 'correct_mistake', cat: 'Correct Mistake',
+        wrong: "He is a very carefull driver.",
+        ans: "He is a very careful driver",
+        word: "careful", trans: "ehtiyotkor",
+        exp: "Imlo xatosi: <b>Careful</b> so'zida bitta 'l' bo'ladi."
+    }
+    
+    ];
+
+    // --- O'YIN MANTIQI (GAME LOGIC) ---
+    
+    // Global o'zgaruvchilar
+    let currentIndex = 0;
+    let score = 0;
+    let mistakes = 0;
+    let currentQuestion = null;
+    let userScramble = []; // Scramble mashqi uchun
+
+    // 1. Professional Aralashtirish Funksiyasi (Fisher-Yates Shuffle)
+    // Bu savollarni mukammal aralashtiradi va takrorlanishni oldini oladi.
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    // 2. O'yinni Boshlash (Init)
+    function initGame() {
+        // O'zgaruvchilarni nollash
+        currentIndex = 0;
+        score = 0;
+        mistakes = 0;
+        
+        // UI ni tozalash
+        document.getElementById('score').innerText = '0';
+        document.getElementById('mistakes').innerText = '0';
+        
+        // Savollarni aralashtirish
+        if (typeof unit12Data !== 'undefined' && unit12Data.length > 0) {
+            shuffleArray(unit12Data);
+            document.getElementById('total-q').innerText = unit12Data.length;
+            loadQuestion();
+        } else {
+            alert("Xatolik: Ma'lumotlar bazasi (unit12Data) topilmadi!");
+        }
+    }
+
+    // 3. Savolni Yuklash
+    function loadQuestion() {
+        // O'yin tugaganini tekshirish
+        if (currentIndex >= unit12Data.length) {
+            showResults();
+            return;
+        }
+
+        currentQuestion = unit12Data[currentIndex];
+        document.getElementById('curr-q').innerText = currentIndex + 1;
+        const area = document.getElementById('quiz-area');
+        
+        // Tugmalarni boshlang'ich holatga qaytarish
+        const checkBtn = document.getElementById('check-btn');
+        checkBtn.style.display = 'block';
+        checkBtn.innerText = "Tekshirish";
+        checkBtn.disabled = false;
+        checkBtn.style.background = "var(--primary)"; // Rangni tiklash
+        
+        document.getElementById('next-btn').style.display = 'none';
+        
+        // HTML shablonini yaratish
+        let html = `
+            <div class="question-card">
+                <span class="tag">${currentQuestion.cat || 'General'}</span>
+        `;
+
+        // SAVOL TURLARI BO'YICHA RENDER QILISH
+
+        // A) Xatoni to'g'irlash (Yangi tur)
+        if (currentQuestion.type === 'correct_mistake') {
+            html += `
+                <div class="question-text">
+                    Quyidagi gapdagi xatoni tuzating:<br>
+                    <span style="color:var(--error); text-decoration: line-through; font-style:italic; font-size: 0.9em;">"${currentQuestion.wrong}"</span>
+                </div>
+                <input type="text" class="text-answer" id="text-input" placeholder="To'g'ri gapni yozing..." autocomplete="off">
+            `;
+        }
+        // B) Test (Multiple Choice)
+        else if (currentQuestion.type === 'multi') {
+            html += `<div class="question-text">${currentQuestion.q}</div>`;
+            html += `<div class="options-grid" id="opt-grid">`;
+            currentQuestion.options.forEach(opt => {
+                html += `<button class="option-btn" onclick="selectOption(this, '${opt}')">${opt}</button>`;
+            });
+            html += `</div>`;
+            html += `<input type="hidden" id="user-ans">`;
+        } 
+        // C) Yozma javob (Input)
+        else if (currentQuestion.type === 'input') {
+            html += `<div class="question-text">${currentQuestion.q}</div>`;
+            html += `<input type="text" class="text-answer" id="text-input" placeholder="${currentQuestion.hint || 'Javobni yozing...'}" autocomplete="off">`;
+        }
+        // D) So'z tuzish (Scramble)
+        else if (currentQuestion.type === 'scramble') {
+            html += `<div class="question-text">${currentQuestion.q}</div>`;
+            userScramble = [];
+            let parts = [...currentQuestion.parts];
+            parts.sort(() => Math.random() - 0.5); // So'zlarni aralashtirish
+            
+            html += `
+                <div class="scramble-container" id="drop-zone"></div>
+                <div style="display:flex; gap:5px; flex-wrap:wrap;">
+                    ${parts.map(w => `<div class="word-chip" onclick="moveWord(this)">${w}</div>`).join('')}
+                </div>
+            `;
+        }
+
+        // Feedback va Lug'at qismi
+        // Agar so'z va tarjima bo'lsa ko'rsatadi, bo'lmasa yashiradi (Undefined xatosini oldini olish)
+        let vocabHTML = '';
+        if (currentQuestion.word && currentQuestion.trans) {
+            vocabHTML = `
+                <div class="vocab-info">
+                    <strong>${currentQuestion.word}</strong>: ${currentQuestion.trans}
+                </div>`;
+        }
+
+        html += `
+            <div class="feedback-box" id="feedback">
+                <div class="feedback-title" id="fb-title"></div>
+                <div class="feedback-detail" id="fb-detail"></div>
+                ${vocabHTML}
+            </div>
+            </div> `;
+
+        area.innerHTML = html;
+        
+        // Inputga fokus berish (qulaylik uchun)
+        const inp = document.getElementById('text-input');
+        if(inp) inp.focus();
+    }
+
+    // --- INTERAKTIV FUNKSIYALAR ---
+    
+    // Variant tanlash
+    window.selectOption = (btn, val) => {
+        document.querySelectorAll('.option-btn').forEach(b => {
+            b.style.borderColor = '#e5e7eb';
+            b.style.background = '#fff';
+            b.style.color = 'var(--text)';
+        });
+        btn.style.borderColor = 'var(--primary)';
+        btn.style.background = 'var(--primary)';
+        btn.style.color = '#fff';
+        document.getElementById('user-ans').value = val;
+    };
+
+    // So'zlarni siljitish (Scramble)
+    window.moveWord = (el) => {
+        const dropZone = document.getElementById('drop-zone');
+        if (el.parentElement.id === 'drop-zone') {
+            el.remove(); // Hozircha oddiygina o'chirish
+            // Murakkabroq qilish uchun bankka qaytarish mumkin, lekin bu yetarli
+            // Qayta tiklash uchun savolni yangilash kerak bo'ladi
+        } else {
+            dropZone.appendChild(el);
+        }
+    };
+
+    // --- TEKSHIRISH (STRICT MODE) ---
+    window.checkAnswer = () => {
+        let isCorrect = false;
+        let userVal = "";
+
+        // Tozalash funksiyasi (Kichik harf va belgilarsiz)
+        const normalize = (str) => str.toString().trim().toLowerCase().replace(/[.,!?'"]/g, "");
+
+        // 1. Javobni olish
+        if (currentQuestion.type === 'multi') {
+            userVal = document.getElementById('user-ans').value;
+            isCorrect = (userVal === currentQuestion.ans);
+        }
+        else if (currentQuestion.type === 'input' || currentQuestion.type === 'correct_mistake') {
+            userVal = document.getElementById('text-input').value;
+            let normUser = normalize(userVal);
+            
+            if (Array.isArray(currentQuestion.ans)) {
+                isCorrect = currentQuestion.ans.some(a => normalize(a) === normUser);
+            } else {
+                isCorrect = (normUser === normalize(currentQuestion.ans));
+            }
+        }
+        else if (currentQuestion.type === 'scramble') {
+            const dropZone = document.getElementById('drop-zone');
+            const words = Array.from(dropZone.children).map(c => c.innerText).join(" ");
+            isCorrect = (normalize(words) === normalize(currentQuestion.ans));
+        }
+
+        // 2. Natijani ko'rsatish
+        const fb = document.getElementById('feedback');
+        const fbTitle = document.getElementById('fb-title');
+        const fbDetail = document.getElementById('fb-detail');
+        const checkBtn = document.getElementById('check-btn');
+        
+        fb.style.display = 'block';
+        
+        if (isCorrect) {
+            // TO'G'RI JAVOB
+            score += 10;
+            document.getElementById('score').innerText = score;
+            
+            fb.className = 'feedback-box correct';
+            fbTitle.innerText = "To'g'ri! 🎉";
+            fbDetail.innerHTML = currentQuestion.exp; // Tushuntirish
+
+            // Elementlarni bloklash
+            const opts = document.querySelectorAll('.option-btn');
+            opts.forEach(o => o.disabled = true);
+            const inp = document.getElementById('text-input');
+            if(inp) inp.disabled = true;
+
+            // Tugmalarni almashtirish
+            checkBtn.style.display = 'none';
+            document.getElementById('next-btn').style.display = 'block';
+        } else {
+            // XATO JAVOB (STRICT MODE)
+            mistakes++;
+            document.getElementById('mistakes').innerText = mistakes;
+            
+            fb.className = 'feedback-box wrong';
+            fbTitle.innerText = "Noto'g'ri 😔";
+            fbDetail.innerHTML = "Qayta urinib ko'ring! To'g'ri javobni topmaguncha o'tish yo'q.";
+            
+            // Tugmani o'zgartirish
+            checkBtn.innerText = "Qayta urinish 🔄";
+            checkBtn.style.background = "#f59e0b"; // Sariq rang
+            
+            // "Keyingi" tugmasi chiqmaydi!
+        }
+    };
+
+    window.nextQuestion = () => {
+        currentIndex++;
+        loadQuestion();
+    };
+
+    function showResults() {
+        const modal = document.getElementById('result-modal');
+        const circle = document.getElementById('final-score-circle');
+        const title = document.getElementById('final-title');
+        const desc = document.getElementById('final-desc');
+
+        const maxScore = unit12Data.length * 10;
+        let percent = 0;
+        if (maxScore > 0) percent = Math.round((score / maxScore) * 100);
+
+        circle.innerText = percent + "%";
+        modal.style.display = 'flex';
+
+        if (percent >= 90) {
+            title.innerText = "GRAND MASTER! 🏆";
+            desc.innerText = "Ofisdagi eng yaxshi natija! Mukammal.";
+        } else if (percent >= 70) {
+            title.innerText = "Juda Yaxshi! 👏";
+            desc.innerText = "Natijangiz yomon emas, lekin hali ishlasa bo'ladi.";
+        } else {
+            title.innerText = "Mashq qilish kerak 📚";
+            desc.innerText = "Ko'p xato qildingiz. Qayta urinib ko'ring.";
+        }
+    }
+
+    // Sahifa yuklanganda o'yinni boshlash
+    initGame();
+
+
+</script>
+
+</body>
+</html>
