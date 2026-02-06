@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History & Traditions - Interactive Reader</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://code.responsivevoice.org/responsivevoice.js?key=ftro4Sxr"></script>
+    <style>
+        :root {
+            --primary-color: #d97706;
+            --primary-hover: #b45309;
+            --bg-color: #fffbeb;
+            --card-bg: #ffffff;
+            --text-color: #334155;
+            --heading-color: #1e293b;
+            --tooltip-bg: #1e293b;
+            --tooltip-text: #ffffff;
+            --timer-bg: rgba(255, 255, 255, 0.95);
+            --border-color: #e2e8f0;
+            --highlight-color: rgba(217, 119, 6, 0.15);
+            --word-hover-color: #d97706;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        body.dark-mode {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #cbd5e1;
+            --heading-color: #f1f5f9;
+            --tooltip-bg: #f1f5f9;
+            --tooltip-text: #0f172a;
+            --timer-bg: rgba(15, 23, 42, 0.95);
+            --border-color: #334155;
+            --highlight-color: rgba(217, 119, 6, 0.2);
+            --word-hover-color: #fbbf24;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        }
+
+        .leaf-rain {
+            position: fixed;
+            top: -50px;
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 0.6;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(360deg); }
+        }
+
+        * { box-sizing: border-box; transition: background-color 0.3s ease, color 0.3s ease; }
+        
+        /* Line-height oshirildi (1.9), matnlar bir-biriga kirishib ketmasligi uchun */
+        body { font-family: 'Merriweather', serif; line-height: 1.9; margin: 0; padding-top: 70px; background-color: var(--bg-color); color: var(--text-color); overflow-x: hidden; }
+        
+        #sticky-timer { position: fixed; top: 0; left: 0; width: 100%; height: 60px; background-color: var(--timer-bg); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; z-index: 1000; font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 1.2rem; color: var(--heading-color); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        #timer-icon { margin-right: 10px; color: var(--primary-color); }
+        
+        .container { max-width: 750px; margin: 30px auto 60px; background: var(--card-bg); padding: 40px 50px; border-radius: 16px; box-shadow: var(--shadow); position: relative; z-index: 10; }
+        
+        .content-image { width: 100%; height: 400px; object-fit: cover; border-radius: 12px; margin: 30px 0; background-color: var(--border-color); transition: transform 0.3s ease; }
+        .content-image:hover { transform: scale(1.02); }
+
+        h1 { font-family: 'Montserrat', sans-serif; text-align: center; color: var(--primary-color); margin-bottom: 10px; }
+        h2 { font-family: 'Montserrat', sans-serif; font-weight: 700; color: var(--heading-color); margin-top: 40px; margin-bottom: 20px; font-size: 1.5rem; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; }
+        p { margin-bottom: 20px; font-size: 1.1rem; text-align: justify; }
+        
+        /* --- MUHIM TUZATISH: Matn siljishining oldini olish --- */
+        .word { 
+            cursor: pointer; 
+            position: relative; 
+            display: inline; /* Qator buzilmasligi uchun */
+            
+            /* Joyni oldindan band qilish (muhim!) */
+            border-bottom: 2px solid transparent; 
+            padding-bottom: 0px;
+            
+            /* Silliq o'tish */
+            transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+        }
+        
+        .word:hover { 
+            color: var(--word-hover-color); 
+            background-color: var(--highlight-color); 
+            
+            /* Faqat rang o'zgaradi, o'lcham emas */
+            border-bottom-color: var(--word-hover-color); 
+            border-radius: 3px; 
+            text-decoration: none; /* Tagiga chizishni o'chirish */
+        }
+        /* ----------------------------------------------------- */
+        
+        .tooltip { visibility: hidden; opacity: 0; position: absolute; bottom: 145%; left: 50%; transform: translateX(-50%); background-color: var(--tooltip-bg); color: var(--tooltip-text); text-align: center; border-radius: 6px; padding: 6px 12px; z-index: 1000; white-space: nowrap; font-family: 'Montserrat', sans-serif; font-size: 0.9rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); pointer-events: none; }
+        .tooltip::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -6px; border-width: 6px; border-style: solid; border-color: var(--tooltip-bg) transparent transparent transparent; }
+        .word:hover .tooltip { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(-5px); transition: all 0.2s ease; }
+        
+        .button-group { display: flex; justify-content: center; gap: 20px; margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border-color); }
+        .button-group button { padding: 12px 24px; font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 15px; background-color: var(--primary-color); color: white; border: none; border-radius: 50px; cursor: pointer; }
+        .button-group button.secondary { background-color: transparent; color: var(--text-color); border: 2px solid var(--border-color); }
+        
+        @media (max-width: 600px) { .container { padding: 25px; } .content-image { height: 250px; } .button-group { flex-direction: column; } }
+    </style>
+</head>
+<body>
+
+    <div id="sticky-timer">
+        <span id="timer-icon"></span>
+        <span id="time-display">00:00</span>
+    </div>
+
+    <div class="container">
+        
+        <div id="english-text" class="text-section">
+            <h1>A Brief History of the Olympics</h1>
+            
+            <p>
+                <span class="sentence">There is no such thing as a "brief" history of the Olympics.</span>
+                <span class="sentence">That's because the Olympics started thousands of years ago in Ancient Greece.</span>
+                <span class="sentence">Greek city-states used to send athletes to compete against each other with the reputation of the city and its people on the line.</span>
+                <span class="sentence">These ancient games helped create peace among the cities by bringing people together for friendly competitions.</span>
+            </p>
+
+            <img class="content-image" id="img-olympics-ancient" src="" alt="Ancient Olympics" loading="lazy">
+
+            <p>
+                <span class="sentence">The modern Olympics began in 1896, but the first one was very different to the Olympics we know today.</span>
+                <span class="sentence">Only 14 countries and 176 athletes, all of them men, competed in the games, which were hosted in Athens.</span>
+                <span class="sentence">Still, the Olympics were successful and helped to improve cooperation between nations.</span>
+                <span class="sentence">Just four years later women competed in the 1900 Olympics in Paris.</span>
+            </p>
+
+            <h2>Evolution of the Games</h2>
+            <p>
+                <span class="sentence">Over time the Olympics grew more popular and more nations started sending competitors.</span>
+                <span class="sentence">In 1924, the winter Olympics was started.</span>
+                <span class="sentence">The first winter Olympics was hosted in Chamonix, France.</span>
+                <span class="sentence">Only 16 nations and 258 athletes participated, competing in just 16 different events.</span>
+                <span class="sentence">Like the summer Olympics, however, the winter games gradually became more popular.</span>
+            </p>
+
+            <img class="content-image" id="img-olympics-winter" src="" alt="Winter Olympics" loading="lazy">
+
+            <p>
+                <span class="sentence">Following World War II, the Olympics became an important part of the Cold War and were vital in maintaining world peace.</span>
+                <span class="sentence">During the Cold War, the world was divided between communism and capitalism, with the Soviet Union and United States competing intensely with each other.</span>
+                <span class="sentence">The Olympics were one of the main ways in which these two nations competed.</span>
+            </p>
+
+            <h2>Modern Era and Future</h2>
+            <p>
+                <span class="sentence">From humble beginnings, the Olympic games have evolved into the grandest games on earth.</span>
+                <span class="sentence">In fact, the Rio Olympics saw 205 countries and over 10,000 athletes competing in 302 separate events.</span>
+                <span class="sentence">Furthermore, while the Olympics was predominantly hosted by developed countries through much of their modern history, the recent games have been hosted in developing nations, such as Brazil and China.</span>
+                <span class="sentence">Many up-and-coming nations now view the Olympics as a way to announce their prosperity to the world.</span>
+            </p>
+            <p>
+                <span class="sentence">Currently, the United States dominates the world stage, and has taken home the most medals in nearly every summer Olympics over the past few decades.</span>
+                <span class="sentence">Recently, criticism over the costs and burden of the games has increased.</span>
+                <span class="sentence">So, what does the future hold for the Olympics?</span>
+                <span class="sentence">They'll almost certainly continue to be hosted, but given these issues, reform may be inevitable for the games.</span>
+            </p>
+
+            <h1>The Origins and Meaning of Thanksgiving</h1>
+
+            <p>
+                <span class="sentence">Thanksgiving is one of the most important holidays in the United States and Canada.</span>
+                <span class="sentence">Unlike many other American holidays, Thanksgiving isn't about gifts, fireworks shows or games, it's about being with family, and giving thanks and celebrating your blessings.</span>
+                <span class="sentence">Christians pray and give thanks to God but many non-Christian Americans celebrate Thanksgiving too.</span>
+            </p>
+
+            <img class="content-image" id="img-thanksgiving-dinner" src="" alt="Thanksgiving Dinner" loading="lazy">
+
+            <p>
+                <span class="sentence">The modern Thanksgiving holiday is based on the Thanksgiving harvest festival celebrated by the Pilgrims, who were early English settlers.</span>
+                <span class="sentence">The Pilgrims landed Plymouth Bay in modern-day Massachusetts in 1620.</span>
+                <span class="sentence">They celebrated Thanksgiving after their first successful harvest in 1621.</span>
+            </p>
+
+            <h2>History of Survival</h2>
+            <p>
+                <span class="sentence">That first holiday lasted for three days, and was attended by both Pilgrim settlers and Native Americans and celebrated the friendship between them.</span>
+                <span class="sentence">During the previous winter, the Pilgrims had struggled to survive.</span>
+                <span class="sentence">Their crops had died in the sandy soil and they had trouble finding food.</span>
+                <span class="sentence">The winter in Massachusetts was much harsher than the winters back in England.</span>
+                <span class="sentence">Half the Pilgrims died and many more were at risk of dying.</span>
+                <span class="sentence">The local Native Americans provided the Pilgrims with food and supplies during the winter.</span>
+                <span class="sentence">The next summer, they also taught the Pilgrims several important survival skills, such as how to grow corn and catch eel.</span>
+                <span class="sentence">This festival marked one of the first friendly exchanges between European settlers and Native Americans.</span>
+            </p>
+
+            <img class="content-image" id="img-harvest" src="" alt="Harvest" loading="lazy">
+
+            <p>
+                <span class="sentence">Historically, Thanksgiving was celebrated at a time when most farmers were finished harvesting their crops.</span>
+                <span class="sentence">They would have a big dinner with their family and closest friends to celebrate their blessings and harvests.</span>
+                <span class="sentence">President Abraham Lincoln later established the tradition of a national and annual Thanksgiving holiday.</span>
+                <span class="sentence">While most Americans are no longer farmers, the tradition of celebrating blessings and food remains and the holiday is still held at harvest time, on the second Monday of October in Canada and on the fourth Thursday of November in the United States.</span>
+            </p>
+        </div>
+        
+        <div id="uzbek-text" class="text-section" style="display:none;">
+            <h1>Olimpiada Tarixi</h1>
+            <p>
+                <span class="sentence">Olimpiada o'yinlarining "qisqa" tarixi degan narsa yo'q.</span>
+                <span class="sentence">Chunki Olimpiada ming yillar oldin Qadimgi Gretsiyada boshlangan.</span>
+                <span class="sentence">Yunon shahar-davlatlari sportchilarni bir-birlari bilan musobaqalashish uchun yuborgan, bunda shahar va uning xalqining obro'si o'rtaga tikilgan.</span>
+                <span class="sentence">Ushbu qadimiy o'yinlar odamlarni do'stona musobaqalar uchun birlashtirib, shaharlar o'rtasida tinchlik o'rnatishga yordam bergan.</span>
+            </p>
+            <img class="content-image" id="img-olympics-ancient-uz" src="" alt="Qadimgi Olimpiada" loading="lazy">
+            <p>
+                <span class="sentence">Zamonaviy Olimpiada o'yinlari 1896-yilda boshlangan, ammo birinchisi biz bilgan bugungi Olimpiadadan juda farq qilgan.</span>
+                <span class="sentence">Afinada o'tkazilgan o'yinlarda atigi 14 davlat va 176 nafar sportchi, ularning barchasi erkaklar, ishtirok etgan.</span>
+                <span class="sentence">Shunga qaramay, Olimpiada muvaffaqiyatli bo'ldi va davlatlar o'rtasidagi hamkorlikni yaxshilashga yordam berdi.</span>
+                <span class="sentence">Atigi to'rt yil o'tgach, ayollar 1900-yilda Parij Olimpiadasida ishtirok etishdi.</span>
+            </p>
+            
+            <h2>O'yinlarning Rivojlanishi</h2>
+            <p>
+                <span class="sentence">Vaqt o'tishi bilan Olimpiada yanada ommalashdi va ko'proq davlatlar raqobatchilarni yubora boshladi.</span>
+                <span class="sentence">1924-yilda Qishki Olimpiada o'yinlari boshlandi.</span>
+                <span class="sentence">Birinchi Qishki Olimpiada Fransiyaning Shamonix shahrida bo'lib o'tdi.</span>
+                <span class="sentence">Unda atigi 16 davlat va 258 sportchi qatnashib, bor-yo'g'i 16 xil tadbirda bellashdi.</span>
+                <span class="sentence">Biroq, Yozgi Olimpiada singari, qishki o'yinlar ham asta-sekin ommalashib bordi.</span>
+            </p>
+             <img class="content-image" id="img-olympics-winter-uz" src="" alt="Qishki Olimpiada" loading="lazy">
+            <p>
+                <span class="sentence">Ikkinchi Jahon urushidan so'ng, Olimpiada Sovuq urushning muhim qismiga aylandi va dunyo tinchligini saqlashda muhim ahamiyat kasb etdi.</span>
+                <span class="sentence">Sovuq urush davrida dunyo kommunizm va kapitalizm o'rtasida bo'lingan edi, Sovet Ittifoqi va Qo'shma Shtatlar o'zaro qattiq raqobatlashardi.</span>
+                <span class="sentence">Olimpiada ushbu ikki davlat raqobatlashadigan asosiy yo'llardan biri edi.</span>
+            </p>
+
+            <h2>Zamonaviy Davr va Kelajak</h2>
+            <p>
+                <span class="sentence">Kamtarona boshlanishdan Olimpiya o'yinlari yerdagi eng ulug'vor o'yinlarga aylandi.</span>
+                <span class="sentence">Aslida, Rio Olimpiadasida 205 davlat va 10 000 dan ortiq sportchi 302 xil tadbirda ishtirok etdi.</span>
+                <span class="sentence">Bundan tashqari, Olimpiada zamonaviy tarixining katta qismida asosan rivojlangan davlatlar tomonidan o'tkazilgan bo'lsa-da, so'nggi o'yinlar Braziliya va Xitoy kabi rivojlanayotgan davlatlarda o'tkazildi.</span>
+                <span class="sentence">Ko'plab rivojlanayotgan davlatlar endi Olimpiadaga o'z farovonligini dunyoga e'lon qilish yo'li sifatida qaramoqda.</span>
+            </p>
+            <p>
+                <span class="sentence">Hozirgi kunda Qo'shma Shtatlar jahon sahnasida hukmronlik qilmoqda va so'nggi bir necha o'n yilliklarda deyarli har bir yozgi Olimpiadada eng ko'p medallarni uyiga olib ketmoqda.</span>
+                <span class="sentence">Yaqinda o'yinlarning xarajatlari va yuki yuzasidan tanqidlar kuchaydi.</span>
+                <span class="sentence">Xo'sh, Olimpiadani kelajakda nima kutmoqda?</span>
+                <span class="sentence">Ular deyarli aniq o'tkazilishi davom etadi, ammo ushbu muammolarni hisobga olganda, o'yinlar uchun islohot muqarrar bo'lishi mumkin.</span>
+            </p>
+
+            <h1>Shukrona Kunining Kelib Chiqishi va Ma'nosi</h1>
+            <p>
+                <span class="sentence">Shukrona kuni AQSh va Kanadadagi eng muhim bayramlardan biridir.</span>
+                <span class="sentence">Boshqa ko'plab Amerika bayramlaridan farqli o'laroq, Shukrona kuni sovg'alar, mushakbozlik shoulari yoki o'yinlar haqida emas, u oila bilan bo'lish, shukronalik bildirish va ne'matlarni nishonlash haqidadir.</span>
+                <span class="sentence">Xristianlar ibodat qilib, Xudoga shukrona aytadilar, ammo ko'plab xristian bo'lmagan amerikaliklar ham Shukrona kunini nishonlaydilar.</span>
+            </p>
+             <img class="content-image" id="img-thanksgiving-dinner-uz" src="" alt="Shukrona kechki ovqati" loading="lazy">
+            <p>
+                <span class="sentence">Zamonaviy Shukrona kuni bayrami Pilgrimlar (ilk ingliz ko'chmanchilari) tomonidan nishonlangan Shukrona hosil bayramiga asoslangan.</span>
+                <span class="sentence">Pilgrimlar 1620-yilda hozirgi Massachusetsdagi Plimut ko'rfaziga qo'nganlar.</span>
+                <span class="sentence">Ular Shukrona kunini 1621-yildagi birinchi muvaffaqiyatli hosilidan keyin nishonlashgan.</span>
+            </p>
+
+            <h2>Omon Qolish Tarixi</h2>
+            <p>
+                <span class="sentence">O'sha birinchi bayram uch kun davom etgan va unda ham Pilgrim ko'chmanchilari, ham mahalliy amerikaliklar qatnashgan va ular o'rtasidagi do'stlik nishonlangan.</span>
+                <span class="sentence">Oldingi qishda Pilgrimlar omon qolish uchun kurashgan edilar.</span>
+                <span class="sentence">Ularning ekinlari qumli tuproqda nobud bo'lgan va ular oziq-ovqat topishda qiynalishgan.</span>
+                <span class="sentence">Massachusetsdagi qish Angliyadagi qishdan ancha qattiqroq edi.</span>
+                <span class="sentence">Pilgrimlarning yarmi vafot etdi va yana ko'plari o'lim xavfi ostida edi.</span>
+                <span class="sentence">Mahalliy mahalliy amerikaliklar qish davomida Pilgrimlarni oziq-ovqat va ta'minot bilan ta'minladilar.</span>
+                <span class="sentence">Keyingi yozda ular Pilgrimlarga makkajo'xori o'stirish va ilonbaliq (eel) tutish kabi bir qancha muhim omon qolish ko'nikmalarini ham o'rgatishdi.</span>
+                <span class="sentence">Ushbu festival yevropalik ko'chmanchilar va mahalliy amerikaliklar o'rtasidagi birinchi do'stona almashinuvlardan biri bo'ldi.</span>
+            </p>
+             <img class="content-image" id="img-harvest-uz" src="" alt="Hosil" loading="lazy">
+            <p>
+                <span class="sentence">Tarixan, Shukrona kuni aksariyat fermerlar o'z hosillarini yig'ib olgandan keyin nishonlangan.</span>
+                <span class="sentence">Ular o'z ne'matlari va hosillarini nishonlash uchun oilalari va eng yaqin do'stlari bilan katta kechki ovqat qilishgan.</span>
+                <span class="sentence">Keyinchalik Prezident Avraam Linkoln milliy va yillik Shukrona kuni bayrami an'anasini joriy etdi.</span>
+                <span class="sentence">Aksariyat amerikaliklar endi fermer bo'lmasalar-da, ne'matlar va oziq-ovqatni nishonlash an'anasi saqlanib qolgan va bayram haligacha hosil vaqtida, Kanadada oktabr oyining ikkinchi dushanbasida va AQShda noyabr oyining to'rtinchi payshanbasida o'tkaziladi.</span>
+            </p>
+        </div>
+
+        <div class="button-group">
+            <button id="toggle-lang-button">O'zbekcha</button>
+            <button id="toggle-theme-button" class="secondary">Qorong'u rejim</button>
+        </div>
+    </div>
+
+    <script>
+        function loadImages() {
+            const images = {
+                "img-olympics-ancient": "https://images.unsplash.com/photo-1569517282132-25d22f4573e6?w=800&q=60", 
+                "img-olympics-winter": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=800&q=60", 
+                "img-thanksgiving-dinner": "https://images.unsplash.com/photo-1574672174772-e86da986bf98?w=800&q=60", 
+                "img-harvest": "https://images.unsplash.com/photo-1474447976065-67d23accb1e3?w=800&q=60"
+            };
+            for (const [id, url] of Object.entries(images)) {
+                if(document.getElementById(id)) document.getElementById(id).src = url;
+                if(document.getElementById(id + "-uz")) document.getElementById(id + "-uz").src = url;
+            }
+        }
+
+        // --- KUZGI BARGLAR YOMG'IRI ---
+        function createLeaf() {
+            const leaf = document.createElement('div');
+            const icons = ['', '', '']; 
+            leaf.innerHTML = icons[Math.floor(Math.random() * icons.length)];
+            leaf.className = 'leaf-rain';
+            leaf.style.left = Math.random() * 100 + 'vw';
+            leaf.style.animationDuration = Math.random() * 5 + 8 + 's'; 
+            leaf.style.fontSize = (Math.random() * 20 + 15) + 'px';
+            document.body.appendChild(leaf);
+            setTimeout(() => leaf.remove(), 13000);
+        }
+        setInterval(createLeaf, 600);
+
+        const originalTexts = {};
+        const words = {
+            "there": "bor/u yerda", "is": "-dir", "no": "yo'q", "such": "bunday", "thing": "narsa", "as": "kabi/sifatida", "a": "bir", "brief": "qisqa", "history": "tarix", "of": "ning", "the": "o'sha", "olympics": "olimpiada", "that's": "bu (shuning uchun)", "because": "chunki", "started": "boshlangan", "thousands": "minglab", "years": "yillar", "ago": "oldin", "in": "ichida/-da", "ancient": "qadimiy", "greece": "gretsiya", "greek": "yunon", "city-states": "shahar-davlatlar", "used": "odatlangandi", "to": "ga/uchun", "send": "yubormoq", "athletes": "sportchilar", "compete": "musobaqalashmoq", "against": "qarshi", "each": "har", "other": "boshqa", "with": "bilan", "reputation": "obro'", "city": "shahar", "and": "va", "its": "uning", "people": "odamlar", "on": "ustida", "line": "chiziq/xavf ostida", "these": "bu", "games": "o'yinlar", "helped": "yordam bergan", "create": "yaratmoq", "peace": "tinchlik", "among": "orasida", "cities": "shaharlar", "by": "orqali", "bringing": "birlashtirish", "together": "birga", "for": "uchun", "friendly": "do'stona", "competitions": "musobaqalar", "modern": "zamonaviy", "began": "boshlangan", "1896": "1896", "but": "ammo", "first": "birinchi", "one": "bitta", "was": "edi", "very": "juda", "different": "boshqacha", "know": "bilmoq", "today": "bugun", "only": "faqat", "14": "14", "countries": "davlatlar", "176": "176", "all": "barcha", "them": "ular", "men": "erkaklar", "competed": "musobaqalashgan", "which": "qaysiki", "were": "edilar", "hosted": "mezbonlik qilingan", "athens": "afina", "still": "hali ham", "successful": "muvaffaqiyatli", "improve": "yaxshilamoq", "cooperation": "hamkorlik", "between": "o'rtasida", "nations": "millatlar", "just": "shunchaki", "four": "to'rt", "later": "keyinroq", "women": "ayollar", "1900": "1900", "paris": "parij", "over": "davomida", "time": "vaqt", "grew": "o'sdi", "more": "ko'proq", "popular": "mashhur", "sending": "yuborish", "competitors": "raqobatchilar", "1924": "1924", "winter": "qish", "chamonix": "shamonix", "france": "fransiya", "16": "16", "258": "258", "participated": "ishtirok etgan", "competing": "musobaqalashib", "events": "tadbirlar", "like": "kabi", "summer": "yoz", "however": "biroq", "gradually": "asta-sekin", "became": "bo'ldi", "following": "keyin", "world": "dunyo", "war": "urush", "ii": "ikkinchi", "important": "muhim", "part": "qism", "cold": "sovuq", "vital": "o'ta muhim", "maintaining": "saqlash", "during": "davomida", "divided": "bo'lingan", "communism": "kommunizm", "capitalism": "kapitalizm", "soviet": "sovet", "union": "ittifoqi", "united": "birlashgan", "states": "shtatlar", "intensely": "qattiq", "main": "asosiy", "ways": "yo'llar", "two": "ikki", "at": "da", "same": "bir xil", "new": "yangi", "coming": "kelayotgan", "into": "ichiga", "existence": "mavjudlik", "colonial": "mustamlaka", "empires": "imperiyalar", "kingdom": "qirollik", "others": "boshqalar", "crumbling": "parchalanayotgan", "founded": "asos solingan", "many": "ko'plab", "wanted": "xohlagan", "prove": "isbotlamoq", "themselves": "o'zlarini", "way": "yo'l", "do": "qilmoq", "so": "shunday", "from": "dan", "humble": "kamtarona", "beginnings": "boshlanishlar", "have": "bor", "evolved": "rivojlangan", "grandest": "eng ulug'vor", "earth": "yer", "fact": "fakt", "rio": "rio", "saw": "ko'rdi", "205": "205", "10000": "10000", "302": "302", "separate": "alohida", "furthermore": "bundan tashqari", "while": "holbuki", "predominantly": "asosan", "developed": "rivojlangan", "through": "orqali", "much": "ko'p", "recent": "yaqindagi", "been": "bo'lgan", "developing": "rivojlanayotgan", "brazil": "braziliya", "china": "xitoy", "up-and-coming": "kelajagi bor", "now": "hozir", "view": "qaramoq", "announce": "e'lon qilmoq", "prosperity": "farovonlik", "currently": "hozirda", "dominates": "hukmronlik qiladi", "stage": "sahna", "taken": "olgan", "home": "uy", "most": "eng ko'p", "medals": "medallar", "nearly": "deyarli", "every": "har bir", "past": "o'tmish", "few": "bir necha", "decades": "o'n yilliklar", "beijing": "pekin", "2008": "2008", "came": "keldi", "close": "yaqin", "taking": "olish", "couldn't": "qila olmadi", "quite": "to'liq", "beat": "yengmoq", "recently": "yaqinda", "criticism": "tanqid", "costs": "xarajatlar", "burden": "yuk", "has": "bor", "increased": "oshgan", "norway": "norvegiya", "pulled": "chiqib ketdi", "out": "tashqari", "bid": "taklif", "citizens": "fuqarolar", "didn't": "qilmadi", "want": "xohlamoq", "deal": "shug'ullanmoq", "hassle": "ovoragarchilik", "meanwhile": "shu vaqtda", "janeiro": "janeyro", "faced": "duch keldi", "setbacks": "to'siqlar", "challenges": "qiyinchiliklar", "what": "nima", "does": "qiladi", "hold": "saqlamoq", "they'll": "ular (qiladi)", "almost": "deyarli", "certainly": "albatta", "continue": "davom etmoq", "given": "hisobga olib", "issues": "muammolar", "reform": "islohot", "may": "mumkin", "inevitable": "muqarrar", "origins": "kelib chiqishi", "meaning": "ma'nosi", "thanksgiving": "shukrona kuni", "holidays": "bayramlar", "unlike": "farqli", "american": "amerikalik", "isn't": "emas", "about": "haqida", "gifts": "sovg'alar", "fireworks": "mushakbozlik", "shows": "shoular", "it's": "bu", "family": "oila", "giving": "berish", "thanks": "rahmat", "celebrating": "nishonlash", "your": "sizning", "blessings": "ne'matlar", "christians": "xristianlar", "pray": "ibodat qilmoq", "god": "xudo", "non-christian": "xristian bo'lmagan", "holiday": "bayram", "based": "asoslangan", "harvest": "hosil", "festival": "festival", "pilgrims": "ziyoratchilar", "who": "kimki", "early": "ilk", "english": "ingliz", "settlers": "ko'chmanchilar", "landed": "qo'ngan", "plymouth": "plimut", "bay": "ko'rfaz", "modern-day": "hozirgi zamon", "massachusetts": "massachusets", "1620": "1620", "after": "keyin", "successful": "muvaffaqiyatli", "1621": "1621", "survival": "omon qolish", "lasted": "davom etgan", "three": "uch", "days": "kunlar", "attended": "qatnashgan", "both": "ikkalasi", "native": "mahalliy", "americans": "amerikaliklar", "friendship": "do'stlik", "previous": "oldingi", "had": "bor edi", "struggled": "kurashgan", "survive": "omon qolmoq", "their": "ularning", "crops": "ekinlar", "died": "o'lgan", "sandy": "qumli", "soil": "tuproq", "trouble": "muammo", "finding": "topish", "food": "oziq-ovqat", "harsher": "qattiqroq", "winters": "qishlar", "back": "orqada", "england": "angliya", "half": "yarim", "risk": "xavf", "dying": "o'lish", "local": "mahalliy", "provided": "ta'minlagan", "supplies": "ta'minot", "next": "keyingi", "taught": "o'rgatgan", "several": "bir qancha", "skills": "ko'nikmalar", "grow": "o'stirmoq", "corn": "makkajo'xori", "catch": "tutmoq", "eel": "ilonbaliq", "marked": "belgilagan", "exchanges": "almashinuvlar", "european": "yevropalik", "historically": "tarixan", "farmers": "fermerlar", "finished": "tugatgan", "harvesting": "yig'ib olish", "big": "katta", "dinner": "kechki ovqat", "closest": "eng yaqin", "friends": "do'stlar", "president": "prezident", "abraham": "avraam", "lincoln": "linkoln", "established": "tashkil etgan", "tradition": "an'ana", "national": "milliy", "annual": "yillik", "longer": "uzoqroq", "remains": "qolmoqda", "held": "o'tkaziladi", "second": "ikkinchi", "monday": "dushanba", "october": "oktabr", "canada": "kanada", "fourth": "to'rtinchi", "thursday": "payshanba", "november": "noyabr"
+        };
+
+        function makeWordsClickable(containerId) {
+            const container = document.getElementById(containerId);
+            const sentences = container.getElementsByClassName('sentence');
+            
+            for (let sentence of sentences) {
+                if (!originalTexts[sentence.innerText]) originalTexts[sentence.innerText] = sentence.innerText;
+                const text = sentence.innerText;
+                const wordsArray = text.split(/(\s+|[,.?!:;()""—-])/);
+                sentence.innerHTML = '';
+                
+                wordsArray.forEach(word => {
+                    if (word.trim() && !/[,.?!:;()""—-]/.test(word)) {
+                        const span = document.createElement('span');
+                        span.className = 'word';
+                        span.innerText = word;
+                        const lowerWord = word.toLowerCase().replace(/[^a-z0-9'-]/g, '');
+                        let translation = words[lowerWord];
+                        if (!translation && lowerWord.endsWith('s')) translation = words[lowerWord.slice(0, -1)];
+                        if (!translation && lowerWord.endsWith('ed')) translation = words[lowerWord.slice(0, -2)];
+                        if (!translation) translation = '...';
+                        
+                        const tooltip = document.createElement('span');
+                        tooltip.className = 'tooltip';
+                        tooltip.innerText = translation;
+                        span.appendChild(tooltip);
+                        span.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            if (typeof responsiveVoice !== 'undefined') responsiveVoice.speak(word, "UK English Male");
+                        });
+                        sentence.appendChild(span);
+                    } else {
+                        sentence.appendChild(document.createTextNode(word));
+                    }
+                });
+            }
+        }
+
+        let seconds = 0;
+        setInterval(() => {
+            seconds++;
+            const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const secs = (seconds % 60).toString().padStart(2, '0');
+            document.getElementById('time-display').textContent = `${mins}:${secs}`;
+        }, 1000);
+
+        const toggleButton = document.getElementById('toggle-lang-button');
+        const englishText = document.getElementById('english-text');
+        const uzbekText = document.getElementById('uzbek-text');
+        let isEnglish = true;
+
+        toggleButton.addEventListener('click', () => {
+            if (isEnglish) {
+                englishText.style.display = 'none';
+                uzbekText.style.display = 'block';
+                toggleButton.textContent = 'English';
+                isEnglish = false;
+                makeWordsClickable('uzbek-text');
+            } else {
+                englishText.style.display = 'block';
+                uzbekText.style.display = 'none';
+                toggleButton.textContent = 'O\'zbekcha';
+                isEnglish = true;
+                makeWordsClickable('english-text');
+            }
+        });
+
+        const toggleThemeButton = document.getElementById('toggle-theme-button');
+        let currentThemeIndex = 0;
+        const themes = ['light-mode', 'dark-mode'];
+        const themeTexts = ['Qorong\'u rejim', 'Kun rejimi'];
+
+        toggleThemeButton.addEventListener('click', () => {
+            document.body.classList.remove(...themes);
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+            if (themes[currentThemeIndex] !== 'light-mode') {
+                document.body.classList.add(themes[currentThemeIndex]);
+            }
+            toggleThemeButton.textContent = themeTexts[currentThemeIndex];
+        });
+
+        window.onload = () => {
+            makeWordsClickable('english-text');
+            loadImages();
+            if (typeof responsiveVoice !== 'undefined') responsiveVoice.enableSpeech();
+        };
+    </script>
+</body>
+</html>
