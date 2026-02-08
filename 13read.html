@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English & Travel - Ultimate Course</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://code.responsivevoice.org/responsivevoice.js?key=ftro4Sxr"></script>
+    <style>
+        /* --- DIZAYN (O'ZGARTIRILMADI) --- */
+        :root {
+            --primary-color: #d97706; --primary-hover: #b45309;
+            --bg-color: #fffbeb; --card-bg: #ffffff;
+            --text-color: #334155; --heading-color: #1e293b;
+            --tooltip-bg: #1e293b; --tooltip-text: #ffffff;
+            --border-color: #e2e8f0; --highlight-color: rgba(217, 119, 6, 0.15);
+            --word-hover-color: #d97706;
+            --highlight-bg: #fef08a; /* Sariq (Javobni belgilash uchun) */
+            --correct-bg: #dcfce7; --correct-text: #14532d;
+            --wrong-bg: #fee2e2; --wrong-text: #991b1b;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        body.dark-mode {
+            --bg-color: #0f172a; --card-bg: #1e293b;
+            --text-color: #cbd5e1; --heading-color: #f1f5f9;
+            --tooltip-bg: #f1f5f9; --tooltip-text: #0f172a;
+            --border-color: #334155; --highlight-color: rgba(217, 119, 6, 0.2);
+            --word-hover-color: #fbbf24; --highlight-bg: #854d0e;
+        }
+        .floating-icon { position: fixed; top: -50px; z-index: 9999; pointer-events: none; opacity: 0.5; animation: fall linear forwards; }
+        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+        * { box-sizing: border-box; transition: background-color 0.3s ease, color 0.3s ease; }
+        body { font-family: 'Merriweather', serif; line-height: 1.9; margin: 0; padding-top: 80px; background-color: var(--bg-color); color: var(--text-color); overflow-x: hidden; }
+        
+        #sticky-menu { position: fixed; top: 0; left: 0; width: 100%; height: 70px; background: var(--card-bg); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 0 20px; z-index: 10000; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .timer-container { display: flex; align-items: center; gap: 10px; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.3rem; color: var(--primary-color); }
+        .timer-icon { font-size: 1.5rem; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        .menu-btn { background: transparent; color: var(--text-color); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 50px; cursor: pointer; font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 5px; }
+        .menu-btn:hover { border-color: var(--primary-color); color: var(--primary-color); }
+        
+   .container {
+    max-width: 800px;
+    width: 100%;           /* Mobil qurilmalarda chekkalarga yopishib qolmasligi uchun */
+    margin: 20px auto 60px;
+    background: var(--card-bg);
+    padding: 40px 50px;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    position: relative;
+    z-index: 10;
+
+    /* --- MUAMMONI HAL QILUVCHI QATORLAR --- */
+    box-sizing: border-box;  /* Padding kenglikni oshirib yubormasligi uchun */
+    overflow: hidden;        /* Ichidagi tarjima yoki boshqa bloklar chetdan chiqsa, kesib tashlaydi */
+    word-wrap: break-word;   /* Uzun so'zlarni majburan pastga tushiradi */
+}
+
+/* Mobil telefonlar uchun qo'shimcha moslashuv */
+@media (max-width: 600px) {
+    .container {
+        padding: 25px 15px; /* Telefonda ichki masofani kamaytiramiz */
+        margin-top: 10px;
+    }
+}
+
+        .content-image { width: 100%; height: 350px; object-fit: cover; border-radius: 12px; margin: 30px 0; background-color: var(--border-color); }
+        h1 { font-family: 'Montserrat', sans-serif; text-align: center; color: var(--primary-color); margin-bottom: 20px; font-weight: 700; }
+        h2, h3 { font-family: 'Montserrat', sans-serif; font-weight: 700; color: var(--heading-color); margin-top: 40px; margin-bottom: 15px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; }
+        p { margin-bottom: 20px; font-size: 1.1rem; text-align: justify; }
+        
+        .word { cursor: pointer; position: relative; display: inline; border-bottom: 2px solid transparent; transition: all 0.2s; }
+        .word:hover { color: var(--word-hover-color); background-color: var(--highlight-color); border-bottom-color: var(--word-hover-color); border-radius: 3px; }
+        .tooltip { visibility: hidden; opacity: 0; position: absolute; bottom: 150%; left: 50%; transform: translateX(-50%); background-color: var(--tooltip-bg); color: var(--tooltip-text); text-align: center; border-radius: 6px; padding: 6px 12px; z-index: 1000; white-space: nowrap; font-family: 'Montserrat', sans-serif; font-size: 0.9rem; box-shadow: 0 4px 8px rgba(0,0,0,0.2); pointer-events: none; }
+        .tooltip::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -6px; border-width: 6px; border-style: solid; border-color: var(--tooltip-bg) transparent transparent transparent; }
+        .word:hover .tooltip { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(-5px); }
+        .highlight-found { background-color: var(--highlight-bg); border-radius: 3px; transition: background-color 0.5s ease; padding: 2px 0; border: 1px dashed var(--primary-color); }
+
+        .quiz-container { margin-top: 40px; border-top: 2px solid var(--border-color); padding-top: 20px; }
+        .quiz-block { background: rgba(0,0,0,0.02); padding: 25px; border-radius: 12px; margin-bottom: 30px; border: 1px solid var(--border-color); }
+        .quiz-title { font-family: 'Montserrat', sans-serif; font-weight: 700; margin-bottom: 15px; color: var(--primary-color); text-transform: uppercase; font-size: 0.95rem; letter-spacing: 1px; }
+        .question-item { margin-bottom: 25px; border-bottom: 1px dashed var(--border-color); padding-bottom: 20px; }
+        .question-item:last-child { border-bottom: none; }
+        .question-text { font-weight: 600; margin-bottom: 10px; color: var(--heading-color); }
+        .options label { display: block; margin: 8px 0; cursor: pointer; padding: 10px; border-radius: 6px; transition: background 0.2s; font-size: 1rem; border: 1px solid transparent; }
+        .options label:hover { background: rgba(0,0,0,0.04); border-color: var(--border-color); }
+        .quiz-input { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-color); color: var(--text-color); margin-top: 5px; font-family: 'Montserrat', sans-serif; font-size: 1rem; }
+        .btn-check { padding: 10px 24px; background: var(--primary-color); color: white; border: none; border-radius: 50px; cursor: pointer; font-size: 0.9rem; margin-top: 15px; font-family: 'Montserrat', sans-serif; font-weight: 600; }
+        .btn-check:hover { background: var(--primary-hover); }
+        
+        .feedback { margin-top: 15px; font-size: 0.95rem; display: none; padding: 15px; border-radius: 8px; line-height: 1.6; border-left: 5px solid; }
+        .feedback.correct { background-color: var(--correct-bg); color: var(--correct-text); border-color: #16a34a; }
+        .feedback.wrong { background-color: var(--wrong-bg); color: var(--wrong-text); border-color: #dc2626; }
+
+        @media (max-width: 600px) { .container { padding: 25px; margin-top: 10px; } .content-image { height: 220px; } .menu-btn span { display: none; } }
+    </style>
+</head>
+<body>
+
+    <div id="sticky-menu">
+        <div class="timer-container">
+            <span class="timer-icon"></span>
+            <span id="page-timer">00:00</span>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button class="menu-btn" id="lang-btn"> <span>O'zbekcha</span></button>
+            <button class="menu-btn" id="theme-btn"></button>
+        </div>
+    </div>
+
+    <div class="container">
+        
+        <div id="english-content">
+            <h1>Why Learning English is Essential</h1>
+            <img class="content-image" src="https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=800&q=60" alt="English">
+
+            <div class="text-body">
+                <p>
+                    <span class="sentence" id="ev-q-false">English might not be the most widely spoken language in the world (that honour goes to Chinese), but it is the world's second most spoken language.</span> 
+                    <span class="sentence">It's spoken as a foreign language by a massive 603 million people - more than double Arabic, in third place.</span> 
+                    <span class="sentence">English is the most popular second language in countries as far apart as Suriname, Denmark, Israel and Singapore.</span> 
+                    <span class="sentence">If you want to speak to the world, learn English.</span>
+                </p>
+
+                <h2>English Language in Business</h2>
+                <p>
+                    <span class="sentence" id="ev-q1">The trend towards English is being led by international businesses; both Chinese electronics company Lenovo and German airline Lufthansa are now using English as their official language.</span> 
+                    <span class="sentence" id="ev-q1-b">Using English makes it possible for businesses to recruit the best talent from across the world and opens up their product to new markets.</span> 
+                    <span class="sentence" id="ev-v3">Employees who are hoping for a promotion or want to make their CV stand out should consider sharpening their English skills.</span> 
+                    <span class="sentence">If you can communicate with clients and suppliers of a company no matter what country they're based in, then your skills are invaluable to an employer.</span>
+                </p>
+
+                <h2>English Language in Education</h2>
+                <p>
+                    <span class="sentence">English is doubly important to anyone working in an academic discipline.</span> 
+                    <span class="sentence" id="ev-q2">According to research, 80% of the peer-reviewed journals in Scopus, the biggest database of journals, are published in English.</span> 
+                    <span class="sentence">If you want your papers to be read by scientists across the world, or you want to work with colleagues in other countries, you need to be able to talk to them in English.</span>
+                </p>
+
+                <h2>English Language in Entertainment</h2>
+                <p>
+                    <span class="sentence" id="ev-q3">It's not only academic writing that is mostly published in English. More books are published each year in English than in any other language, and Hollywood and its English-language films still dominate the industry.</span> 
+                    <span class="sentence">Of course, you can read translations or watch with subtitles, but these never quite match the experience of the original.</span> 
+                    <span class="sentence" id="ev-tf-net">The internet, too, is close to 54% English, according to the Web Technology Surveys.</span> 
+                    <span class="sentence">If you're searching for information online then you're much more likely to find what you're looking for if you use English.</span>
+                </p>
+
+                <h2>English Language for Travel</h2>
+                <p>
+                    <span class="sentence">Travel to most countries is easier if you speak their language, but it's not possible to learn the language for every single country you might want to visit.</span> 
+                    <span class="sentence" id="ev-q4">It's fairly likely, though, that you'll be able to find someone who speaks English in most major cities in the world.</span> 
+                    <span class="sentence">People who work in the tourist industry learn English, so you will have no trouble understanding people at your hotel, on the plane or at a tourist site if you speak English.</span>
+                </p>
+
+                <h2>Conclusion</h2>
+                <p>
+                    <span class="sentence">The world is getting smaller, and globalisation is here to stay.</span> 
+                    <span class="sentence" id="ev-v4">These problems can only be solved if we co-operate across national boundaries, and to do that we have to have a common language.</span> 
+                    <span class="sentence">Whether you love it or hate it, the future is English.</span>
+                </p>
+            </div>
+
+            <div class="quiz-container">
+                <div class="quiz-block">
+                    <div class="quiz-title">1. Tushunish boyicha savollar</div>
+                    
+                    <div class="question-item">
+                        <p class="question-text">1. Nega xalqaro bizneslarda ingliz tilidan foydalanish tendensiyasi bor?</p>
+                        <div class="options">
+                            <label><input type="radio" name="eq1" value="a"> Mahsulotlarni arzonlashtirish uchun.</label>
+                            <label><input type="radio" name="eq1" value="b"> Eng yaxshi iste'dodlarni yollash va yangi bozorlarga kirish uchun.</label>
+                        </div>
+                        <button class="btn-check" onclick="checkQ(this, 'b', 'ev-q1-b', '<strong>To\'g\'ri!</strong><br><strong>Qanday aniqlash kerak:</strong> Matnda aynan shu gapda (<em>ev-q1-b</em>) aniq yozilgan: <em>Using English makes it possible for businesses to recruit the best talent... and opens up their product to new markets.</em><br>Bu degani: Ingliz tili korxonalarga eng yaxshi xodimlarni topish va yangi bozorlarga chiqish imkonini beradi.')">Tekshirish</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-item">
+                        <p class="question-text">2. Ingliz tilini bilish akademik sohalarda qanday foydali?</p>
+                        <div class="options">
+                            <label><input type="radio" name="eq2" value="a"> Jurnallarning 80% ingliz tilida bolib, tadqiqotlar olimlarga yetib borishiga yordam beradi.</label>
+                            <label><input type="radio" name="eq2" value="b"> Maqola yozishni tezlashtiradi.</label>
+                        </div>
+                        <button class="btn-check" onclick="checkQ(this, 'a', 'ev-q2', '<strong>To\'g\'ri!</strong><br><strong>Qanday aniqlash kerak:</strong> Matnning <em>Ta\'limda</em> bolimidagi ikkinchi gap (<em>ev-q2</em>)da aytilgan: <em>80% of the peer-reviewed journals... are published in English.</em><br>Bu shuni anglatadiki, olimlar oz ishlarini dunyoga tanitish va ilmiy hamkorlik qilish uchun ingliz tilini bilishlari shart. Boshqa variant esa matnda asoslanmagan.')">Tekshirish</button>
+                        <div class="feedback"></div>
+                    </div>
+                </div>
+
+                <div class="quiz-block">
+                    <div class="quiz-title">2. Togri yoki Notogri?</div>
+                    
+                    <div class="question-item">
+                        <p class="question-text">1. Ingliz tili dunyodagi eng keng tarqalgan til.</p>
+                        <div class="options">
+                            <label><input type="radio" name="etf1" value="false"> Notogri</label>
+                            <label><input type="radio" name="etf1" value="true"> Togri</label>
+                        </div>
+                        <button class="btn-check" onclick="checkQ(this, 'false', 'ev-q-false', '<strong>To\'g\'ri (Javob Noto\'g\'ri).</strong><br><strong>Qanday aniqlash kerak:</strong> Matnning birinchi gapida (<em>ev-q-false</em>) aniq ta\'kidlangan: <em>English might not be the most widely spoken language... that honour goes to Chinese.</em><br>Ya\'ni, eng kop gapiriladigan til Xitoy tili, Ingliz tili esa ikkinchi orinda. Shuning uchun bu gap notogri.')">Tekshirish</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-item">
+                        <p class="question-text">2. Internetning kop qismi ingliz tilida.</p>
+                         <div class="options">
+                            <label><input type="radio" name="etf3" value="true"> Togri</label>
+                            <label><input type="radio" name="etf3" value="false"> Notogri</label>
+                        </div>
+                         <button class="btn-check" onclick="checkQ(this, 'true', 'ev-tf-net', '<strong>To\'g\'ri (Javob To\'g\'ri).</strong><br><strong>Qanday aniqlash kerak:</strong> <em>Kongilochar</em> bolimidagi uchinchi gap (<em>ev-tf-net</em>)da statistik keltirilgan: <em>The internet, too, is close to 54% English.</em><br>Bu internetning yarmidan kopi ingliz tilida ekanligini anglatadi. 54% — "kop qismi" degan ma\'noni beradi.')">Tekshirish</button>
+                        <div class="feedback"></div>
+                    </div>
+                </div>
+
+                <div class="quiz-block">
+                    <div class="quiz-title">3. Gaplarni Toldiring (Lugat)</div>
+                    
+                    <div class="question-item">
+                        <p class="question-text">1. Lenovo va Lufthansa ingliz tilini o'zlarining ______ til sifatida ishlatmoqda.</p>
+                        <input type="text" class="quiz-input" placeholder="Javobni yozing...">
+                        <button class="btn-check" onclick="checkInput(this, ['official', 'rasmiy'], 'ev-q1', '<strong>To\'g\'ri!</strong><br><strong>Qanday aniqlash kerak:</strong> <em>official</em> — bu <strong>sifat (adjective)</strong>. Oldidan <em>their</em> (ularning) olmoshi kelgani va song <em>language</em> otiga boglanganligi uni sifat ekanligini korsatadi. Matndagi <em>ev-q1</em> gapida aynan <em>official language</em> iborasi ishlatilgan.')">Tekshirish</button>
+                        <div class="feedback"></div>
+                    </div>
+                     <div class="question-item">
+                        <p class="question-text">2. Askar oz vatoni uchun kurashgani uchun buni ______ deb hisobladi.</p>
+                        <input type="text" class="quiz-input" placeholder="Javobni yozing...">
+                        <button class="btn-check" onclick="checkInput(this, ['honour', 'honor', 'sharaf'], 'ev-q-false', '<strong>To\'g\'ri!</strong><br><strong>Qanday aniqlash kerak:</strong> Bu yerda <strong>ot (noun)</strong> kerak, chunki u <em>an</em> artikli va <em>it</em> olmoshi bilan almashtirilishi mumkin bolgan pozitsiyada turadi. Matndagi birinchi qatorda (<em>ev-q-false</em>) Xitoy tiliga nisbatan <em>that honour</em> iborasi ishlatilgan. Bu yerda ham vatan uchun jang qilish "sharaf" degan ma\'noda keladi.')">Tekshirish</button>
+                        <div class="feedback"></div>
+                    </div>
+                     <div class="question-item">
+                        <p class="question-text">3. Lavozimi kotarilishni istaydigan xodimlar oz konikmalarini ______ haqida oylab korishi kerak.</p>
+                        <input type="text" class="quiz-input" placeholder="Javobni yozing...">
+                        <button class="btn-check" onclick="checkInput(this, ['sharpening', 'o\'tkirlash', 'yaxshilash'], 'ev-v3', '<strong>To\'g\'ri!</strong><br><strong>Qanday aniqlash kerak:</strong> <em>consider</em> (oylab kormoq) feli odatda <strong>-ing</strong> shaklidagi fel (gerund) yoki ot oladi. Shuningdek, <em>their skills</em> (ularning konikmalari) iborasidan keyin ularni <strong>nima qilish</strong> kerakligi soralayotgani aniq. Matndagi <em>ev-v3</em> gapida aynan <em>sharpening their English skills</em> degan ibora bor. Sharpening — bu yerda "otkirlash", ya\'ni konikmalarni rivojlantirish va yaxshilash ma\'nosida.')">Tekshirish</button>
+                        <div class="feedback"></div>
+                    </div>
+                     <div class="question-item">
+                        <p class="question-text">4. Agar biz milliy chegaralardan tashqarida ______ qilsak, muammolarni hal qilish mumkin.</p>
+                        <input type="text" class="quiz-input" placeholder="Javobni yozing...">
+                        <button class="btn-check" onclick="checkInput(this, ['co-operate', 'cooperate', 'hamkorlik'], 'ev-v4', '<strong>To\'g\'ri!</strong><br><strong>Qanday aniqlash kerak:</strong> Gap shart maylida (<em>if we...</em>) va asosiy fel (<em>can be solved</em>)dan oldin kelgani uchun, bu yerda <strong>fel (verb)</strong> kerak. Matndagi oxirgi bolimdagi ikkinchi gap (<em>ev-v4</em>)da aynan shu soz ishlatilgan: <em>if we co-operate across national boundaries.</em> Muammolarni hal qilish uchun davlatlar ozaro hamkorlik qilishi kerakligi aytilgan.')">Tekshirish</button>
+                        <div class="feedback"></div>
+                    </div>
+                </div>
+            </div>
+
+            <hr style="margin: 50px 0; border: 0; border-top: 2px dashed var(--border-color);">
+
+            <h1>5 Places You Need to Visit in Europe</h1>
+            <img class="content-image" src="https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800&q=60" alt="Travel">
+
+            <div class="text-body">
+                <p>
+                    <span class="sentence" id="tv-ex4">Ancient monuments, eating sensational food and experiencing new adventures make the perfect holiday.</span> 
+                    <span class="sentence">Thankfully, Europe has something for everyone, but narrowing down the top places in Europe to visit is a difficult task especially with so many unique and interesting cities to discover.</span>
+                </p>
+
+                <h3>Number 5: Verdun (France)</h3>
+                <p>
+                    <span class="sentence" id="tv-q1">Verdun in France is probably most famous for the battle fought there during World War I.</span> 
+                    <span class="sentence">During this time, much of the town was destroyed. It has since been rebuilt but there are still surrounding areas left in ruins as a reminder of the past.</span> 
+                    <span class="sentence">Battle-scarred hills and war memorials can be seen, as well as an 11th century cathedral, which has been restored.</span> 
+                    <span class="sentence">A must-visit place for history buffs and anyone interested in World War I history.</span>
+                </p>
+
+                <h3>Number 4: Bruges (Belgium)</h3>
+                <p>
+                    <span class="sentence" id="tv-q2">Bruges is packed with people exploring its narrow lanes and ancient buildings, but don't let that stop you from checking it out.</span> 
+                    <span class="sentence">Stepping into this city is like stepping back in time.</span> 
+                    <span class="sentence" id="tv-tf-cobble">The streets are cobblestoned in much of the city.</span> 
+                    <span class="sentence">There are lots of old buildings to see and traditional food to taste.</span> 
+                    <span class="sentence">You'll feel part of the medieval world.</span>
+                </p>
+
+                <h3>Number 3: Bulgaria</h3>
+                <p>
+                    <span class="sentence" id="tv-tf-bulg">Bulgaria is an entire country that had, until recently, been largely overlooked by tourists.</span> 
+                    <span class="sentence">An ancient nation, it holds important information about people and civilizations past.</span> 
+                    <span class="sentence">Tombs and monuments, temples and jewels, all exist from the time of ancient Thrace.</span> 
+                    <span class="sentence">This is a country that has such a rich past and beautiful modern culture that anyone would enjoy.</span>
+                </p>
+
+                <h3>Number 2: Valencia (Spain)</h3>
+                <p>
+                    <span class="sentence" id="tv-v-stun">If you're interested in delicious food and stunning parks, Valencia is the place for you.</span> 
+                    <span class="sentence" id="tv-tf-val">This city is large - Spain's third largest - but it is not as busy as some other places in the country.</span> 
+                    <span class="sentence" id="tv-v-ren">Valencia is renowned for its futuristic modern architecture and charming traditional neighbourhoods.</span>
+                </p>
+
+                <h3>Number 1: Kvarner Islands (Croatia)</h3>
+                <p>
+                    <span class="sentence">Croatia used to be a secret of a few travellers.</span> 
+                    <span class="sentence">Now, however, it is a popular tourist spot but there are still places to check out that are less well known.</span> 
+                    <span class="sentence">The Kvarner Gulf, with its unique islands, features all the aspects of Croatian culture that attract visitors.</span> 
+                    <span class="sentence">There are mountains, quiet fishing villages, warm waters to swim in and the flora on these islands is large, lush and tropical.</span> 
+                    <span class="sentence">Croatia is definitely worth a visit.</span> 
+                    <span class="sentence" id="tv-v-broad">Travel broadens the mind, so grab your bags and go!!!!</span>
+                </p>
+            </div>
+
+            <div class="quiz-container">
+                <div class="quiz-block">
+                    <div class="quiz-title">1. Tushunish boyicha savollar</div>
+                    <div class="question-item">
+                        <p class="question-text">1. Verdun nima bilan mashhur?</p>
+                        <div class="options">
+                            <label><input type="radio" name="tq1" value="a"> Birinchi jahon urushida bolgan jangi bilan.</label>
+                            <label><input type="radio" name="tq1" value="b"> Faqat 11-asr sobori bilan.</label>
+                        </div>
+                        <button class="btn-check" onclick="checkQ(this, 'a', 'tv-q1', '<strong>To\'g\'ri!</strong><br><strong>Qanday aniqlash kerak:</strong> Verdun haqidagi birinchi gap (<em>tv-q1</em>)da aniq yozilgan: <em>Verdun... is probably most famous for the battle fought there during World War I.</em><br>Keyingi gapda sobor haqida ham tilga olingan, ammo <strong>asosiy sabab</strong> jangdir. Savol <em>most renowned for</em> (eng mashhur) deb soragani uchun, togri javob jangdir.')">Tekshirish</button>
+                        <div class="feedback"></div>
+                    </div>
+                    <div class="question-item">
+                        <p class="question-text">2. Nega odamlar Bryugesni yoqtirishadi?</p>
+                        <div class="options">
+                            <label><input type="radio" name="tq2" value="a"> Futuristik binolari uchun.</label>
+                            <label><input type="radio" name="tq2" value="b"> Tor kochalari va qadimiy binolarini kashf qilish uchun.</label>
+                        </div>
+                        <button class="btn-check" onclick="checkQ(this, 'b', 'tv-q2', '<strong>To\'g\'ri!</strong><br><strong>Qanday aniqlash kerak:</strong> Bryuges haqidagi birinchi gap (<em>tv-q2</em>)da aynan shunday deyilgan: <em>Bruges is packed with people exploring its narrow lanes and ancient buildings.</em><br>Bu shuni korsatadiki, odamlar u yerga asosan tarixiy muhitni korish uchun boradilar. Futuristik binolar esa Valensiya haqida gapiriladi, Bryuges haqida emas.')">Tekshirish</button>
+                        <div class="feedback"></div>
+                    </div>
+                </div>
+
+                <div class="quiz-block">
+                    <div class="quiz-title">2. Togri yoki Notogri?</div>
+                    <div class="question-item">
+                        <p class="question-text">1. Otmishda Bolgariyaga kop sayyohlar kelmagan.</p>
+                        <div class="options">
+                            <label><input type="radio" name="ttf1" value="true"> Togri</label>
+                            <label><input type="radio" name="ttf1" value="false"> Notogri</label>
+                        </div>
+                        <button class="btn-check" onclick="checkQ(this, 'true', 'tv-tf-bulg', '<strong>To\'g\'ri (Javob To\'g\'ri).</strong><br><strong>Qanday aniqlash kerak:</strong> Bolgariya haqidagi birinchi gap (<em>tv-tf-bulg</em>)da aniq aytilgan: <em>...until recently, been largely overlooked by tourists.</em><br><em>Overlooked</em> — e\'tiborsiz qoldirilgan degani. Bu sozlar Bolgariyaning yaqin vaqtgacha sayyohlar tomonidan kop tashrif buyurilmaganligini korsatadi.')">Tekshirish</button>
+                        <div class="feedback"></div>
+                    </div>
+                     <div class="question-item">
+                        <p class="question-text">2. Valensiya Ispaniyadagi kichik shaharchadir.</p>
+                        <div class="options">
+                            <label><input type="radio" name="ttf2" value="true"> Togri</label>
+                            <label><input type="radio" name="ttf2" value="false"> Notogri</label>
+                        </div>
+                        <button class="btn-check" onclick="checkQ(this, 'false', 'tv-tf-val', '<strong>To\'g\'ri (Javob Noto\'g\'ri).</strong><br><strong>Qanday aniqlash kerak:</strong> Valensiya haqidagi ikkinchi gap (<em>tv-tf-val</em>)da aniq aytilgan: <em>This city is large - Spain\'s third largest.</em><br>Bu shuni anglatadiki, Valensiya kichik shaharcha emas, balki Ispaniyaning uchinchi eng katta shahri. Shuning uchun bu gap notogri.')">Tekshirish</button>
+                        <div class="feedback"></div>
+                    </div>
+                </div>
+
+                <div class="quiz-block">
+                    <div class="quiz-title">3. Gaplarni Toldiring (Lugat)</div>
+                    <div class="question-item">
+                        <p class="question-text">1. Fransiya va Italiya ozlarining ovqatlari bilan ______.</p>
+                        <input type="text" class="quiz-input" placeholder="Javob...">
+                        <button class="btn-check" onclick="checkInput(this, ['renowned', 'famous', 'mashhur'], 'tv-v-ren', '<strong>To\'g\'ri!</strong><br><strong>Qanday aniqlash kerak:</strong> Bu yerda <strong>sifat (adjective)</strong> kerak, chunki u <em>are</em> felidan keyin va <em>for...</em> bilan boglanib kelayotgan. Matndagi Valensiya haqidagi oxirgi gapda (<em>tv-v-ren</em>) <em>renowned for</em> iborasi ishlatilgan. Bu gapda ham Fransiya va Italiya ovqatlari bilan mashhur ekanligi aytilmoqda.')">Tekshirish</button>
+                        <div class="feedback"></div>
+                    </div>
+                    <div class="question-item">
+                        <p class="question-text">2. Togdan korinishlar ______.</p>
+                        <input type="text" class="quiz-input" placeholder="Javob...">
+                        <button class="btn-check" onclick="checkInput(this, ['stunning', 'sensational', 'ajoyib'], 'tv-v-stun', '<strong>To\'gri!</strong><br><strong>Qanday aniqlash kerak:</strong> Bu yerda <strong>sifat (adjective)</strong> kerak, chunki u <em>are</em> felidan keyin kelayotgan va <em>views</em> (korinishlar) otini tasvirlayapti. Matndagi Valensiya haqidagi birinchi gapda (<em>tv-v-stun</em>) <em>stunning parks</em> degan ibora bor. Bu yerda ham <em>stunning</em> (hayratlanarli) sozi ajoyib korinishlarni tasvirlash uchun mos keladi.')">Tekshirish</button>
+                        <div class="feedback"></div>
+                    </div>
+                     <div class="question-item">
+                        <p class="question-text">3. Sayohat aql-ni ______.</p>
+                        <input type="text" class="quiz-input" placeholder="Javob...">
+                        <button class="btn-check" onclick="checkInput(this, ['broadens', 'kengaytiradi'], 'tv-v-broad', '<strong>To\'g\'ri!</strong><br><strong>Qanday aniqlash kerak:</strong> Bu yerda <strong>fel (verb)</strong> kerak, chunki u <em>Travel</em> otiga boglanib, gapning predikatini tashkil qiladi. Matnning eng oxirida (<em>tv-v-broad</em>) aynan shu gap bor: <em>Travel <strong>broadens</strong> the mind.</em><br>Sayohat inson dunyoqarashini kengaytiradi. <em>Broadens</em> — kengaytiradi.')">Tekshirish</button>
+                        <div class="feedback"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="uzbek-content" style="display:none;">
+            <h1>Nega Ingliz Tili Muhim?</h1>
+            <img class="content-image" src="https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=800&q=60" alt="English">
+
+            <div class="text-body">
+                <p>
+                    <span class="sentence" id="ev-q-false-uz">Ingliz tili dunyodagi eng keng gapiriladigan til bo'lmasligi mumkin (bu sharaf Xitoy tiliga tegishli), ammo u dunyodagi ikkinchi eng ko'p gapiriladigan tildir.</span>
+                    <span class="sentence">U 603 million odam tomonidan chet tili sifatida gapiriladi - bu uchinchi o'rindagi arab tilidan ikki baravar ko'p.</span>
+                    <span class="sentence">Ingliz tili Surinam, Daniya, Isroil va Singapur kabi bir-biridan uzoq mamlakatlardagi eng mashhur ikkinchi tildir.</span>
+                    <span class="sentence">Agar siz dunyo bilan gaplashmoqchi bo'lsangiz, ingliz tilini o'rganing.</span>
+                </p>
+
+                <h2>Biznesda Ingliz Tili</h2>
+                <p>
+                    <span class="sentence" id="ev-q1-uz">Ingliz tiliga bo'lgan tendensiya xalqaro bizneslar tomonidan olib borilmoqda; Xitoyning Lenovo elektronika kompaniyasi ham, Germaniyaning Lufthansa aviakompaniyasi ham hozir ingliz tilini o'zlarining rasmiy tili sifatida ishlatmoqdalar.</span>
+                    <span class="sentence" id="ev-q1-b-uz">Ingliz tilidan foydalanish korxonalarga dunyo bo'ylab eng yaxshi iste'dodlarni yollash va ularning mahsulotini yangi bozorlarga ochish imkonini beradi.</span>
+                    <span class="sentence" id="ev-v3-uz">Lavozimi ko'tarilishni istayotgan yoki o'z rezyumesini ajralib turishi uchun uni yaxshilamoqchi bo'lgan xodimlar ingliz tilidagi ko'nikmalarini o'tkirlashni o'ylab ko'rishlari kerak.</span>
+                    <span class="sentence">Agar siz qaysi davlatda joylashganligidan qat'i nazar, kompaniyaning mijozlari va ta'minotchilari bilan muloqot qila olsangiz, u holda sizning ko'nikmalaringiz ish beruvchi uchun bebohodir.</span>
+                </p>
+
+                <h2>Ta'limda Ingliz Tili</h2>
+                <p>
+                    <span class="sentence">Ingliz tili akademik sohada ishlayotgan har bir kishi uchun ikki hissa muhimdir.</span>
+                    <span class="sentence" id="ev-q2-uz">Tadqiqotlarga ko'ra, jurnallarning eng katta bazasi bo'lgan Scopus'dagi tengdoshlar tomonidan tekshirilgan jurnallarning 80% ingliz tilida nashr etiladi.</span>
+                    <span class="sentence">Agar sizning maqolalaringiz dunyo bo'ylab olimlar tomonidan o'qilishini yoki boshqa mamlakatlardagi hamkasblaringiz bilan ishlashni istasangiz, siz ular bilan ingliz tilida gaplashishni bilishingiz kerak.</span>
+                </p>
+
+                <h2>Ko'ngilocharda Ingliz Tili</h2>
+                <p>
+                    <span class="sentence" id="ev-q3-uz">Faqatgina akademik yozuv emas, balki asosan ingliz tilida nashr etiladi. Har yili boshqa har qanday tildagiga qaraganda ko'proq kitob ingliz tilida nashr etiladi va Gollivud va uning ingliz tilidagi filmlari hanuzgacha sanoatda hukmronlik qiladi.</span>
+                    <span class="sentence">Albatta, siz tarjimalarni o'qishingiz yoki subtitrlar bilan tomosha qilishingiz mumkin, ammo ular hech qachon asl nusxaning tajribasiga to'liq mos kelmaydi.</span>
+                    <span class="sentence" id="ev-tf-net-uz">Internet ham, Web Technology Surveys ma'lumotlariga ko'ra, qariyb 54% ingliz tilidadir.</span>
+                    <span class="sentence">Agar siz onlayn ma'lumot qidirsangiz, ingliz tilidan foydalansangiz, siz qidirayotgan narsangizni topish ehtimolingiz ancha yuqori bo'ladi.</span>
+                </p>
+
+                <h2>Sayohat uchun Ingliz Tili</h2>
+                <p>
+                    <span class="sentence">Aksariyat mamlakatlarga sayohat qilish ularning tilini bilsangiz osonroq, ammo siz tashrif buyurmoqchi bo'lgan har bir yakka mamlakat uchun til o'rganish imkonsiz.</span>
+                    <span class="sentence" id="ev-q4-uz">Shunga qaramay, dunyoning aksariyat yirik shaharlarida ingliz tilida gapiradigan kimnidir topish imkoningiz ancha yuqori.</span>
+                    <span class="sentence">Turistik sanoatda ishlaydigan odamlar ingliz tilini o'rganadilar, shuning uchun agar siz ingliz tilini bilsangiz, mehmonxonangizda, samolyotda yoki sayyohlik joyida odamlarni tushunishda muammo bo'lmaydi.</span>
+                </p>
+
+                <h2>Xulosa</h2>
+                <p>
+                    <span class="sentence">Dunyo kichrayayapti va globallashuv bu erda qolish uchun.</span>
+                    <span class="sentence" id="ev-v4-uz">Bu muammolarni faqat biz milliy chegaralardan tashqarida hamkorlik qilsakgina hal qilish mumkin va buni amalga oshirish uchun bizda umumiy til bo'lishi kerak.</span>
+                    <span class="sentence">Siz uni sevsangiz ham, yomon ko'rsangiz ham, kelajak ingliz tilidadir.</span>
+                </p>
+            </div>
+
+            <hr style="margin: 50px 0; border: 0; border-top: 2px dashed var(--border-color);">
+
+            <h1>Yevropada Korish Kerak Bolgan 5 Joy</h1>
+            <img class="content-image" src="https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800&q=60" alt="Travel">
+
+            <div class="text-body">
+                <p>
+                    <span class="sentence" id="tv-ex4-uz">Qadimiy yodgorliklar, ajoyib ovqat iste'mol qilish va yangi sarguzashtlarni boshdan kechirish mukammal ta'tilni yaratadi.</span>
+                    <span class="sentence">Xayriyatki, Yevropada hamma uchun biror narsa bor, ammo kashf qilish uchun juda ko'p noyob va qiziqarli shaharlar bo'lganligi sababli, Yevropadagi eng yaxshi tashrif buyurish joylarini tanlab olish qiyin vazifadir.</span>
+                </p>
+
+                <h3>5-orin: Verdun (Fransiya)</h3>
+                <p>
+                    <span class="sentence" id="tv-q1-uz">Fransiyadagi Verdun, ehtimol, Birinchi Jahon Urushi davrida u erda bolib otgan jangi bilan eng mashhur.</span>
+                    <span class="sentence">Bu vaqt davomida shaharning katta qismi vayron qilingan. U shu vaqtdan beri qayta qurilgan, ammo otmishdan bir eslatma sifatida xarobalar holida qolgan atrofdagi hududlar hali ham mavjud.</span>
+                    <span class="sentence">Jang izlari qolgan tepaliklar va urush yodgorliklarini, shuningdek, tiklangana XI asr soborini korish mumkin.</span>
+                    <span class="sentence">Tarixga qiziqqan va Birinchi Jahon Urushi tarixiga qiziqqan har bir kishi uchun borish shart bolgan joy.</span>
+                </p>
+
+                <h3>4-orin: Bryuges (Belgiya)</h3>
+                <p>
+                    <span class="sentence" id="tv-q2-uz">Bryuges tor kochalari va qadimiy binolarini kashf qilayotgan odamlar bilan tolib-toshgan, ammo bu sizni uni tekshirishdan toxtatmasin.</span>
+                    <span class="sentence">Bu shaharga qadam qo'yish vaqtda orqaga qaytishga o'xshaydi.</span>
+                    <span class="sentence" id="tv-tf-cobble-uz">Shaharning ko'p qismidagi ko'chalar tosh yotqizilgan.</span>
+                    <span class="sentence">Ko'rish uchun juda ko'p eski bino va tatib ko'rish uchun an'anaviy ovqat bor.</span>
+                    <span class="sentence">Siz o'rta asr dunyosining bir qismi ekanligingizni his qilasiz.</span>
+                </p>
+
+                <h3>3-orin: Bolgariya</h3>
+                <p>
+                    <span class="sentence" id="tv-tf-bulg-uz">Bolgariya yaqin vaqtgacha, asosan, sayyohlar tomonidan e'tiborsiz qoldirilgan butun bir mamlakatdir.</span>
+                    <span class="sentence">Qadimiy bir millat sifatida u o'tmishdagi odamlar va sivilizatsiyalar haqida muhim ma'lumotlarni o'zida saqlaydi.</span>
+                    <span class="sentence">Maqbaralar va yodgorliklar, ibodatxonalar va zargarlik buyumlari, barchasi qadimgi Frakiya davridan mavjud.</span>
+                    <span class="sentence">Bu juda boy o'tmishi va go'zal zamonaviy madaniyatiga ega bo'lgan, har kim yoqtirib qoladigan mamlakatdir.</span>
+                </p>
+
+                <h3>2-orin: Valensiya (Ispaniya)</h3>
+                <p>
+                    <span class="sentence" id="tv-v-stun-uz">Agar siz mazali ovqat va hayratlanarli bog'larga qiziqsangiz, Valensiya siz uchun joydir.</span>
+                    <span class="sentence" id="tv-tf-val-uz">Bu shahar katta - Ispaniyaning uchinchi eng katta shahri - ammo u mamlakatdagi ba'zi boshqa joylar kabi gavjum emas.</span>
+                    <span class="sentence" id="tv-v-ren-uz">Valensiya o'zining futuristik zamonaviy arxitekturasi va jozibali an'anaviy mahallalari bilan mashhur.</span>
+                </p>
+
+                <h3>1-orin: Kvarner Orollari (Xorvatiya)</h3>
+                <p>
+                    <span class="sentence">Xorvatiya ilgari bir nechta sayohatchilarning siri edi.</span>
+                    <span class="sentence">Endi, ammo, u mashhur sayyohlik joyiga aylanmoqda, ammo hali ham unchalik mashhur bo'lmagan tekshirish joylari bor.</span>
+                    <span class="sentence">O'zining noyob orollari bilan Kvarner ko'rfazi xorvat madaniyatining sayyohlarni jalb qiladigan barcha jihatlariga ega.</span>
+                    <span class="sentence">U erda tog'lar, tinch baliq ovlash qishloqlari, suzish uchun iliq suvlar bor va bu orollardagi flora katta, yashil va tropikdir.</span>
+                    <span class="sentence">Xorvatiyaga shubhasiz tashrif buyurishga arziydi.</span>
+                    <span class="sentence" id="tv-v-broad-uz">Sayohat aqlni kengaytiradi, shuning uchun sumkalaringizni oling va boring!!!!</span>
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- 1. LOCALSTORAGE TIMER (Sahifadan chiqsa ham saqlanadi) ---
+        let seconds = localStorage.getItem('englishTravelTimer') ? parseInt(localStorage.getItem('englishTravelTimer')) : 0;
+        const timerDisplay = document.getElementById('page-timer');
+
+        function updateTimer() {
+            seconds++;
+            localStorage.setItem('englishTravelTimer', seconds); // Saqlash
+            const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const secs = (seconds % 60).toString().padStart(2, '0');
+            timerDisplay.textContent = `${mins}:${secs}`;
+        }
+        setInterval(updateTimer, 1000);
+
+        // --- 2. KENGAYTIRILGAN LUG'AT BAZASI (Hamma sozlar) ---
+        const dictionary = {
+            "english": "Ingliz tili", "might": "mumkin/ehtimol", "not": "emas", "be": "bolmoq", "the": "", "most": "eng", "widely": "keng", "spoken": "gapiriladigan", "language": "til", "in": "-da/-da", "world": "dunyo", "honour": "sharaf", "goes": "boradi/tegishli", "to": "-ga", "chinese": "Xitoycha", "but": "ammo", "it": "u", "is": "-dir", "second": "ikkinchi", "foreign": "xorijiy", "massive": "ulkan", "million": "million", "people": "odamlar", "more": "koproq", "than": "qaraganda", "double": "ikki barobar", "arabic": "Arab tili", "third": "uchinchi", "place": "orin", "popular": "mashhur", "countries": "davlatlar", "far": "uzoq", "apart": "ayro", "suriname": "Surinam", "denmark": "Daniya", "israel": "Isroil", "singapore": "Singapur", "if": "agar", "you": "sen/siz", "want": "xohlamoq", "speak": "gapirmoq", "learn": "organmoq",
+            "business": "biznes", "trend": "tendensiya/oqim", "towards": "tomon", "being": "-ayotgan", "led": "boshchiligida", "by": "tomonidan", "international": "xalqaro", "businesses": "bizneslar", "both": "ikkalasi ham", "electronics": "elektronika", "company": "kompaniya", "lenovo": "Lenovo", "and": "va", "german": "nemis", "airline": "aviakompaniya", "lufthansa": "Lufthansa", "now": "hozir", "using": "foydalanish", "official": "rasmiy", "makes": "qiladi", "possible": "imkoniyatli", "for": "uchun", "recruit": "ishga olmoq", "best": "eng yaxshi", "talent": "iqtidor", "from": "-dan", "across": "boylab", "opens": "ochadi", "up": "yuqoriga", "their": "ularning", "product": "mahsulot", "new": "yangi", "markets": "bozorlar", "employees": "xodimlar", "who": "kim", "are": "-dir", "hoping": "umid qilayotgan", "a": "bir", "promotion": "lavozim oshishi", "or": "yoki", "make": "qilmoq", "cv": "tarjimai hol", "stand": "turmoq", "out": "tashqari (ajralib)", "should": "kerak", "consider": "o'ylab ko'rmoq", "sharpening": "o'tkirlash/yaxshilash", "skills": "ko'nikmalar", "communicate": "muloqot qilmoq", "with": "bilan", "clients": "mijozlar", "suppliers": "ta'minotchilar", "of": "-ning", "no": "yoq", "matter": "ahamiyatga ega", "what": "nima", "country": "davlat", "they": "ular", "based": "joylashgan", "then": "unda", "your": "sizning", "invaluable": "bebaho", "employer": "ish beruvchi",
+            "education": "ta'lim", "doubly": "ikki hissa", "important": "muhim", "anyone": "kimdir", "working": "ishlayotgan", "academic": "akademik", "discipline": "fan/soha", "according": "ko'ra", "research": "tadqiqot", "peer-reviewed": "taqrizdan o'tgan (tekshirilgan)", "journals": "jurnallar", "scopus": "Scopus", "biggest": "eng katta", "database": "baza", "published": "nashr etilgan", "papers": "ilmiy ishlar/maqolalar", "read": "o'qilgan", "scientists": "olimlar", "colleagues": "hamkasblar", "other": "boshqa", "need": "kerak", "able": "qodir", "talk": "gaplashmoq", "them": "ular",
+            "entertainment": "ko'ngilochar", "writing": "yozuv", "mostly": "asosan", "books": "kitoblar", "each": "har", "year": "yil", "any": "har qanday", "hollywood": "Gollivud", "films": "filmlar", "still": "hali ham", "dominate": "hukmronlik qilmoq", "industry": "sanoat", "course": "albatta", "translations": "tarjimalar", "watch": "ko'rmoq", "subtitles": "subtitrlar", "never": "hech qachon", "quite": "to'liq", "match": "mos kelmoq", "experience": "tajriba", "original": "asl nusxa", "internet": "internet", "too": "ham", "close": "yaqin", "web": "web", "technology": "texnologiya", "surveys": "so'rovnomalar", "searching": "qidirish", "information": "ma'lumot", "online": "onlayn", "likely": "ehtimol", "find": "topmoq", "looking": "izlayotgan", "use": "ishlatmoq",
+            "travel": "sayohat", "easier": "osonroq", "possible": "imkonli", "every": "har", "single": "bitta", "visit": "tashrif buyurmoq", "fairly": "ancha", "though": "shunga qaramay", "able": "qodir", "someone": "kimdir", "major": "asosiy", "cities": "shaharlar", "tourist": "sayyoh", "trouble": "muammo", "understanding": "tushunish", "hotel": "mehmonxona", "plane": "samolyot", "site": "joy",
+            "conclusion": "xulosa", "getting": "bo'lyapti", "smaller": "kichikroq", "globalisation": "globallashuv", "here": "shu yerda", "stay": "qolmoq", "problems": "muammolar", "solved": "yechilgan", "co-operate": "hamkorlik", "boundaries": "chegaralar", "common": "umumiy", "whether": "xoh... xoh", "love": "sevmoq", "hate": "yomon ko'rmoq", "future": "kelajak",
+            "ancient": "qadimiy", "monuments": "yodgorliklar", "eating": "yeyish", "sensational": "ajoyib/shov-shuvli", "food": "ovqat", "experiencing": "boshdan kechirish", "adventures": "sarguzashtlar", "perfect": "mukammal", "holiday": "ta'til", "thankfully": "xayriyatki", "europe": "yevropa", "something": "biror narsa", "everyone": "hamma", "narrowing": "qisqartirish/torayish", "down": "pastga", "top": "eng yaxshi/yuqori", "places": "joylar", "difficult": "qiyin", "task": "vazifa", "especially": "ayniqsa", "unique": "noyob", "interesting": "qiziqarli", "discover": "kashf qilmoq",
+            "verdun": "Verdun", "france": "Fransiya", "probably": "ehtimol", "famous": "mashhur", "battle": "jang", "fought": "jang qilgan", "war": "urush", "during": "davomida", "time": "vaqt", "town": "shahar", "destroyed": "vayron bo'lgan", "since": "beri", "rebuilt": "qayta qurilgan", "still": "hali", "surrounding": "atrofdagi", "areas": "hududlar", "left": "qolgan", "ruins": "xarobalar", "reminder": "eslatma", "past": "o'tmish", "battle-scarred": "jang izlari qolgan", "hills": "tepaliklar", "war": "urush", "memorials": "yodgorliklar", "seen": "ko'rilgan", "as": "kabi", "well": "yaxshi", "an": "bir", "century": "asr", "cathedral": "sobor", "which": "qaysi", "has": "bor", "been": "bo'lgan", "restored": "tiklangan", "must-visit": "borish shart", "buffs": "ishqibozlar", "interested": "qiziqqan", "history": "tarix",
+            "bruges": "Bryuges", "belgium": "Belgiya", "packed": "to'la", "exploring": "o'rganish", "narrow": "tor", "lanes": "yo'laklar", "buildings": "binolar", "stop": "to'xtatmoq", "checking": "tekshirish", "stepping": "qadam bosish", "into": "ichiga", "this": "bu", "city": "shahar", "like": "kabi", "back": "orqaga", "streets": "ko'chalar", "cobblestoned": "toshli/tosh yotqizilgan", "much": "ko'p", "lots": "ko'p", "old": "eski", "traditional": "an'anaviy", "taste": "tatib ko'rmoq", "feel": "his qilmoq", "part": "qism", "medieval": "o'rta asr",
+            "bulgaria": "Bolgariya", "entire": "butun", "had": "bor edi", "until": "gacha", "recently": "yaqinda", "largely": "asosan", "overlooked": "e'tiborsiz qolgan", "by": "tomonidan", "tourists": "sayyohlar", "nation": "millat", "holds": "ushlab turadi/saqlaydi", "important": "muhim", "about": "haqida", "civilizations": "sivilizatsiyalar", "tombs": "maqbaralar", "temples": "ibodatxonalar", "jewels": "zargarlik", "all": "barchasi", "exist": "mavjud", "thrace": "Frakiya", "rich": "boy", "modern": "zamonaviy", "culture": "madaniyat", "enjoy": "rohatlanmoq",
+            "valencia": "Valensiya", "spain": "Ispaniya", "delicious": "mazali", "stunning": "hayratlanarli", "parks": "bog'lar", "large": "katta", "largest": "eng katta", "busy": "band/gavjum", "renowned": "mashhur", "futuristic": "futuristik", "architecture": "arxitektura", "charming": "jozibali", "neighbourhoods": "mahallalar",
+            "kvarner": "Kvarner", "islands": "orollar", "croatia": "Xorvatiya", "secret": "sir", "few": "bir nechta", "travellers": "sayohatchilar", "however": "ammo", "popular": "mashhur", "spot": "joy", "less": "kamroq", "well": "yaxshi", "known": "ma'lum", "gulf": "ko'rfaz", "its": "uning", "features": "xususiyatlar", "aspects": "jihatlar", "croatian": "xorvat", "attract": "jalb qilmoq", "visitors": "tashrif buyuruvchilar", "mountains": "tog'lar", "quiet": "tinch", "fishing": "baliq ovlash", "villages": "qishloqlar", "warm": "iliq", "waters": "suvlar", "swim": "suzmoq", "flora": "o'simliklar", "lush": "yashil/serhosil", "tropical": "tropik", "definitely": "shubhasiz", "worth": "arziydi", "broadens": "kengaytiradi", "mind": "aql", "grab": "olmoq", "bags": "sumkalar", "go": "keting", "so": "shuning uchun", "your": "sizning"
+        };
+
+        // --- 3. MATNNI BOSILADIGAN QILISH ---
+        function makeContentClickable() {
+            const container = document.getElementById('english-content');
+            const sentences = container.getElementsByClassName('sentence');
+            
+            for (let s of sentences) {
+                const text = s.innerText;
+                const wordsArray = text.split(/(\s+|[,.?!:;()""—-])/);
+                s.innerHTML = '';
+                
+                wordsArray.forEach(token => {
+                    if (token.trim() && !/[,.?!:;()""—-]/.test(token)) {
+                        const span = document.createElement('span');
+                        span.className = 'word';
+                        span.innerText = token;
+                        
+                        // So'zning asosini topish (ing, ed, s larni olib tashlash)
+                        const cleanWord = token.toLowerCase().replace(/[^a-z]/g, '');
+                        let trans = dictionary[cleanWord];
+                        
+                        if (!trans && cleanWord.endsWith('s')) trans = dictionary[cleanWord.slice(0, -1)];
+                        if (!trans && cleanWord.endsWith('ed')) trans = dictionary[cleanWord.slice(0, -2)];
+                        if (!trans && cleanWord.endsWith('ing')) trans = dictionary[cleanWord.slice(0, -3)];
+                        
+                        // Faqat lug'atda bor so'zlarga tooltip qo'shish
+                        if (trans) {
+                            const tip = document.createElement('span');
+                            tip.className = 'tooltip';
+                            tip.innerText = trans;
+                            span.appendChild(tip);
+                        }
+
+                        // Ovozli o'qish (Hamma so'z uchun)
+                        span.onclick = (e) => {
+                            e.stopPropagation();
+                            responsiveVoice.speak(token, "UK English Male");
+                        };
+                        
+                        s.appendChild(span);
+                    } else {
+                        s.appendChild(document.createTextNode(token));
+                    }
+                });
+            }
+        }
+
+        // --- 4. TEKSHIRISH FUNKSIYALARI ---
+        function clearHighlights() {
+            document.querySelectorAll('.highlight-found').forEach(el => el.classList.remove('highlight-found'));
+        }
+
+        function highlightEvidence(elementId) {
+            clearHighlights();
+            // Uzbek va ingliz matnlaridagi tegishli elementlarni belgilash
+            const el = document.getElementById(elementId);
+            const elUz = document.getElementById(elementId + '-uz'); // Uzbekcha tarjima
+            if (el) {
+                el.classList.add('highlight-found');
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            if (elUz) {
+                elUz.classList.add('highlight-found');
+                elUz.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function checkQ(btn, correctVal, evidenceId, explanation) {
+            const container = btn.parentElement;
+            const options = container.querySelectorAll('input[type="radio"]');
+            const feedback = container.querySelector('.feedback');
+            let selected = null;
+            options.forEach(opt => { if (opt.checked) selected = opt.value; });
+
+            feedback.style.display = 'block';
+            if (selected === correctVal) {
+                feedback.className = 'feedback correct';
+                feedback.innerHTML = explanation;
+                if(evidenceId) highlightEvidence(evidenceId);
+            } else {
+                feedback.className = 'feedback wrong';
+                feedback.innerHTML = `<strong>Noto'g'ri.</strong> Qayta urinib ko'ring.`;
+                if(evidenceId) highlightEvidence(evidenceId); // Xato bo'lsa ham to'g'ri joyni ko'rsatib, o'rgatadi.
+            }
+        }
+
+        function checkInput(btn, correctAnswers, evidenceId, explanation) {
+            const container = btn.parentElement;
+            const input = container.querySelector('input');
+            const feedback = container.querySelector('.feedback');
+            const userVal = input.value.trim().toLowerCase();
+            
+            feedback.style.display = 'block';
+            const isCorrect = correctAnswers.some(ans => userVal.includes(ans));
+
+            if (isCorrect && userVal.length > 2) {
+                feedback.className = 'feedback correct';
+                feedback.innerHTML = explanation;
+                if(evidenceId) highlightEvidence(evidenceId);
+            } else {
+                feedback.className = 'feedback wrong';
+                feedback.innerHTML = `<strong>Noto'g'ri.</strong> To'g'ri javob: <em>${correctAnswers[0]}</em>.`;
+                if(evidenceId) highlightEvidence(evidenceId);
+            }
+        }
+
+        // --- 5. TUGMALAR VA EFFEKTLAR ---
+        const langBtn = document.getElementById('lang-btn');
+        const engDiv = document.getElementById('english-content');
+        const uzbDiv = document.getElementById('uzbek-content');
+        
+        langBtn.onclick = () => {
+            if (engDiv.style.display !== 'none') {
+                engDiv.style.display = 'none';
+                uzbDiv.style.display = 'block';
+                langBtn.innerHTML = ' <span>English</span>';
+            } else {
+                engDiv.style.display = 'block';
+                uzbDiv.style.display = 'none';
+                langBtn.innerHTML = ' <span>O\'zbekcha</span>';
+            }
+        };
+
+        document.getElementById('theme-btn').onclick = () => {
+            document.body.classList.toggle('dark-mode');
+        };
+
+        function createIcon() {
+            const el = document.createElement('div');
+            const icons = ['', '', '', '', '']; 
+            el.innerHTML = icons[Math.floor(Math.random() * icons.length)];
+            el.className = 'floating-icon';
+            el.style.left = Math.random() * 100 + 'vw';
+            el.style.animationDuration = Math.random() * 5 + 10 + 's'; 
+            el.style.fontSize = (Math.random() * 20 + 15) + 'px';
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 15000);
+        }
+        setInterval(createIcon, 1500);
+
+        window.onload = makeContentClickable;
+
+    </script>
+</body>
+</html>
