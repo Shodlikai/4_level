@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 3: Fun and games - Grammatika</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --dark: #1e293b;
+            --light: #f8fafc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Crimson Pro', serif;
+            background: linear-gradient(to bottom right, #fef3c7, #fde68a, #fed7aa);
+            color: var(--dark);
+            line-height: 1.8;
+        }
+
+        .header {
+            background: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .back-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: var(--secondary);
+            transform: translateX(-5px);
+        }
+
+        .progress-indicator {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .progress-bar-custom {
+            width: 150px;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '🎮';
+            position: absolute;
+            font-size: 15rem;
+            opacity: 0.1;
+            top: -50px;
+            right: -50px;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+        }
+
+        .content-wrapper {
+            max-width: 900px;
+            margin: -50px auto 3rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .grammar-card {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .vocabulary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .vocab-card {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .vocab-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .vocab-word {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .vocab-translation {
+            color: #64748b;
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .vocab-example {
+            font-style: italic;
+            color: #475569;
+            font-size: 0.95rem;
+            padding: 0.75rem;
+            background: white;
+            border-radius: 8px;
+            margin-top: 0.5rem;
+        }
+
+        .grammar-rule {
+            background: #f0f9ff;
+            padding: 2rem;
+            border-radius: 15px;
+            border-left: 5px solid #3b82f6;
+            margin: 1.5rem 0;
+        }
+
+        .rule-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e40af;
+            margin-bottom: 1rem;
+        }
+
+        .example-box {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+        }
+
+        .example-label {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .phrase-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .phrase-item {
+            padding: 1rem;
+            margin: 0.75rem 0;
+            background: linear-gradient(to right, #fef3c7, white);
+            border-radius: 10px;
+            border-left: 3px solid var(--primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .phrase-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .phrase-en {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .phrase-uz {
+            color: #64748b;
+        }
+
+        .complete-btn {
+            width: 100%;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .complete-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+        }
+
+        .audio-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .audio-btn:hover {
+            background: var(--secondary);
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .grammar-card {
+                padding: 1.5rem;
+            }
+
+            .vocabulary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <button class="back-btn" onclick="goBack()">
+                    <i class="bi bi-arrow-left"></i>
+                    Orqaga
+                </button>
+                <div class="progress-indicator">
+                    <span id="progressText">0%</span>
+                    <div class="progress-bar-custom">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <h1>🎮 Fun and games</h1>
+            <p>O'yin va ko'ngil ochish mavzulari</p>
+        </div>
+    </section>
+
+    <!-- Content -->
+    <div class="container">
+        <div class="content-wrapper">
+
+            <!-- Vocabulary Section -->
+            <div class="grammar-card">
+                <div class="section-title">
+                    <div class="section-icon">📚</div>
+                    Asosiy So'zlar (Vocabulary)
+                </div>
+
+                <div class="vocabulary-grid">
+                    <div class="vocab-card">
+                        <div class="vocab-word">amateur</div>
+                        <div class="vocab-translation">havaskor, amatyor</div>
+                        <div class="vocab-example">
+                            "He's just an amateur photographer."
+                        </div>
+                    </div>
+
+                    <div class="vocab-card">
+                        <div class="vocab-word">challenge</div>
+                        <div class="vocab-translation">qiyinchilik, muammo; e'tiroz</div>
+                        <div class="vocab-example">
+                            "Climbing that mountain was a real challenge."
+                        </div>
+                    </div>
+
+                    <div class="vocab-card">
+                        <div class="vocab-word">champion</div>
+                        <div class="vocab-translation">chempion, g'olib</div>
+                        <div class="vocab-example">
+                            "She became the world champion last year."
+                        </div>
+                    </div>
+
+                    <div class="vocab-card">
+                        <div class="vocab-word">compete</div>
+                        <div class="vocab-translation">raqobatlashmoq, bellashmoq</div>
+                        <div class="vocab-example">
+                            "Athletes from 50 countries will compete."
+                        </div>
+                    </div>
+
+                    <div class="vocab-card">
+                        <div class="vocab-word">competitor</div>
+                        <div class="vocab-translation">raqobatchi, bellashuvchi</div>
+                        <div class="vocab-example">
+                            "There were over 100 competitors in the race."
+                        </div>
+                    </div>
+
+                    <div class="vocab-card">
+                        <div class="vocab-word">defeat</div>
+                        <div class="vocab-translation">yengmoq, mag'lub qilmoq</div>
+                        <div class="vocab-example">
+                            "Our team defeated them 3-1."
+                        </div>
+                    </div>
+
+                    <div class="vocab-card">
+                        <div class="vocab-word">draw</div>
+                        <div class="vocab-translation">durang, teng natija</div>
+                        <div class="vocab-example">
+                            "The match ended in a 2-2 draw."
+                        </div>
+                    </div>
+
+                    <div class="vocab-card">
+                        <div class="vocab-word">entertain</div>
+                        <div class="vocab-translation">ko'ngil ochmoq, zavqlandirmoq</div>
+                        <div class="vocab-example">
+                            "The clown entertained the children."
+                        </div>
+                    </div>
+
+                    <div class="vocab-card">
+                        <div class="vocab-word">entertainment</div>
+                        <div class="vocab-translation">ko'ngil ochar narsa, tomasha</div>
+                        <div class="vocab-example">
+                            "There's not much entertainment in this town."
+                        </div>
+                    </div>
+
+                    <div class="vocab-card">
+                        <div class="vocab-word">final</div>
+                        <div class="vocab-translation">final, yakuniy o'yin</div>
+                        <div class="vocab-example">
+                            "They reached the final of the competition."
+                        </div>
+                    </div>
+
+                    <div class="vocab-card">
+                        <div class="vocab-word">fun</div>
+                        <div class="vocab-translation">qiziq, quvnoq</div>
+                        <div class="vocab-example">
+                            "We had a lot of fun at the party."
+                        </div>
+                    </div>
+
+                    <div class="vocab-card">
+                        <div class="vocab-word">hobby</div>
+                        <div class="vocab-translation">sevimli mashg'ulot</div>
+                        <div class="vocab-example">
+                            "My hobby is collecting stamps."
+                        </div>
+                    </div>
+
+                    <div class="vocab-card">
+                        <div class="vocab-word">interest</div>
+                        <div class="vocab-translation">qiziqish, manfaat</div>
+                        <div class="vocab-example">
+                            "She has a great interest in music."
+                        </div>
+                    </div>
+
+                    <div class="vocab-card">
+                        <div class="vocab-word">lose</div>
+                        <div class="vocab-translation">yo'qotmoq, yutqizmoq</div>
+                        <div class="vocab-example">
+                            "I don't want to lose this game."
+                        </div>
+                    </div>
+
+                    <div class="vocab-card">
+                        <div class="vocab-word">member</div>
+                        <div class="vocab-translation">a'zo</div>
+                        <div class="vocab-example">
+                            "He's been a member of the club for years."
+                        </div>
+                    </div>
+
+                    <div class="vocab-card">
+                        <div class="vocab-word">opponent</div>
+                        <div class="vocab-translation">raqib, qarshi tomondagi kishi</div>
+                        <div class="vocab-example">
+                            "His opponent was much stronger."
+                        </div>
+                    </div>
+
+                    <div class="vocab-card">
+                        <div class="vocab-word">organise</div>
+                        <div class="vocab-translation">tashkil qilmoq, uyushtirmoq</div>
+                        <div class="vocab-example">
+                            "We need to organise a meeting."
+                        </div>
+                    </div>
+
+                    <div class="vocab-card">
+                        <div class="vocab-word">player</div>
+                        <div class="vocab-translation">o'yinchi</div>
+                        <div class="vocab-example">
+                            "He's the best player on the team."
+                        </div>
+                    </div>
+
+                    <div class="vocab-card">
+                        <div class="vocab-word">prize</div>
+                        <div class="vocab-translation">mukofot, sovg'a</div>
+                        <div class="vocab-example">
+                            "First prize is a trip to Paris."
+                        </div>
+                    </div>
+
+                    <div class="vocab-card">
+                        <div class="vocab-word">professional</div>
+                        <div class="vocab-translation">professional, mutaxassis</div>
+                        <div class="vocab-example">
+                            "She's a professional tennis player."
+                        </div>
+                    </div>
+
+                    <div class="vocab-card">
+                        <div class="vocab-word">score</div>
+                        <div class="vocab-translation">ball, hisob; gol urmoq</div>
+                        <div class="vocab-example">
+                            "What's the score? - It's 2-1."
+                        </div>
+                    </div>
+
+                    <div class="vocab-card">
+                        <div class="vocab-word">spectator</div>
+                        <div class="vocab-translation">tomoshabin</div>
+                        <div class="vocab-example">
+                            "There were over 10,000 spectators."
+                        </div>
+                    </div>
+
+                    <div class="vocab-card">
+                        <div class="vocab-word">support</div>
+                        <div class="vocab-translation">qo'llab-quvvatlamoq</div>
+                        <div class="vocab-example">
+                            "Which team do you support?"
+                        </div>
+                    </div>
+
+                    <div class="vocab-card">
+                        <div class="vocab-word">team</div>
+                        <div class="vocab-translation">jamoa</div>
+                        <div class="vocab-example">
+                            "Our team won the championship."
+                        </div>
+                    </div>
+
+                    <div class="vocab-card">
+                        <div class="vocab-word">train</div>
+                        <div class="vocab-translation">mashq qilmoq, o'qitmoq</div>
+                        <div class="vocab-example">
+                            "He trains every day for the competition."
+                        </div>
+                    </div>
+
+                    <div class="vocab-card">
+                        <div class="vocab-word">trophy</div>
+                        <div class="vocab-translation">kubok, taqdim</div>
+                        <div class="vocab-example">
+                            "They won the trophy for the third time."
+                        </div>
+                    </div>
+
+                    <div class="vocab-card">
+                        <div class="vocab-word">win</div>
+                        <div class="vocab-translation">g'alaba qozonmoq, yutmoq</div>
+                        <div class="vocab-example">
+                            "I hope we win the match."
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phrasal Verbs -->
+            <div class="grammar-card">
+                <div class="section-title">
+                    <div class="section-icon">💬</div>
+                    So'z Birikmalari (Phrasal Verbs)
+                </div>
+
+                <ul class="phrase-list">
+                    <li class="phrase-item">
+                        <span class="phrase-en">give up</span>
+                        <span class="phrase-uz">taslim bo'lmoq, tashlamoq</span>
+                    </li>
+                    <li class="phrase-item">
+                        <span class="phrase-en">take up</span>
+                        <span class="phrase-uz">boshlamoq (yangi mashg'ulot)</span>
+                    </li>
+                    <li class="phrase-item">
+                        <span class="phrase-en">join in</span>
+                        <span class="phrase-uz">qo'shilmoq, ishtirok etmoq</span>
+                    </li>
+                    <li class="phrase-item">
+                        <span class="phrase-en">knock out</span>
+                        <span class="phrase-uz">nokautga solmoq, yo'q qilmoq</span>
+                    </li>
+                    <li class="phrase-item">
+                        <span class="phrase-en">warm up</span>
+                        <span class="phrase-uz">isitmoq, tayyorlanmoq</span>
+                    </li>
+                    <li class="phrase-item">
+                        <span class="phrase-en">work out</span>
+                        <span class="phrase-uz">mashq qilmoq, sport bilan shug'ullanmoq</span>
+                    </li>
+                    <li class="phrase-item">
+                        <span class="phrase-en">look forward to</span>
+                        <span class="phrase-uz">intiqlik bilan kutmoq</span>
+                    </li>
+                    <li class="phrase-item">
+                        <span class="phrase-en">get on with</span>
+                        <span class="phrase-uz">davom ettirmoq</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Grammar Rules -->
+            <div class="grammar-card">
+                <div class="section-title">
+                    <div class="section-icon">📝</div>
+                    Grammatika Qoidalari
+                </div>
+
+                <div class="grammar-rule">
+                    <div class="rule-title">Present Simple vs Present Continuous</div>
+                    <p>O'yinlar va sport mavzusida bu zamonlardan ko'p foydalanamiz:</p>
+                    
+                    <div class="example-box">
+                        <div class="example-label">Present Simple - Odatiy harakatlar:</div>
+                        <p>✓ I <strong>play</strong> football every weekend.</p>
+                        <p>✓ She <strong>trains</strong> three times a week.</p>
+                        <p>✓ They <strong>support</strong> Manchester United.</p>
+                    </div>
+
+                    <div class="example-box">
+                        <div class="example-label">Present Continuous - Hozirgi paytdagi harakatlar:</div>
+                        <p>✓ We <strong>are playing</strong> chess right now.</p>
+                        <p>✓ He <strong>is training</strong> for the competition.</p>
+                        <p>✓ The teams <strong>are competing</strong> today.</p>
+                    </div>
+                </div>
+
+                <div class="grammar-rule">
+                    <div class="rule-title">Gerund (-ing) after certain verbs</div>
+                    <p>Ba'zi fe'llardan keyin -ing shakli ishlatiladi:</p>
+                    
+                    <div class="example-box">
+                        <p>✓ I <strong>enjoy playing</strong> tennis.</p>
+                        <p>✓ She <strong>finished watching</strong> the game.</p>
+                        <p>✓ They <strong>avoid losing</strong> matches.</p>
+                        <p>✓ We <strong>suggest practising</strong> more.</p>
+                    </div>
+                </div>
+
+                <div class="grammar-rule">
+                    <div class="rule-title">Used to - Oldingi odatlar</div>
+                    <p>O'tmishda mavjud bo'lgan odatlarni ifodalash uchun:</p>
+                    
+                    <div class="example-box">
+                        <p>✓ I <strong>used to play</strong> football when I was young.</p>
+                        <p>✓ She <strong>used to be</strong> a professional swimmer.</p>
+                        <p>✓ We <strong>didn't use to watch</strong> sports on TV.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Complete Button -->
+            <button class="complete-btn" onclick="completeGrammar()">
+                <i class="bi bi-check-circle-fill"></i>
+                Grammatikani tugalladim
+            </button>
+
+        </div>
+    </div>
+
+    <script>
+        const UNIT_ID = 3;
+        let scrollPercent = 0;
+
+        // Progress yangilash funksiyasi
+        function updateUnitProgress(unitId, section, percent) {
+            let progress = JSON.parse(localStorage.getItem('unitProgress')) || {};
+            if (!progress[unitId]) {
+                progress[unitId] = {
+                    grammar: 0,
+                    flashcard: 0,
+                    test: 0,
+                    practice: 0,
+                    overall: 0
+                };
+            }
+            progress[unitId][section] = percent;
+            const overall = Math.round(
+                (progress[unitId].grammar + progress[unitId].flashcard + 
+                 progress[unitId].test + progress[unitId].practice) / 4
+            );
+            progress[unitId].overall = overall;
+            localStorage.setItem('unitProgress', JSON.stringify(progress));
+            return overall;
+        }
+
+        // Scroll progress hisoblash
+        function updateScrollProgress() {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            scrollPercent = Math.round((scrollTop / docHeight) * 100);
+            
+            document.getElementById('progressFill').style.width = scrollPercent + '%';
+            document.getElementById('progressText').textContent = scrollPercent + '%';
+            
+            updateUnitProgress(UNIT_ID, 'grammar', scrollPercent);
+        }
+
+        // Scroll hodisasi
+        window.addEventListener('scroll', updateScrollProgress);
+
+        // Grammatikani tugallash
+        function completeGrammar() {
+            updateUnitProgress(UNIT_ID, 'grammar', 100);
+            document.getElementById('progressFill').style.width = '100%';
+            document.getElementById('progressText').textContent = '100%';
+            
+            alert('🎉 Ajoyib! Grammatika bo\'limi tugallandi!');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1000);
+        }
+
+        // Orqaga qaytish
+        function goBack() {
+            if (confirm('Haqiqatan ham orqaga qaytmoqchimisiz? Progress saqlanadi.')) {
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Sahifa yuklanganda progressni ko'rsatish
+        window.addEventListener('load', () => {
+            const progress = JSON.parse(localStorage.getItem('unitProgress')) || {};
+            if (progress[UNIT_ID] && progress[UNIT_ID].grammar) {
+                const savedProgress = progress[UNIT_ID].grammar;
+                document.getElementById('progressFill').style.width = savedProgress + '%';
+                document.getElementById('progressText').textContent = savedProgress + '%';
+            }
+        });
+
+        // Audio o'ynatish (demo)
+        function playAudio(word) {
+            // Web Speech API yordamida
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(word);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.8;
+                speechSynthesis.speak(utterance);
+            }
+        }
+
+        // Vocab kartochkalarga audio qo'shish
+        document.addEventListener('DOMContentLoaded', () => {
+            const vocabCards = document.querySelectorAll('.vocab-card');
+            vocabCards.forEach(card => {
+                const word = card.querySelector('.vocab-word').textContent;
+                card.addEventListener('click', () => playAudio(word));
+            });
+        });
+    </script>
+
+</body>
+</html>

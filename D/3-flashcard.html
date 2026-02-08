@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 3: Fun and games - Flashcard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            color: white;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-5px);
+        }
+
+        .progress-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .progress-text {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .main-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .flashcard-wrapper {
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .card-counter {
+            text-align: center;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+
+        .flashcard-container {
+            perspective: 1000px;
+            margin-bottom: 2rem;
+        }
+
+        .flashcard {
+            width: 100%;
+            height: 400px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .card-front {
+            background: white;
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            transform: rotateY(180deg);
+        }
+
+        .card-word {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .card-type {
+            font-size: 1rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 2rem;
+        }
+
+        .card-pronunciation {
+            font-size: 1.3rem;
+            color: #6366f1;
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+
+        .card-translation {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .card-example {
+            font-size: 1.1rem;
+            color: #475569;
+            text-align: center;
+            font-style: italic;
+            line-height: 1.6;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid #6366f1;
+        }
+
+        .flip-hint {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #94a3b8;
+            font-size: 0.9rem;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .control-btn {
+            background: white;
+            color: #6366f1;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .control-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .control-btn.previous {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .control-btn.next {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .control-btn.audio {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+
+        .control-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .knowledge-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .knowledge-btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+        }
+
+        .knowledge-btn.know {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .knowledge-btn.learning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .knowledge-btn.dont-know {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .knowledge-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .stats-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            color: white;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .complete-btn {
+            width: 100%;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: none;
+        }
+
+        .complete-btn.show {
+            display: block;
+        }
+
+        .complete-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .flashcard {
+                height: 350px;
+            }
+
+            .card-word {
+                font-size: 2.5rem;
+            }
+
+            .card-translation {
+                font-size: 1.7rem;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .stats-panel {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <button class="back-btn" onclick="goBack()">
+                    <i class="bi bi-arrow-left"></i>
+                    Orqaga
+                </button>
+                <div class="progress-info">
+                    <span class="progress-text" id="progressText">0%</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="flashcard-wrapper">
+            
+            <!-- Card Counter -->
+            <div class="card-counter">
+                <span id="currentCard">1</span> / <span id="totalCards">35</span>
+            </div>
+
+            <!-- Stats Panel -->
+            <div class="stats-panel">
+                <div class="stat-item">
+                    <span class="stat-number" id="knownCount">0</span>
+                    <span class="stat-label">Bilaman</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="learningCount">0</span>
+                    <span class="stat-label">O'rganyapman</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="unknownCount">0</span>
+                    <span class="stat-label">Bilmayman</span>
+                </div>
+            </div>
+
+            <!-- Flashcard -->
+            <div class="flashcard-container">
+                <div class="flashcard" id="flashcard" onclick="flipCard()">
+                    <div class="card-face card-front">
+                        <div class="card-type" id="cardType">Noun</div>
+                        <div class="card-word" id="cardWord">amateur</div>
+                        <div class="card-pronunciation" id="cardPronunciation">/ˈæmətər/</div>
+                        <div class="flip-hint">
+                            <i class="bi bi-arrow-repeat"></i> Bosing
+                        </div>
+                    </div>
+                    <div class="card-face card-back">
+                        <div class="card-translation" id="cardTranslation">havaskor, amatyor</div>
+                        <div class="card-example" id="cardExample">
+                            "He's just an amateur photographer, but his pictures are amazing."
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Knowledge Buttons -->
+            <div class="knowledge-buttons">
+                <button class="knowledge-btn dont-know" onclick="markCard('dont-know')">
+                    <i class="bi bi-x-circle"></i> Bilmayman
+                </button>
+                <button class="knowledge-btn learning" onclick="markCard('learning')">
+                    <i class="bi bi-clock"></i> O'rganyapman
+                </button>
+                <button class="knowledge-btn know" onclick="markCard('know')">
+                    <i class="bi bi-check-circle"></i> Bilaman
+                </button>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls">
+                <button class="control-btn previous" onclick="previousCard()" id="prevBtn">
+                    <i class="bi bi-arrow-left-circle"></i>
+                    Oldingi
+                </button>
+                <button class="control-btn audio" onclick="playAudio()">
+                    <i class="bi bi-volume-up-fill"></i>
+                </button>
+                <button class="control-btn next" onclick="nextCard()" id="nextBtn">
+                    Keyingi
+                    <i class="bi bi-arrow-right-circle"></i>
+                </button>
+            </div>
+
+            <!-- Complete Button -->
+            <button class="complete-btn" id="completeBtn" onclick="completeFlashcards()">
+                <i class="bi bi-check-circle-fill"></i>
+                Flashcardlarni tugalladim
+            </button>
+
+        </div>
+    </div>
+
+    <script>
+        const UNIT_ID = 3;
+
+        // Flashcard ma'lumotlari
+        const flashcards = [
+            { word: "amateur", translation: "havaskor, amatyor", type: "noun", pronunciation: "/ˈæmətər/", 
+              example: "He's just an amateur photographer, but his pictures are amazing." },
+            { word: "challenge", translation: "qiyinchilik, muammo", type: "noun", pronunciation: "/ˈtʃælɪndʒ/", 
+              example: "Climbing that mountain was a real challenge for us." },
+            { word: "champion", translation: "chempion, g'olib", type: "noun", pronunciation: "/ˈtʃæmpiən/", 
+              example: "She became the world champion in tennis last year." },
+            { word: "compete", translation: "raqobatlashmoq, bellashmoq", type: "verb", pronunciation: "/kəmˈpiːt/", 
+              example: "Athletes from 50 countries will compete in the games." },
+            { word: "competitor", translation: "raqobatchi, bellashuvchi", type: "noun", pronunciation: "/kəmˈpetɪtər/", 
+              example: "There were over 100 competitors in the race." },
+            { word: "defeat", translation: "yengmoq, mag'lub qilmoq", type: "verb", pronunciation: "/dɪˈfiːt/", 
+              example: "Our team defeated them 3-1 in the final match." },
+            { word: "draw", translation: "durang, teng natija", type: "noun", pronunciation: "/drɔː/", 
+              example: "The match ended in a 2-2 draw." },
+            { word: "entertain", translation: "ko'ngil ochmoq, zavqlandirmoq", type: "verb", pronunciation: "/ˌentərˈteɪn/", 
+              example: "The clown entertained the children at the party." },
+            { word: "entertainment", translation: "ko'ngil ochar narsa, tomasha", type: "noun", pronunciation: "/ˌentərˈteɪnmənt/", 
+              example: "There's not much entertainment in this small town." },
+            { word: "final", translation: "final, yakuniy o'yin", type: "noun", pronunciation: "/ˈfaɪnl/", 
+              example: "They reached the final of the competition." },
+            { word: "fun", translation: "qiziq, quvnoq", type: "noun/adj", pronunciation: "/fʌn/", 
+              example: "We had a lot of fun at the party yesterday." },
+            { word: "hobby", translation: "sevimli mashg'ulot", type: "noun", pronunciation: "/ˈhɒbi/", 
+              example: "My hobby is collecting stamps from different countries." },
+            { word: "interest", translation: "qiziqish, manfaat", type: "noun", pronunciation: "/ˈɪntrəst/", 
+              example: "She has a great interest in classical music." },
+            { word: "lose", translation: "yo'qotmoq, yutqizmoq", type: "verb", pronunciation: "/luːz/", 
+              example: "I don't want to lose this important game." },
+            { word: "member", translation: "a'zo", type: "noun", pronunciation: "/ˈmembər/", 
+              example: "He's been a member of the club for five years." },
+            { word: "opponent", translation: "raqib, qarshi tomon", type: "noun", pronunciation: "/əˈpəʊnənt/", 
+              example: "His opponent in the final was much stronger." },
+            { word: "organise", translation: "tashkil qilmoq, uyushtirmoq", type: "verb", pronunciation: "/ˈɔːɡənaɪz/", 
+              example: "We need to organise a meeting for next week." },
+            { word: "player", translation: "o'yinchi", type: "noun", pronunciation: "/ˈpleɪər/", 
+              example: "He's the best player on the team this season." },
+            { word: "prize", translation: "mukofot, sovg'a", type: "noun", pronunciation: "/praɪz/", 
+              example: "First prize is a trip to Paris for two people." },
+            { word: "professional", translation: "professional, mutaxassis", type: "adj/noun", pronunciation: "/prəˈfeʃənl/", 
+              example: "She's a professional tennis player." },
+            { word: "score", translation: "ball, hisob; gol urmoq", type: "noun/verb", pronunciation: "/skɔːr/", 
+              example: "What's the score? - It's 2-1 to our team." },
+            { word: "spectator", translation: "tomoshabin", type: "noun", pronunciation: "/spekˈteɪtər/", 
+              example: "There were over 10,000 spectators at the stadium." },
+            { word: "support", translation: "qo'llab-quvvatlamoq", type: "verb", pronunciation: "/səˈpɔːt/", 
+              example: "Which football team do you support?" },
+            { word: "team", translation: "jamoa", type: "noun", pronunciation: "/tiːm/", 
+              example: "Our team won the championship this year." },
+            { word: "train", translation: "mashq qilmoq, o'qitmoq", type: "verb", pronunciation: "/treɪn/", 
+              example: "He trains every day for the big competition." },
+            { word: "trophy", translation: "kubok, taqdim", type: "noun", pronunciation: "/ˈtrəʊfi/", 
+              example: "They won the trophy for the third time in a row." },
+            { word: "win", translation: "g'alaba qozonmoq, yutmoq", type: "verb", pronunciation: "/wɪn/", 
+              example: "I really hope we win the match tomorrow." },
+            { word: "give up", translation: "taslim bo'lmoq, tashlamoq", type: "phrasal verb", pronunciation: "/ɡɪv ʌp/", 
+              example: "Don't give up! You can still win this game." },
+            { word: "take up", translation: "boshlamoq (yangi mashg'ulot)", type: "phrasal verb", pronunciation: "/teɪk ʌp/", 
+              example: "I've decided to take up swimming this summer." },
+            { word: "join in", translation: "qo'shilmoq, ishtirok etmoq", type: "phrasal verb", pronunciation: "/dʒɔɪn ɪn/", 
+              example: "Everyone is welcome to join in the game." },
+            { word: "knock out", translation: "nokautga solmoq, yo'q qilmoq", type: "phrasal verb", pronunciation: "/nɒk aʊt/", 
+              example: "The champion knocked out his opponent in the third round." },
+            { word: "warm up", translation: "isitmoq, tayyorlanmoq", type: "phrasal verb", pronunciation: "/wɔːm ʌp/", 
+              example: "Players always warm up before the match starts." },
+            { word: "work out", translation: "mashq qilmoq, sport bilan shug'ullanmoq", type: "phrasal verb", pronunciation: "/wɜːk aʊt/", 
+              example: "I work out at the gym three times a week." },
+            { word: "look forward to", translation: "intiqlik bilan kutmoq", type: "phrasal verb", pronunciation: "/lʊk ˈfɔːwəd tuː/", 
+              example: "I'm looking forward to the match this weekend." },
+            { word: "get on with", translation: "davom ettirmoq", type: "phrasal verb", pronunciation: "/ɡet ɒn wɪð/", 
+              example: "Let's get on with the game, we're wasting time." }
+        ];
+
+        let currentIndex = 0;
+        let isFlipped = false;
+        let stats = {
+            known: 0,
+            learning: 0,
+            unknown: 0
+        };
+
+        // Progress yangilash funksiyasi
+        function updateUnitProgress(unitId, section, percent) {
+            let progress = JSON.parse(localStorage.getItem('unitProgress')) || {};
+            if (!progress[unitId]) {
+                progress[unitId] = {
+                    grammar: 0,
+                    flashcard: 0,
+                    test: 0,
+                    practice: 0,
+                    overall: 0
+                };
+            }
+            progress[unitId][section] = percent;
+            const overall = Math.round(
+                (progress[unitId].grammar + progress[unitId].flashcard + 
+                 progress[unitId].test + progress[unitId].practice) / 4
+            );
+            progress[unitId].overall = overall;
+            localStorage.setItem('unitProgress', JSON.stringify(progress));
+        }
+
+        // Kartochkani ko'rsatish
+        function displayCard() {
+            const card = flashcards[currentIndex];
+            document.getElementById('cardWord').textContent = card.word;
+            document.getElementById('cardTranslation').textContent = card.translation;
+            document.getElementById('cardType').textContent = card.type;
+            document.getElementById('cardPronunciation').textContent = card.pronunciation;
+            document.getElementById('cardExample').textContent = card.example;
+            document.getElementById('currentCard').textContent = currentIndex + 1;
+            document.getElementById('totalCards').textContent = flashcards.length;
+
+            // Progress yangilash
+            const progress = Math.round(((currentIndex + 1) / flashcards.length) * 100);
+            document.getElementById('progressText').textContent = progress + '%';
+            updateUnitProgress(UNIT_ID, 'flashcard', progress);
+
+            // Tugmalarni boshqarish
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            
+            // Oxirgi kartochkada tugallash tugmasini ko'rsatish
+            if (currentIndex === flashcards.length - 1) {
+                document.getElementById('completeBtn').classList.add('show');
+            } else {
+                document.getElementById('completeBtn').classList.remove('show');
+            }
+        }
+
+        // Kartochkani aylantirish
+        function flipCard() {
+            const flashcard = document.getElementById('flashcard');
+            isFlipped = !isFlipped;
+            if (isFlipped) {
+                flashcard.classList.add('flipped');
+            } else {
+                flashcard.classList.remove('flipped');
+            }
+        }
+
+        // Keyingi kartochka
+        function nextCard() {
+            if (currentIndex < flashcards.length - 1) {
+                currentIndex++;
+                if (isFlipped) flipCard();
+                displayCard();
+            }
+        }
+
+        // Oldingi kartochka
+        function previousCard() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                if (isFlipped) flipCard();
+                displayCard();
+            }
+        }
+
+        // Kartochkani belgilash
+        function markCard(status) {
+            if (status === 'know') {
+                stats.known++;
+                document.getElementById('knownCount').textContent = stats.known;
+            } else if (status === 'learning') {
+                stats.learning++;
+                document.getElementById('learningCount').textContent = stats.learning;
+            } else if (status === 'dont-know') {
+                stats.unknown++;
+                document.getElementById('unknownCount').textContent = stats.unknown;
+            }
+
+            // Keyingi kartochkaga o'tish
+            setTimeout(() => {
+                nextCard();
+            }, 300);
+        }
+
+        // Audio o'ynatish
+        function playAudio() {
+            const word = flashcards[currentIndex].word;
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(word);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.8;
+                speechSynthesis.speak(utterance);
+            }
+        }
+
+        // Flashcardlarni tugallash
+        function completeFlashcards() {
+            updateUnitProgress(UNIT_ID, 'flashcard', 100);
+            alert(`🎉 Ajoyib! Barcha ${flashcards.length} ta kartochka ko'rildi!\n\nBilaman: ${stats.known}\nO'rganyapman: ${stats.learning}\nBilmayman: ${stats.unknown}`);
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1000);
+        }
+
+        // Orqaga qaytish
+        function goBack() {
+            if (confirm('Haqiqatan ham orqaga qaytmoqchimisiz? Progress saqlanadi.')) {
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Klaviatura hodisalari
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextCard();
+            if (e.key === 'ArrowLeft') previousCard();
+            if (e.key === ' ') {
+                e.preventDefault();
+                flipCard();
+            }
+        });
+
+        // Sahifa yuklanganda
+        window.addEventListener('load', () => {
+            displayCard();
+        });
+    </script>
+
+</body>
+</html>

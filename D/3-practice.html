@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 3: Fun and games - Mashqlar</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(to bottom right, #fef3c7, #fed7aa, #fbbf24);
+            min-height: 100vh;
+            color: #1e293b;
+        }
+
+        .header {
+            background: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .back-btn {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-btn:hover {
+            background: #4f46e5;
+            transform: translateX(-5px);
+        }
+
+        .progress-bar-wrapper {
+            flex: 1;
+            max-width: 300px;
+            margin: 0 2rem;
+        }
+
+        .progress-label {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress {
+            height: 12px;
+            border-radius: 10px;
+            background: #e2e8f0;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 3rem;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .exercise-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .exercise-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid #f1f5f9;
+        }
+
+        .exercise-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+        }
+
+        .exercise-info h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
+        }
+
+        .exercise-info p {
+            color: #64748b;
+            margin: 0;
+        }
+
+        .question {
+            margin-bottom: 2rem;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1e293b;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .blank-input {
+            min-width: 150px;
+            padding: 0.8rem;
+            border: 2px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .blank-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            background: #f8f9ff;
+        }
+
+        .blank-input.correct {
+            border-color: #10b981;
+            background: #d1fae5;
+        }
+
+        .blank-input.incorrect {
+            border-color: #ef4444;
+            background: #fee2e2;
+        }
+
+        .word-options {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .word-option {
+            padding: 0.7rem 1.5rem;
+            background: #f1f5f9;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .word-option:hover {
+            background: #e2e8f0;
+            transform: translateY(-2px);
+        }
+
+        .word-option.selected {
+            background: #6366f1;
+            color: white;
+            border-color: #6366f1;
+        }
+
+        .word-option.used {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .matching-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .match-column h4 {
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #6366f1;
+        }
+
+        .match-item {
+            padding: 1rem;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .match-item:hover {
+            background: #f1f5f9;
+            transform: translateX(5px);
+        }
+
+        .match-item.selected {
+            background: #6366f1;
+            color: white;
+            border-color: #6366f1;
+        }
+
+        .match-item.matched {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+            cursor: default;
+        }
+
+        .sentence-builder {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 2px dashed #cbd5e1;
+            min-height: 80px;
+            margin-bottom: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .sentence-word {
+            padding: 0.6rem 1.2rem;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .sentence-word:hover {
+            background: #fee2e2;
+            border-color: #ef4444;
+        }
+
+        .check-btn {
+            width: 100%;
+            padding: 1.2rem;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+
+        .check-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(251, 191, 36, 0.3);
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            padding: 1.2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.correct {
+            background: #d1fae5;
+            color: #065f46;
+            border: 2px solid #10b981;
+        }
+
+        .feedback.incorrect {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 2px solid #ef4444;
+        }
+
+        .complete-btn {
+            width: 100%;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.3rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .complete-btn.show {
+            display: block;
+        }
+
+        .complete-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(16, 185, 129, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .matching-container {
+                grid-template-columns: 1fr;
+            }
+
+            .progress-bar-wrapper {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <button class="back-btn" onclick="goBack()">
+                    <i class="bi bi-arrow-left"></i>
+                    Orqaga
+                </button>
+                <div class="progress-bar-wrapper">
+                    <div class="progress-label">
+                        <span id="completedEx">0</span> / <span id="totalEx">6</span> bajarildi
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <!-- Hero -->
+        <div class="hero">
+            <h1>🎮 Mashqlar</h1>
+            <p>Unit 3: Fun and games - Amaliy topshiriqlar</p>
+        </div>
+
+        <!-- Exercise 1: Fill in the blanks -->
+        <div class="exercise-card" data-exercise="1">
+            <div class="exercise-header">
+                <div class="exercise-icon">📝</div>
+                <div class="exercise-info">
+                    <h3>Mashq 1: Bo'sh joylarni to'ldiring</h3>
+                    <p>To'g'ri so'zlarni tanlang</p>
+                </div>
+            </div>
+
+            <div class="question">
+                <div class="question-text">
+                    1. She's just an _____ photographer, but her pictures are amazing.
+                </div>
+                <input type="text" class="blank-input" data-answer="amateur" placeholder="Javobingiz...">
+            </div>
+
+            <div class="question">
+                <div class="question-text">
+                    2. Our team _____ the championship this year.
+                </div>
+                <input type="text" class="blank-input" data-answer="won" placeholder="Javobingiz...">
+            </div>
+
+            <div class="question">
+                <div class="question-text">
+                    3. There were over 10,000 _____ at the stadium.
+                </div>
+                <input type="text" class="blank-input" data-answer="spectators" placeholder="Javobingiz...">
+            </div>
+
+            <div class="question">
+                <div class="question-text">
+                    4. He _____ every day for the big competition.
+                </div>
+                <input type="text" class="blank-input" data-answer="trains" placeholder="Javobingiz...">
+            </div>
+
+            <button class="check-btn" onclick="checkExercise(1)">Tekshirish</button>
+            <div class="feedback" id="feedback1"></div>
+        </div>
+
+        <!-- Exercise 2: Multiple choice -->
+        <div class="exercise-card" data-exercise="2">
+            <div class="exercise-header">
+                <div class="exercise-icon">✅</div>
+                <div class="exercise-info">
+                    <h3>Mashq 2: To'g'ri variantni tanlang</h3>
+                    <p>Har bir gapga mos so'zni toping</p>
+                </div>
+            </div>
+
+            <div class="question">
+                <div class="question-text">
+                    1. The match ended in a _____. Nobody won.
+                </div>
+                <div class="word-options">
+                    <div class="word-option" data-answer="false">defeat</div>
+                    <div class="word-option" data-answer="true">draw</div>
+                    <div class="word-option" data-answer="false">victory</div>
+                    <div class="word-option" data-answer="false">score</div>
+                </div>
+            </div>
+
+            <div class="question">
+                <div class="question-text">
+                    2. I've decided to _____ swimming this summer.
+                </div>
+                <div class="word-options">
+                    <div class="word-option" data-answer="true">take up</div>
+                    <div class="word-option" data-answer="false">give up</div>
+                    <div class="word-option" data-answer="false">look up</div>
+                    <div class="word-option" data-answer="false">make up</div>
+                </div>
+            </div>
+
+            <div class="question">
+                <div class="question-text">
+                    3. My _____ is collecting stamps from different countries.
+                </div>
+                <div class="word-options">
+                    <div class="word-option" data-answer="false">job</div>
+                    <div class="word-option" data-answer="true">hobby</div>
+                    <div class="word-option" data-answer="false">work</div>
+                    <div class="word-option" data-answer="false">interest</div>
+                </div>
+            </div>
+
+            <button class="check-btn" onclick="checkExercise(2)">Tekshirish</button>
+            <div class="feedback" id="feedback2"></div>
+        </div>
+
+        <!-- Exercise 3: Matching -->
+        <div class="exercise-card" data-exercise="3">
+            <div class="exercise-header">
+                <div class="exercise-icon">🔗</div>
+                <div class="exercise-info">
+                    <h3>Mashq 3: Moslashtiring</h3>
+                    <p>Inglizcha so'zlarni tarjimasi bilan birlashtiring</p>
+                </div>
+            </div>
+
+            <div class="matching-container">
+                <div class="match-column">
+                    <h4>English</h4>
+                    <div class="match-item" data-id="1" onclick="selectMatch(this, 'left')">champion</div>
+                    <div class="match-item" data-id="2" onclick="selectMatch(this, 'left')">opponent</div>
+                    <div class="match-item" data-id="3" onclick="selectMatch(this, 'left')">compete</div>
+                    <div class="match-item" data-id="4" onclick="selectMatch(this, 'left')">defeat</div>
+                </div>
+                <div class="match-column">
+                    <h4>O'zbekcha</h4>
+                    <div class="match-item" data-id="4" onclick="selectMatch(this, 'right')">yengmoq, mag'lub qilmoq</div>
+                    <div class="match-item" data-id="1" onclick="selectMatch(this, 'right')">chempion, g'olib</div>
+                    <div class="match-item" data-id="3" onclick="selectMatch(this, 'right')">raqobatlashmoq</div>
+                    <div class="match-item" data-id="2" onclick="selectMatch(this, 'right')">raqib</div>
+                </div>
+            </div>
+
+            <button class="check-btn" onclick="checkExercise(3)">Tekshirish</button>
+            <div class="feedback" id="feedback3"></div>
+        </div>
+
+        <!-- Exercise 4: Sentence building -->
+        <div class="exercise-card" data-exercise="4">
+            <div class="exercise-header">
+                <div class="exercise-icon">🏗️</div>
+                <div class="exercise-info">
+                    <h3>Mashq 4: Gap tuzing</h3>
+                    <p>So'zlarni to'g'ri tartibda joylashtiring</p>
+                </div>
+            </div>
+
+            <div class="question">
+                <div class="question-text">
+                    1. Gap tuzing: "He trains every day"
+                </div>
+                <div class="sentence-builder" id="builder1"></div>
+                <div class="word-options">
+                    <div class="word-option" onclick="addWord(this, 1, 'He')">He</div>
+                    <div class="word-option" onclick="addWord(this, 1, 'trains')">trains</div>
+                    <div class="word-option" onclick="addWord(this, 1, 'every')">every</div>
+                    <div class="word-option" onclick="addWord(this, 1, 'day')">day</div>
+                </div>
+            </div>
+
+            <div class="question">
+                <div class="question-text">
+                    2. Gap tuzing: "I look forward to the match"
+                </div>
+                <div class="sentence-builder" id="builder2"></div>
+                <div class="word-options">
+                    <div class="word-option" onclick="addWord(this, 2, 'I')">I</div>
+                    <div class="word-option" onclick="addWord(this, 2, 'look')">look</div>
+                    <div class="word-option" onclick="addWord(this, 2, 'forward')">forward</div>
+                    <div class="word-option" onclick="addWord(this, 2, 'to')">to</div>
+                    <div class="word-option" onclick="addWord(this, 2, 'the')">the</div>
+                    <div class="word-option" onclick="addWord(this, 2, 'match')">match</div>
+                </div>
+            </div>
+
+            <button class="check-btn" onclick="checkExercise(4)">Tekshirish</button>
+            <div class="feedback" id="feedback4"></div>
+        </div>
+
+        <!-- Exercise 5: Translation -->
+        <div class="exercise-card" data-exercise="5">
+            <div class="exercise-header">
+                <div class="exercise-icon">🌐</div>
+                <div class="exercise-info">
+                    <h3>Mashq 5: Tarjima qiling</h3>
+                    <p>O'zbekchadan inglizchaga tarjima qiling</p>
+                </div>
+            </div>
+
+            <div class="question">
+                <div class="question-text">
+                    1. "sevimli mashg'ulot"
+                </div>
+                <input type="text" class="blank-input" data-answer="hobby" placeholder="Tarjima...">
+            </div>
+
+            <div class="question">
+                <div class="question-text">
+                    2. "tomoshabin"
+                </div>
+                <input type="text" class="blank-input" data-answer="spectator" placeholder="Tarjima...">
+            </div>
+
+            <div class="question">
+                <div class="question-text">
+                    3. "kubok, taqdim"
+                </div>
+                <input type="text" class="blank-input" data-answer="trophy" placeholder="Tarjima...">
+            </div>
+
+            <div class="question">
+                <div class="question-text">
+                    4. "taslim bo'lmoq, tashlamoq"
+                </div>
+                <input type="text" class="blank-input" data-answer="give up" placeholder="Tarjima...">
+            </div>
+
+            <button class="check-btn" onclick="checkExercise(5)">Tekshirish</button>
+            <div class="feedback" id="feedback5"></div>
+        </div>
+
+        <!-- Exercise 6: Phrasal verbs -->
+        <div class="exercise-card" data-exercise="6">
+            <div class="exercise-header">
+                <div class="exercise-icon">💬</div>
+                <div class="exercise-info">
+                    <h3>Mashq 6: Phrasal verbs</h3>
+                    <p>To'g'ri phrasal verb bilan to'ldiring</p>
+                </div>
+            </div>
+
+            <div class="question">
+                <div class="question-text">
+                    1. Don't _____ ! You can still win. (taslim bo'lmoq)
+                </div>
+                <input type="text" class="blank-input" data-answer="give up" placeholder="Javobingiz...">
+            </div>
+
+            <div class="question">
+                <div class="question-text">
+                    2. Players always _____ before the match. (isitmoq)
+                </div>
+                <input type="text" class="blank-input" data-answer="warm up" placeholder="Javobingiz...">
+            </div>
+
+            <div class="question">
+                <div class="question-text">
+                    3. I _____ at the gym every day. (mashq qilmoq)
+                </div>
+                <input type="text" class="blank-input" data-answer="work out" placeholder="Javobingiz...">
+            </div>
+
+            <div class="question">
+                <div class="question-text">
+                    4. Everyone can _____ the game. (qo'shilmoq)
+                </div>
+                <input type="text" class="blank-input" data-answer="join in" placeholder="Javobingiz...">
+            </div>
+
+            <button class="check-btn" onclick="checkExercise(6)">Tekshirish</button>
+            <div class="feedback" id="feedback6"></div>
+        </div>
+
+        <!-- Complete Button -->
+        <button class="complete-btn" id="completeBtn" onclick="completePractice()">
+            <i class="bi bi-check-circle-fill"></i>
+            Barcha mashqlar bajarildi! Tugatish
+        </button>
+
+    </div>
+
+    <script>
+        const UNIT_ID = 3;
+        const TOTAL_EXERCISES = 6;
+        let completedExercises = new Set();
+        let matchingPairs = { left: null, right: null };
+        let sentences = { 1: [], 2: [] };
+
+        // Progress yangilash
+        function updateUnitProgress(unitId, section, percent) {
+            let progress = JSON.parse(localStorage.getItem('unitProgress')) || {};
+            if (!progress[unitId]) {
+                progress[unitId] = {
+                    grammar: 0,
+                    flashcard: 0,
+                    test: 0,
+                    practice: 0,
+                    overall: 0
+                };
+            }
+            progress[unitId][section] = percent;
+            const overall = Math.round(
+                (progress[unitId].grammar + progress[unitId].flashcard + 
+                 progress[unitId].test + progress[unitId].practice) / 4
+            );
+            progress[unitId].overall = overall;
+            localStorage.setItem('unitProgress', JSON.stringify(progress));
+        }
+
+        function updateProgress() {
+            const percent = Math.round((completedExercises.size / TOTAL_EXERCISES) * 100);
+            document.getElementById('completedEx').textContent = completedExercises.size;
+            document.getElementById('totalEx').textContent = TOTAL_EXERCISES;
+            document.getElementById('progressBar').style.width = percent + '%';
+            
+            updateUnitProgress(UNIT_ID, 'practice', percent);
+
+            if (completedExercises.size === TOTAL_EXERCISES) {
+                document.getElementById('completeBtn').classList.add('show');
+            }
+        }
+
+        // Exercise 1 & 5 & 6 (Fill in the blanks)
+        function checkExercise(exerciseNum) {
+            const card = document.querySelector(`[data-exercise="${exerciseNum}"]`);
+            const inputs = card.querySelectorAll('.blank-input');
+            let allCorrect = true;
+
+            inputs.forEach(input => {
+                const userAnswer = input.value.trim().toLowerCase();
+                const correctAnswer = input.dataset.answer.toLowerCase();
+
+                if (userAnswer === correctAnswer) {
+                    input.classList.add('correct');
+                    input.classList.remove('incorrect');
+                } else {
+                    input.classList.add('incorrect');
+                    input.classList.remove('correct');
+                    allCorrect = false;
+                }
+            });
+
+            const feedback = document.getElementById(`feedback${exerciseNum}`);
+            feedback.classList.add('show');
+            
+            if (allCorrect) {
+                feedback.textContent = '🎉 To\'g\'ri! Ajoyib!';
+                feedback.classList.add('correct');
+                feedback.classList.remove('incorrect');
+                completedExercises.add(exerciseNum);
+                updateProgress();
+            } else {
+                feedback.textContent = '❌ Ba\'zi javoblar noto\'g\'ri. Qaytadan urinib ko\'ring.';
+                feedback.classList.add('incorrect');
+                feedback.classList.remove('correct');
+            }
+        }
+
+        // Exercise 2 (Multiple choice)
+        document.querySelectorAll('[data-exercise="2"] .word-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const question = this.closest('.question');
+                question.querySelectorAll('.word-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+
+        // Exercise 3 (Matching)
+        function selectMatch(element, side) {
+            if (element.classList.contains('matched')) return;
+
+            const column = element.closest('.match-column');
+            column.querySelectorAll('.match-item').forEach(item => {
+                if (!item.classList.contains('matched')) {
+                    item.classList.remove('selected');
+                }
+            });
+
+            element.classList.add('selected');
+            matchingPairs[side] = element;
+
+            if (matchingPairs.left && matchingPairs.right) {
+                if (matchingPairs.left.dataset.id === matchingPairs.right.dataset.id) {
+                    matchingPairs.left.classList.add('matched');
+                    matchingPairs.right.classList.add('matched');
+                    matchingPairs.left.classList.remove('selected');
+                    matchingPairs.right.classList.remove('selected');
+                } else {
+                    setTimeout(() => {
+                        matchingPairs.left.classList.remove('selected');
+                        matchingPairs.right.classList.remove('selected');
+                    }, 500);
+                }
+                matchingPairs = { left: null, right: null };
+
+                // Check if all matched
+                const allMatched = document.querySelectorAll('[data-exercise="3"] .match-item.matched').length === 8;
+                if (allMatched) {
+                    const feedback = document.getElementById('feedback3');
+                    feedback.textContent = '🎉 Hammasi to\'g\'ri! Ajoyib!';
+                    feedback.classList.add('show', 'correct');
+                    completedExercises.add(3);
+                    updateProgress();
+                }
+            }
+        }
+
+        // Exercise 4 (Sentence building)
+        function addWord(element, sentenceNum, word) {
+            if (element.classList.contains('used')) return;
+
+            element.classList.add('used');
+            sentences[sentenceNum].push(word);
+
+            const builder = document.getElementById(`builder${sentenceNum}`);
+            const wordSpan = document.createElement('span');
+            wordSpan.className = 'sentence-word';
+            wordSpan.textContent = word;
+            wordSpan.onclick = function() {
+                removeWord(this, element, sentenceNum, word);
+            };
+            builder.appendChild(wordSpan);
+        }
+
+        function removeWord(wordSpan, optionElement, sentenceNum, word) {
+            wordSpan.remove();
+            optionElement.classList.remove('used');
+            const index = sentences[sentenceNum].indexOf(word);
+            if (index > -1) {
+                sentences[sentenceNum].splice(index, 1);
+            }
+        }
+
+        // Override checkExercise for exercise 2
+        const originalCheck = checkExercise;
+        checkExercise = function(exerciseNum) {
+            if (exerciseNum === 2) {
+                const questions = document.querySelectorAll('[data-exercise="2"] .question');
+                let allCorrect = true;
+
+                questions.forEach(question => {
+                    const selected = question.querySelector('.word-option.selected');
+                    if (!selected || selected.dataset.answer !== 'true') {
+                        allCorrect = false;
+                    }
+                });
+
+                const feedback = document.getElementById('feedback2');
+                feedback.classList.add('show');
+
+                if (allCorrect) {
+                    feedback.textContent = '🎉 Barcha javoblar to\'g\'ri!';
+                    feedback.classList.add('correct');
+                    feedback.classList.remove('incorrect');
+                    completedExercises.add(2);
+                    updateProgress();
+                } else {
+                    feedback.textContent = '❌ Ba\'zi javoblar noto\'g\'ri. Qaytadan urinib ko\'ring.';
+                    feedback.classList.add('incorrect');
+                    feedback.classList.remove('correct');
+                }
+            } else if (exerciseNum === 4) {
+                const correct1 = sentences[1].join(' ') === 'He trains every day';
+                const correct2 = sentences[2].join(' ') === 'I look forward to the match';
+
+                const feedback = document.getElementById('feedback4');
+                feedback.classList.add('show');
+
+                if (correct1 && correct2) {
+                    feedback.textContent = '🎉 Ikkala gap ham to\'g\'ri tuzildi!';
+                    feedback.classList.add('correct');
+                    feedback.classList.remove('incorrect');
+                    completedExercises.add(4);
+                    updateProgress();
+                } else {
+                    feedback.textContent = '❌ Gaplar noto\'g\'ri. Qaytadan urinib ko\'ring.';
+                    feedback.classList.add('incorrect');
+                    feedback.classList.remove('correct');
+                }
+            } else {
+                originalCheck(exerciseNum);
+            }
+        };
+
+        // Complete practice
+        function completePractice() {
+            updateUnitProgress(UNIT_ID, 'practice', 100);
+            alert('🎉 Ajoyib! Barcha mashqlar muvaffaqiyatli bajarildi!');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1000);
+        }
+
+        // Go back
+        function goBack() {
+            if (confirm('Orqaga qaytmoqchimisiz? Progress saqlanadi.')) {
+                window.location.href = 'index.html';
+            }
+        }
+    </script>
+
+</body>
+</html>
