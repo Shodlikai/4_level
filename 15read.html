@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Time & Cats - Interactive Reader</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://code.responsivevoice.org/responsivevoice.js?key=ftro4Sxr"></script>
+    <style>
+        /* --- DIZAYN (GOLD/ORANGE) --- */
+        :root {
+            --primary-color: #d97706; --primary-hover: #b45309;
+            --bg-color: #fffbeb; --card-bg: #ffffff;
+            --text-color: #334155; --heading-color: #1e293b;
+            --tooltip-bg: #1e293b; --tooltip-text: #ffffff;
+            --border-color: #e2e8f0; --highlight-color: rgba(217, 119, 6, 0.15);
+            --word-hover-color: #d97706;
+            --highlight-bg: #fef08a; 
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        body.dark-mode {
+            --bg-color: #0f172a; --card-bg: #1e293b;
+            --text-color: #cbd5e1; --heading-color: #f1f5f9;
+            --tooltip-bg: #f1f5f9; --tooltip-text: #0f172a;
+            --border-color: #334155; --highlight-color: rgba(217, 119, 6, 0.2);
+            --word-hover-color: #fbbf24; --highlight-bg: #854d0e;
+        }
+
+        * { box-sizing: border-box; transition: background-color 0.3s ease, color 0.3s ease; }
+        
+        html { font-size: 16px; scroll-behavior: auto; }
+        body { font-family: 'Merriweather', serif; line-height: 1.9; margin: 0; padding-top: 80px; background-color: var(--bg-color); color: var(--text-color); overflow-x: hidden; }
+
+        /* HEADER */
+        #sticky-menu { position: fixed; top: 0; left: 0; width: 100%; height: 70px; background: var(--card-bg); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 0 20px; z-index: 10000; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .timer-container { display: flex; align-items: center; gap: 10px; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.2rem; color: var(--primary-color); }
+        .timer-icon { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        
+        .menu-btn { background: transparent; color: var(--text-color); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 50px; cursor: pointer; font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+        .menu-btn:hover { border-color: var(--primary-color); color: var(--primary-color); }
+
+        /* CONTAINER */
+        .container { width: 95%; max-width: 800px; margin: 20px auto 60px; background: var(--card-bg); padding: 40px 50px; border-radius: 16px; box-shadow: var(--shadow); position: relative; z-index: 10; }
+        .content-image { width: 100%; height: auto; max-height: 400px; object-fit: cover; border-radius: 12px; margin: 30px 0; background-color: var(--border-color); }
+
+        h1 { font-family: 'Montserrat', sans-serif; text-align: center; color: var(--primary-color); margin-bottom: 20px; font-weight: 700; font-size: 1.8rem; }
+        h2, h3 { font-family: 'Montserrat', sans-serif; font-weight: 700; color: var(--heading-color); margin-top: 40px; margin-bottom: 15px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; font-size: 1.3rem; }
+        
+        /* MATNNI TEKISLASH (JUSTIFY) */
+        p { margin-bottom: 20px; font-size: 1.1rem; text-align: justify; text-justify: inter-word; }
+        
+        /* CLICKABLE WORDS */
+        .word { cursor: pointer; position: relative; display: inline-block; border-bottom: 1.5px solid transparent; transition: all 0.2s; white-space: pre-wrap; }
+        .word:hover { color: var(--word-hover-color); background-color: var(--highlight-color); border-bottom-color: var(--word-hover-color); border-radius: 3px; }
+        
+        .tooltip { visibility: hidden; opacity: 0; position: absolute; bottom: 135%; left: 50%; transform: translateX(-50%); background-color: var(--tooltip-bg); color: var(--tooltip-text); text-align: center; border-radius: 6px; padding: 5px 10px; z-index: 1000; white-space: nowrap; font-family: 'Montserrat', sans-serif; font-size: 0.85rem; box-shadow: 0 4px 8px rgba(0,0,0,0.2); pointer-events: none; }
+        .tooltip::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -6px; border-width: 6px; border-style: solid; border-color: var(--tooltip-bg) transparent transparent transparent; }
+        .word:hover .tooltip { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(-5px); }
+
+        .floating-icon { position: fixed; top: -50px; z-index: 9999; pointer-events: none; opacity: 0.4; animation: fall linear forwards; }
+        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+
+        @media (max-width: 768px) {
+            .container { width: 95%; padding: 25px; margin-top: 10px; }
+            h1 { font-size: 1.5rem; }
+            .menu-btn span { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="sticky-menu">
+        <div class="timer-container">
+            <span class="timer-icon"></span>
+            <span id="page-timer">00:00</span>
+        </div>
+        <div style="display: flex; gap: 8px;">
+            <button class="menu-btn" id="lang-btn"> <span>O'zbekcha</span></button>
+            <button class="menu-btn" id="theme-btn"></button>
+        </div>
+    </div>
+
+    <div class="container">
+        
+        <div id="english-content">
+            <h1>The History Of Time</h1>
+            <img class="content-image" src="https://images.unsplash.com/photo-1508962914676-13484968c7ff?w=800&q=60" alt="Time and Clock">
+            
+            <p><span class="sentence">If you can read a clock, you can know the time of day.</span> <span class="sentence">But no one knows what time itself is.</span> <span class="sentence">We cannot see it.</span> <span class="sentence">We cannot touch it.</span> <span class="sentence">We cannot hear it.</span> <span class="sentence">We know it only by the way we mark its passing.</span> <span class="sentence">For all our success in measuring the smallest parts of time, time remains one of the great mysteries of the universe.</span> <span class="sentence">One way to think about time is to imagine a world without time.</span> <span class="sentence">There could be no movement, because time and movement cannot be separated.</span> <span class="sentence">A world without time could exist only as long as there were no changes.</span> <span class="sentence">For time and change are linked.</span> <span class="sentence">We know that time has passed when something changes.</span></p>
+
+            <p><span class="sentence">In the real world, the world with time, changes never stop.</span> <span class="sentence">Some changes happen only once in a while, like an eclipse of the moon.</span> <span class="sentence">Others happen repeatedly, like the rising and setting of the sun.</span> <span class="sentence">Humans always have noted natural events that repeat themselves.</span> <span class="sentence">When people began to count such events, they began to measure time.</span> <span class="sentence">In early human history, the only changes that seemed to repeat themselves evenly were the movements of objects in the sky.</span> <span class="sentence">The most easily seen result of these movements was the difference between light and darkness.</span></p>
+
+            <p><span class="sentence">The sun rises in the eastern sky, producing light.</span> <span class="sentence">It moves across the sky and sinks in the west, causing darkness.</span> <span class="sentence">The appearance and disappearance of the sun was even and unfailing.</span> <span class="sentence">The periods of light and darkness it created were the first accepted periods of time.</span> <span class="sentence">We have named each period of light and darkness: one day.</span></p>
+
+            <p><span class="sentence">People saw the sun rise higher in the sky during the summer than in winter.</span> <span class="sentence">They counted the days that passed from the sun's highest position until it returned to that position.</span> <span class="sentence">They counted three hundred and sixty-five days.</span> <span class="sentence">We now know that is the time Earth takes to move once around the sun.</span> <span class="sentence">We call this period of time a year.</span></p>
+
+            <p><span class="sentence">Early humans also noted changes in the moon.</span> <span class="sentence">As it moved across the night sky, they must have wondered: Why did it look different every night?</span> <span class="sentence">Why did it disappear?</span> <span class="sentence">Where did it go?</span> <span class="sentence">Even before they learned the answers to these questions, they developed a way to use the changing faces of the moon to tell time.</span> <span class="sentence">The moon was "full" when its face was bright and round and "new" when it was almost entirely dark.</span> <span class="sentence">The early humans counted the number of times the sun appeared between full moons.</span> <span class="sentence">They learned that this number always remained the same, about twenty-nine suns.</span> <span class="sentence">Twenty-nine suns equalled one moon.</span> <span class="sentence">We now know this period of time as one month.</span></p>
+
+            <p><span class="sentence">Early humans hunted animals and gathered wild plants.</span> <span class="sentence">They moved in groups or tribes from place to place in search of food.</span> <span class="sentence">Then, people learned to plant seeds and grow crops.</span> <span class="sentence">They learned to use animals to help them work, and for food.</span> <span class="sentence">They found they no longer needed to move from one place to another to survive.</span> <span class="sentence">As farmers, however, they had to plant crops in time to harvest them before winter.</span> <span class="sentence">They had to know when the seasons would change.</span> <span class="sentence">So, they were forced to develop calendars.</span> <span class="sentence">No one knows when the first calendar was developed.</span> <span class="sentence">But it seems possible that it was based on moons, or lunar months.</span></p>
+
+            <p><span class="sentence">When people started farming, the wise men of the tribes became very important.</span> <span class="sentence">They studied the sky.</span> <span class="sentence">They gathered enough information so they could know when the seasons would change.</span> <span class="sentence">They announced when it was time to plant crops.</span></p>
+
+            <hr style="margin: 50px 0; border-top: 2px dashed var(--border-color);">
+
+            <h1>The Domestication of Cats</h1>
+            <img class="content-image" src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800&q=60" alt="Cat">
+
+            <p><span class="sentence">For centuries, the common view of how domestication had occurred was that prehistoric people, realizing how useful it would be to have captive herds of food animals, began capturing wild animals and breeding them.</span> <span class="sentence">Over time, by allowing only animals with "tame" characteristics to mate and produce offspring, human beings created animals that were less wild and more dependent upon people.</span> <span class="sentence">Eventually this process led to the domestic farm animals and pets that we know today, many of which would fare quite badly in the wild, having lost their ancient survival skills and instincts.</span></p>
+
+            <p><span class="sentence">Recent research suggests that this view of domestication is incomplete.</span> <span class="sentence">Prehistoric human beings did capture and breed useful wild animals, and those species became tamer over time (they generally changed physically, too, developing larger bodies and smaller brains than their wild cousins).</span> <span class="sentence">But specialists in animal behavior now think that domestication was not simply something people did to animals — the animals played an active part in the process.</span> <span class="sentence">Wolves and wild horses, for example, may have taken the first steps in their own domestication by hanging around human settlements, feeding on people's garbage and crops and getting used to human presence and activity.</span> <span class="sentence">Individual animals that were not too nervous or fearful to live near people produced offspring that also tolerated humans, making it easier for people to capture and tame them.</span></p>
+
+            <p><span class="sentence">In this version, people succeeded in domesticating only animals that had already adapted easily to life around humans.</span> <span class="sentence">Domestication required an animal that was willing to become domestic.</span> <span class="sentence">The process was more like a dance with two partners than a triumph of humans over animals.</span></p>
+
+            <p><span class="sentence">At first glance, the taming of cats seems to fit nicely into this new story of domestication.</span> <span class="sentence">A traditional theory says that after prehistoric people in the Near East and Egypt invented agriculture and started farming, rats and mice gathered to feast on their stored grain.</span> <span class="sentence">Wildcats, in turn, gathered at the same places to prey on the rats and mice.</span> <span class="sentence">Over time, cats got used to people and people got used to cats, until at some point cats were tame.</span> <span class="sentence">New studies of wildcats, however, seem to call this theory into question.</span> <span class="sentence">Wildcats don't share hunting and feeding territories, and they don't live close to people or seek out human settlements as food sources.</span> <span class="sentence">Experts do not know whether wildcats were partners in their own domestication.</span> <span class="sentence">They do know that long after people had acquired domestic dogs, sheep, goats, cattle, and horses, they somehow acquired tame cats.</span> <span class="sentence">By mating the least aggressive cats with one another, they produced animals with increasingly tame qualities.</span></p>
+        </div>
+
+        <div id="uzbek-content" style="display:none;">
+            <h1>Vaqt Tarixi</h1>
+            <img class="content-image" src="https://images.unsplash.com/photo-1508962914676-13484968c7ff?w=800&q=60" alt="Time and Clock">
+
+            <p>Agar soatni o'qiy olsangiz, kun vaqtini bilishingiz mumkin. Ammo hech kim vaqtning o'zi nima ekanligini bilmaydi. Biz uni ko'ra olmaymiz. Biz uni ushlay olmaymiz. Biz uni eshita olmaymiz. Biz uni faqat uning o'tishini belgilash usulimiz orqali bilamiz. Vaqtning eng kichik qismlarini o'lchashdagi barcha muvaffaqiyatlarimizga qaramay, vaqt koinotning buyuk sirlaridan biri bo'lib qolmoqda. Vaqt haqida o'ylashning bir usuli - vaqtsiz dunyoni tasavvur qilishdir. Harakat bo'lishi mumkin emas edi, chunki vaqt va harakatni ajratib bo'lmaydi. Vaqtsiz dunyo faqat o'zgarishlar bo'lmagan taqdirdagina mavjud bo'lishi mumkin edi. Chunki vaqt va o'zgarish bog'liqdir. Biror narsa o'zgarganda vaqt o'tganini bilamiz.</p>
+
+            <p>Haqiqiy dunyoda, vaqt mavjud bo'lgan dunyoda o'zgarishlar hech qachon to'xtamaydi. Ba'zi o'zgarishlar oy tutilishi kabi faqat vaqti-vaqti bilan sodir bo'ladi. Boshqalari esa quyoshning chiqishi va botishi kabi takroran sodir bo'ladi. Insonlar har doim o'zini takrorlaydigan tabiat hodisalarini qayd etib kelganlar. Odamlar bunday voqealarni sanashni boshlaganlarida, ular vaqtni o'lchashni boshladilar. Insoniyat tarixining boshlarida o'zini bir tekisda takrorlaydigan yagona o'zgarishlar osmondagi jismlarning harakatlari edi. Ushbu harakatlarning eng oson ko'rinadigan natijasi yorug'lik va qorong'ulik o'rtasidagi farq edi.</p>
+
+            <p>Quyosh sharqiy osmonda ko'tarilib, yorug'lik hosil qiladi. U osmon bo'ylab harakatlanadi va g'arbda botib, qorong'ulikni keltirib chiqaradi. Quyoshning paydo bo'lishi va g'oyib bo'lishi bir tekis va uzluksiz edi. U yaratgan yorug'lik va qorong'ulik davrlari birinchi qabul qilingan vaqt davrlari edi. Biz yorug'lik va qorong'ulikning har bir davrini nomladik: bir kun.</p>
+
+            <p>Odamlar yozda quyosh qishga qaraganda osmonda balandroq ko'tarilishini ko'rdilar. Ular quyoshning eng yuqori holatidan to u yana o'sha holatga qaytguniga qadar o'tgan kunlarni sanadilar. Ular uch yuz oltmish besh kunni sanadilar. Biz hozir bu Yerning quyosh atrofida bir marta aylanishi uchun ketadigan vaqt ekanligini bilamiz. Biz bu vaqt davrini yil deb ataymiz.</p>
+
+            <p>Qadimgi odamlar oydagi o'zgarishlarni ham qayd etishgan. U tungi osmon bo'ylab harakatlanar ekan, ular qiziqqan bo'lishlari kerak: Nega u har kecha boshqacha ko'rinar edi? Nega u g'oyib bo'ldi? U qayerga ketdi? Ular ushbu savollarning javoblarini o'rganishdan oldin ham, vaqtni aniqlash uchun oyning o'zgaruvchan yuzlaridan foydalanish usulini ishlab chiqdilar. Oy yuzi yorqin va dumaloq bo'lganda "to'lin" va deyarli butunlay qorong'i bo'lganda "yangi" edi. Qadimgi odamlar to'lin oylar orasida quyosh necha marta chiqqanini sanadilar. Ular bu raqam har doim bir xil, taxminan yigirma to'qqiz quyosh bo'lib qolishini bilib oldilar. Yigirma to'qqiz quyosh bir oyga teng edi. Biz hozir bu vaqt davrini bir oy deb bilamiz.</p>
+
+            <p>Qadimgi odamlar hayvonlarni ovlaganlar va yovvoyi o'simliklarni yig'ishgan. Ular oziq-ovqat izlab guruhlar yoki qabilalar bo'lib joydan joyga ko'chib yurishgan. Keyin odamlar urug' ekishni va ekin yetishtirishni o'rgandilar. Ular ishlashda yordam berish va oziq-ovqat uchun hayvonlardan foydalanishni o'rgandilar. Ular omon qolish uchun endi bir joydan ikkinchi joyga ko'chib yurishlari shart emasligini tushunib yetdilar. Dehqon sifatida esa, ular qishdan oldin hosilni yig'ib olish uchun ekinlarni o'z vaqtida ekishlari kerak edi. Ular fasllar qachon o'zgarishini bilishlari kerak edi. Shunday qilib, ular taqvim ishlab chiqishga majbur bo'ldilar. Birinchi taqvim qachon ishlab chiqilganini hech kim bilmaydi. Ammo bu oylar yoki qamariy oylarga asoslangan bo'lishi mumkin.</p>
+
+            <p>Odamlar dehqonchilikni boshlaganlarida, qabilalarning donishmandlari juda muhim bo'lib qoldilar. Ular osmonni o'rgandilar. Ular fasllar qachon o'zgarishini bilish uchun yetarli ma'lumot to'pladilar. Ular ekin ekish vaqti kelganini e'lon qildilar.</p>
+
+            <hr style="margin: 50px 0; border-top: 2px dashed var(--border-color);">
+
+            <h1>Mushuklarning Xonakilashtirilishi</h1>
+            <img class="content-image" src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800&q=60" alt="Cat">
+
+            <p>Asrlar davomida xonakilashtirish qanday sodir bo'lganligi haqidagi umumiy qarash shundan iborat ediki, ibtidoiy odamlar oziq-ovqat hayvonlarining tutqun podalariga ega bo'lish qanchalik foydali bo'lishini anglab, yovvoyi hayvonlarni tutishni va ularni ko'paytirishni boshladilar. Vaqt o'tishi bilan, faqat "yuvosh" xususiyatlarga ega bo'lgan hayvonlarning juftlashishi va nasl berishiga ruxsat berish orqali, insonlar kamroq yovvoyi va odamlarga ko'proq bog'liq bo'lgan hayvonlarni yaratdilar. Oxir-oqibat, bu jarayon biz bugungi kunda biladigan xonaki qishloq xo'jaligi hayvonlari va uy hayvonlariga olib keldi, ularning ko'plari o'zlarining qadimiy omon qolish ko'nikmalari va instinktlarini yo'qotib, yovvoyi tabiatda juda yomon ahvolda qolgan bo'lar edilar.</p>
+
+            <p>So'nggi tadqiqotlar shuni ko'rsatadiki, xonakilashtirish haqidagi bu qarash to'liq emas. Ibtidoiy insonlar haqiqatan ham foydali yovvoyi hayvonlarni tutib ko'paytirishgan va bu turlar vaqt o'tishi bilan yuvoshroq bo'lib qolgan (ular odatda jismonan ham o'zgargan, yovvoyi qarindoshlariga qaraganda kattaroq tana va kichikroq miya rivojlangan). Ammo hayvonlar xulq-atvori bo'yicha mutaxassislar endi xonakilashtirish shunchaki odamlar hayvonlarga qilgan narsa emas deb o'ylashmoqda — hayvonlar jarayonda faol ishtirok etishgan. Masalan, bo'rilar va yovvoyi otlar odamlar yashaydigan joylarda aylanib yurib, odamlarning chiqindilari va ekinlari bilan oziqlanib, inson mavjudligi va faoliyatiga o'rganib qolib, o'zlarini xonakilashtirishdagi birinchi qadamlarni tashlagan bo'lishlari mumkin. Odamlarga yaqin yashashdan unchalik asabiy yoki qo'rqmaydigan alohida hayvonlar odamlarga toqat qiladigan nasllarni dunyoga keltirib, odamlar uchun ularni tutish va xonakilashtirishni osonlashtirgan.</p>
+
+            <p>Ushbu versiyada odamlar faqat odamlar atrofidagi hayotga oson moslashgan hayvonlarni xonakilashtirishga muvaffaq bo'lishgan. Xonakilashtirish xonaki bo'lishga tayyor hayvonni talab qilardi. Jarayon odamlarning hayvonlar ustidan g'alabasidan ko'ra ko'proq ikki sherikning raqsiga o'xshardi.</p>
+
+            <p>Bir qarashda, mushuklarning xonakilashtirilishi ushbu yangi xonakilashtirish hikoyasiga juda mos keladigandek tuyuladi. An'anaviy nazariyaga ko'ra, Yaqin Sharq va Misrdagi ibtidoiy odamlar dehqonchilikni ixtiro qilib, ekin yetishtirishni boshlaganlaridan so'ng, kalamushlar va sichqonlar ularning saqlangan donlari bilan ziyofat qilish uchun yig'ilishgan. Yovvoyi mushuklar esa o'z navbatida kalamush va sichqonlarni ovlash uchun xuddi shu joylarga to'planishgan. Vaqt o'tishi bilan mushuklar odamlarga, odamlar esa mushuklarga o'rganib qolgan, toki qaysidir nuqtada mushuklar xonaki bo'lib qolgan. Biroq, yovvoyi mushuklarning yangi tadqiqotlari ushbu nazariyani shubha ostiga qo'yadigandek. Yovvoyi mushuklar ov qilish va oziqlanish hududlarini bo'lishmaydi va ular odamlarga yaqin yashamaydi yoki inson yashash joylarini oziq-ovqat manbai sifatida qidirmaydi. Mutaxassislar yovvoyi mushuklar o'zlarini xonakilashtirishda sherik bo'lgan-bo'lmaganligini bilishmaydi. Ular shuni bilishadiki, odamlar xonaki itlar, qo'ylar, echkilar, qoramollar va otlarga ega bo'lganidan ancha vaqt o'tgach, ular qandaydir yo'l bilan xonaki mushuklarga ega bo'lishgan. Eng kam tajovuzkor mushuklarni bir-biri bilan juftlashtirish orqali ular tobora yuvosh xususiyatlarga ega hayvonlarni yetishtirdilar.</p>
+        </div>
+
+    </div>
+
+    <script>
+        // --- TIMER ---
+        let seconds = localStorage.getItem('timeCatTimer') ? parseInt(localStorage.getItem('timeCatTimer')) : 0;
+        setInterval(() => {
+            seconds++;
+            localStorage.setItem('timeCatTimer', seconds);
+            let m = Math.floor(seconds / 60).toString().padStart(2, '0');
+            let s = (seconds % 60).toString().padStart(2, '0');
+            document.getElementById('page-timer').textContent = `${m}:${s}`;
+        }, 1000);
+
+      // --- TO'LIQ VA MUKAMMAL LUG'AT BAZASI (TIME & CATS) ---
+const dict = {
+    // --- MAVZU 1: VAQT TARIXI (THE HISTORY OF TIME) ---
+    "history": "tarix", "time": "vaqt", "clock": "soat", "read": "o'qimoq/tushunmoq", 
+    "know": "bilmoq", "day": "kun", "no": "yo'q/hech qanday", "one": "bir/kimdir", 
+    "no one": "hech kim", "what": "nima", "itself": "o'zi/asli", "we": "biz", 
+    "cannot": "qila olmaslik", "see": "ko'rmoq", "it": "u/uni", "touch": "ushlamoq", 
+    "hear": "eshitmoq", "only": "faqat", "by": "orqali/tomonidan", "way": "usul/yo'l", 
+    "mark": "belgilamoq", "passing": "o'tishi", "for": "uchun/sababli", "all": "barcha", 
+    "our": "bizning", "success": "muvaffaqiyat", "in": "ichida/-da", "measuring": "o'lchash", 
+    "smallest": "eng kichik", "parts": "qismlar", "remains": "qolmoqda", "great": "buyuk", 
+    "mysteries": "sirlar", "of": "ning", "universe": "koinot", "think": "o'ylamoq", 
+    "about": "haqida", "imagine": "tasavvur qilmoq", "world": "dunyo", "without": "siz (bo'lmasdan)", 
+    "there": "u yerda/bor bo'lmoq", "could": "mumkin edi", "be": "bo'lmoq", "movement": "harakat", 
+    "because": "chunki", "and": "va", "separated": "ajratilgan", "exist": "mavjud bo'lmoq", 
+    "long": "uzoq", "as": "sifatida/kabi", "changes": "o'zgarishlar", "change": "o'zgarish", 
+    "linked": "bog'liq", "passed": "o'tgan", "when": "qachonki", "something": "biror narsa", 
+    "real": "haqiqiy", "never": "hech qachon", "stop": "to'xtamoq", "some": "ba'zi", 
+    "happen": "sodir bo'lmoq", "once": "bir marta", "while": "muddat/vaqt", 
+    "once in a while": "vaqti-vaqti bilan", "like": "kabi/o'xshash", "an": "bir", 
+    "eclipse": "tutilish (oy/quyosh)", "moon": "oy", "others": "boshqalar", "repeatedly": "takroran", 
+    "rising": "chiqishi (quyosh)", "setting": "botishi", "sun": "quyosh", "humans": "insonlar", 
+    "always": "har doim", "have": "bor/ega bo'lmoq", "noted": "qayd etgan", "natural": "tabiiy", 
+    "events": "voqealar/hodisalar", "repeat": "takrorlamoq", "themselves": "o'zlarini", 
+    "began": "boshlagan", "count": "sanamoq", "such": "shunday/bunday", "measure": "o'lchamoq", 
+    "early": "ilk/erta", "human": "inson", "seemed": "tuyulardi", "evenly": "bir tekisda", 
+    "objects": "jismlar/obyektlar", "sky": "osmon", "most": "eng", "easily": "osonlik bilan", 
+    "seen": "ko'ringan", "result": "natija", "these": "bular", "difference": "farq", 
+    "between": "orasida", "light": "yorug'lik", "darkness": "qorong'ulik", "rises": "chiqadi/ko'tariladi", 
+    "eastern": "sharqiy", "producing": "ishlab chiqaruvchi/hosil qiluvchi", "moves": "harakatlanadi", 
+    "across": "bo'ylab/narigi tomoniga", "sinks": "botadi/cho'kadi", "west": "g'arb", 
+    "causing": "sabab bo'luvchi", "appearance": "paydo bo'lish", "disappearance": "g'oyib bo'lish", 
+    "was": "edi", "even": "hatto/tekis", "unfailing": "to'xtovsiz/ishonchli", "periods": "davrlar", 
+    "created": "yaratgan", "first": "birinchi", "accepted": "qabul qilingan", "named": "nomlagan", 
+    "each": "har bir", "saw": "ko'rdi", "rise": "ko'tarilish", "higher": "balandroq", 
+    "during": "davomida", "summer": "yoz", "than": "qaraganda", "winter": "qish", 
+    "counted": "sanagan", "days": "kunlar", "highest": "eng yuqori", "position": "holat/o'rin", 
+    "until": "gacha", "returned": "qaytgan", "three": "uch", "hundred": "yuz", 
+    "sixty-five": "oltmish besh", "now": "hozir", "that": "o'sha/ki", "is": "-dir", 
+    "earth": "Yer", "takes": "oladi (vaqt)", "move": "harakatlanmoq", "around": "atrofida", 
+    "call": "atamok", "this": "bu", "year": "yil", "also": "shuningdek", 
+    "night": "tun", "must": "kerak/shart", "wondered": "qiziqqan/hayron qolgan", 
+    "why": "nega", "did": "qildi (o'tgan zamon)", "look": "ko'rinmoq", "different": "boshqacha/turli", 
+    "every": "har", "disappear": "g'oyib bo'lmoq", "where": "qayerga", "go": "bormoq", 
+    "before": "oldin", "learned": "o'rgangan", "answers": "javoblar", "to": "ga", 
+    "questions": "savollar", "developed": "rivojlantirgan/ishlab chiqqan", "use": "foydalanmoq", 
+    "changing": "o'zgaruvchan", "faces": "yuzlar/qiyofalar", "tell": "aytmoq/bilmoq", 
+    "tell time": "vaqtni bilmoq", "full": "to'liq/to'lin", "its": "uning", "face": "yuz", 
+    "bright": "yorqin", "round": "dumaloq", "new": "yangi", "almost": "deyarli", 
+    "entirely": "butunlay", "dark": "qorong'u", "number": "raqam/son", "times": "marta", 
+    "appeared": "paydo bo'lgan", "remained": "qolgan", "same": "bir xil", "about": "taxminan/haqida", 
+    "twenty-nine": "yigirma to'qqiz", "equalled": "teng kelgan", "month": "oy (taqvim)", 
+    "hunted": "ovlagan", "animals": "hayvonlar", "gathered": "yig'gan/to'plagan", 
+    "wild": "yovvoyi", "plants": "o'simliklar", "moved": "ko'chgan/harakatlangan", 
+    "groups": "guruhlar", "tribes": "qabilalar", "place": "joy", "search": "qidiruv", 
+    "food": "oziq-ovqat", "then": "keyin", "plant": "ekmoq/o'simlik", "seeds": "urug'lar", 
+    "grow": "o'stirmoq", "crops": "ekinlar", "help": "yordam bermoq", "them": "ularga", 
+    "work": "ishlamoq", "found": "topgan", "longer": "uzoqroq", "no longer": "endi ... emas", 
+    "needed": "muhtoj bo'lgan", "another": "boshqa", "survive": "omon qolmoq", 
+    "farmers": "dehqonlar", "however": "biroq", "harvest": "hosil yig'moq", "seasons": "fasllar", 
+    "would": "bo'lardi (kelasi zamon)", "so": "shunday qilib", "forced": "majbur bo'lgan", 
+    "calendars": "taqvimlar", "calendar": "taqvim", "possible": "mumkin/ehtimol", 
+    "based": "asoslangan", "moons": "oylar", "lunar": "qamariy/oyga oid", 
+    "farming": "dehqonchilik", "wise": "dono/aqlli", "men": "erkaklar/odamlar", 
+    "became": "bo'ldi", "important": "muhim", "studied": "o'rgangan", "enough": "yetarli", 
+    "information": "ma'lumot", "announced": "e'lon qilgan",
+
+    // --- MAVZU 2: MUSHUKLARNING XONAKILASHTIRILISHI ---
+    "domestication": "xonakilashtirish", "cats": "mushuklar", "centuries": "asrlar", 
+    "common": "umumiy/keng tarqalgan", "view": "qarash/fikr", "how": "qanday", 
+    "had": "bor edi", "occurred": "sodir bo'lgan", "prehistoric": "tarixdan oldingi/ibtidoiy", 
+    "realizing": "anglab/tushunib", "useful": "foydali", "captive": "tutqun/qo'lga olingan", 
+    "herds": "podalar", "capturing": "tutish", "breeding": "ko'paytirish/naslchilik", 
+    "allowing": "ruxsat berish", "tame": "yuvosh/qo'lga o'rgatilgan", 
+    "characteristics": "xususiyatlar", "mate": "juftlashmoq", "produce": "ishlab chiqarmoq/yaratmoq", 
+    "offspring": "nasl/bola", "beings": "mavjudotlar", "less": "kamroq", "more": "ko'proq", 
+    "dependent": "bog'liq/qaram", "upon": "ustida/-ga (on bilan bir xil)", 
+    "eventually": "oxir-oqibat", "process": "jarayon", "led": "olib kelgan", 
+    "domestic": "xonaki/uy", "farm": "ferma/qishloq xo'jaligi", "pets": "uy hayvonlari", 
+    "today": "bugun", "many": "ko'p", "which": "qaysiki", "fare": "kun kechirmoq/yashamoq", 
+    "quite": "ancha", "badly": "yomon", "lost": "yo'qotgan", "ancient": "qadimiy", 
+    "survival": "omon qolish", "skills": "ko'nikmalar", "instincts": "instinktlar", 
+    "recent": "so'nggi/yangi", "research": "tadqiqot", "suggests": "taklif qiladi/ko'rsatadi", 
+    "incomplete": "chala/to'liq emas", "did": "qildi (kuchaytirish uchun)", "species": "turlar", 
+    "tamer": "yuvoshroq", "generally": "umuman", "changed": "o'zgargan", "physically": "jismonan", 
+    "too": "ham", "developing": "rivojlantirish", "larger": "kattaroq", "bodies": "tanalar", 
+    "smaller": "kichikroq", "brains": "miyalar", "cousins": "amakivachchalar (qarindoshlar)", 
+    "but": "ammo", "specialists": "mutaxassislar", "animal": "hayvon", "behavior": "xulq-atvor", 
+    "simply": "shunchaki", "played": "o'ynagan", "active": "faol", "part": "qism/rol", 
+    "wolves": "bo'rilar", "wild": "yovvoyi", "horses": "otlar", "example": "misol", 
+    "taken": "olgan", "steps": "qadamlar", "own": "o'z", 
+    "hanging": "osilish", "hanging around": "aylanib yurish/sang'ish", "settlements": "aholi punktlari", 
+    "feeding": "oziqlanish", "on": "da/ustida", "garbage": "chiqindi/axlat", 
+    "getting": "olish/bo'lish", "used": "o'rgangan/ishlatilgan", 
+    "getting used to": "ko'nikib qolish", "presence": "mavjudlik", "activity": "faoliyat", 
+    "individual": "alohida", "not": "emas", "nervous": "asabiy/xavotirli", "fearful": "qo'rqoq", 
+    "live": "yashamoq", "near": "yaqin", "tolerated": "toqat qilgan/chidagan", 
+    "making": "qilish", "easier": "osonroq", "version": "versiya/talqin", 
+    "succeeded": "muvaffaqiyat qozongan", "domesticating": "xonakilashtirish", 
+    "already": "allaqachon", "adapted": "moslashgan", "life": "hayot", "required": "talab qilgan", 
+    "willing": "xohlagan/tayyor", "become": "bo'lmoq", "was": "edi", "dance": "raqs", 
+    "partners": "sheriklar", "than": "qaraganda", "triumph": "g'alaba/zafar", 
+    "over": "ustidan", "at": "da", "first": "birinchi", "glance": "qarash", 
+    "at first glance": "bir qarashda", "taming": "qo'lga o'rgatish", "fit": "mos kelmoq", 
+    "nicely": "yaxshi/chiroyli", "into": "ichiga", "story": "hikoya", "traditional": "an'anaviy", 
+    "theory": "nazariya", "says": "aytadiki", "after": "keyin", "near east": "Yaqin Sharq", 
+    "egypt": "Misr", "invented": "ixtiro qilgan", "agriculture": "qishloq xo'jaligi (dehqonchilik)", 
+    "started": "boshlangan", "rats": "kalamushlar", "mice": "sichqonlar", "feast": "ziyofat qilmoq", 
+    "stored": "saqlangan", "grain": "don", "wildcats": "yovvoyi mushuklar", 
+    "turn": "navbat", "in turn": "o'z navbatida", "same": "bir xil/o'sha", "places": "joylar", 
+    "prey": "o'lja/ovlamoq", "prey on": "ovlamoq", "got": "bo'ldi/oldi", "until": "gacha", 
+    "point": "nuqta", "studies": "tadqiqotlar", "seem": "tuyulmoq", "call": "chaqirmoq/nomlamoq", 
+    "question": "savol", "call into question": "shubha ostiga qo'ymoq", "don't": "qilmaydi", 
+    "share": "bo'lishmoq", "hunting": "ov qilish", "territories": "hududlar", 
+    "close": "yaqin", "seek": "qidirmoq", "seek out": "izlab topmoq", "sources": "manbalar", 
+    "experts": "ekspertlar/mutaxassislar", "whether": "..mi yo'qmi/ekanligini", 
+    "acquired": "ega bo'lgan/qo'lga kiritgan", "dogs": "itlar", "sheep": "qo'ylar", 
+    "goats": "echkilar", "cattle": "qoramol", "somehow": "qandaydir qilib", 
+    "mating": "juftlashtirish", "least": "eng kam", "aggressive": "tajovuzkor", 
+    "one another": "bir-biri bilan", "increasingly": "tobora/bora-bora", "qualities": "sifatlar/xususiyatlar"
+};
+
+
+        // --- CLICKABLE WORDS ---
+        function makeClickable() {
+            document.querySelectorAll('.sentence').forEach(s => {
+                let html = '';
+                s.innerText.split(/(\s+|[.,!?;:“”"’()])/).forEach(w => {
+                    let clean = w.toLowerCase().replace(/[^a-z]/g, '');
+                    let trans = dict[clean];
+                    
+                    if (clean && trans) {
+                        html += `<span class="word" onclick="speak('${w}')">${w}<span class="tooltip">${trans}</span></span>`;
+                    } else if (clean && w.trim().length > 0) {
+                        // Agar lug'atda bo'lmasa ham, ovoz chiqarish uchun bosiladigan qilamiz
+                        html += `<span class="word" onclick="speak('${w}')">${w}</span>`;
+                    } else {
+                        html += w;
+                    }
+                });
+                s.innerHTML = html;
+            });
+        }
+
+        function speak(w) { responsiveVoice.speak(w, "UK English Male"); }
+
+        // --- LANGUAGE TOGGLE WITH SCROLL PRESERVE ---
+        document.getElementById('lang-btn').onclick = () => {
+            let eng = document.getElementById('english-content');
+            let uzb = document.getElementById('uzbek-content');
+            
+            // Hozirgi scroll joylashuvini olish
+            let scrollPos = window.scrollY;
+
+            if (eng.style.display !== 'none') {
+                eng.style.display = 'none'; uzb.style.display = 'block';
+                document.getElementById('lang-btn').innerHTML = ' <span>English</span>';
+            } else {
+                eng.style.display = 'block'; uzb.style.display = 'none';
+                document.getElementById('lang-btn').innerHTML = ' <span>O\'zbekcha</span>';
+            }
+
+            // Scroll joylashuvini qaytarish
+            window.scrollTo(0, scrollPos);
+        };
+
+        document.getElementById('theme-btn').onclick = () => document.body.classList.toggle('dark-mode');
+
+        // --- FLOATING ICONS ---
+        setInterval(() => {
+            let el = document.createElement('div');
+            el.className = 'floating-icon';
+            el.innerHTML = ['','','','','',''][Math.floor(Math.random()*6)];
+            el.style.left = Math.random()*100+'vw';
+            el.style.animationDuration = Math.random()*5+5+'s';
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 10000);
+        }, 2000);
+
+        window.onload = makeClickable;
+    </script>
+</body>
+</html>
