@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI Farming & Food Safety - Interactive Reader</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://code.responsivevoice.org/responsivevoice.js?key=ftro4Sxr"></script>
+    <style>
+        /* --- DIZAYN (GOLD/ORANGE) --- */
+        :root {
+            --primary-color: #d97706; --primary-hover: #b45309;
+            --bg-color: #fffbeb; --card-bg: #ffffff;
+            --text-color: #334155; --heading-color: #1e293b;
+            --tooltip-bg: #1e293b; --tooltip-text: #ffffff;
+            --border-color: #e2e8f0; --highlight-color: rgba(217, 119, 6, 0.15);
+            --word-hover-color: #d97706;
+            --highlight-bg: #fef08a; 
+            --correct-bg: #dcfce7; --correct-text: #14532d;
+            --wrong-bg: #fee2e2; --wrong-text: #991b1b;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        body.dark-mode {
+            --bg-color: #0f172a; --card-bg: #1e293b;
+            --text-color: #cbd5e1; --heading-color: #f1f5f9;
+            --tooltip-bg: #f1f5f9; --tooltip-text: #0f172a;
+            --border-color: #334155; --highlight-color: rgba(217, 119, 6, 0.2);
+            --word-hover-color: #fbbf24; --highlight-bg: #854d0e;
+        }
+
+        * { box-sizing: border-box; transition: background-color 0.3s ease, color 0.3s ease; }
+        
+        html { font-size: 16px; scroll-behavior: auto; }
+        body { font-family: 'Merriweather', serif; line-height: 1.9; margin: 0; padding-top: 80px; background-color: var(--bg-color); color: var(--text-color); overflow-x: hidden; }
+
+        /* HEADER */
+        #sticky-menu { position: fixed; top: 0; left: 0; width: 100%; height: 70px; background: var(--card-bg); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 0 20px; z-index: 10000; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .timer-container { display: flex; align-items: center; gap: 10px; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.2rem; color: var(--primary-color); }
+        .timer-icon { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        
+        .menu-btn { background: transparent; color: var(--text-color); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 50px; cursor: pointer; font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+        .menu-btn:hover { border-color: var(--primary-color); color: var(--primary-color); }
+
+        /* CONTAINER */
+        .container { width: 95%; max-width: 800px; margin: 20px auto 60px; background: var(--card-bg); padding: 40px 50px; border-radius: 16px; box-shadow: var(--shadow); position: relative; z-index: 10; }
+        .content-image { width: 100%; height: auto; max-height: 400px; object-fit: cover; border-radius: 12px; margin: 30px 0; background-color: var(--border-color); }
+
+        h1 { font-family: 'Montserrat', sans-serif; text-align: center; color: var(--primary-color); margin-bottom: 20px; font-weight: 700; font-size: 1.8rem; }
+        h2, h3 { font-family: 'Montserrat', sans-serif; font-weight: 700; color: var(--heading-color); margin-top: 40px; margin-bottom: 15px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; font-size: 1.3rem; }
+        
+        /* MATNNI TEKISLASH (JUSTIFY) */
+        p { margin-bottom: 20px; font-size: 1.1rem; text-align: justify; text-justify: inter-word; }
+        
+        /* CLICKABLE WORDS */
+        .word { cursor: pointer; position: relative; display: inline-block; border-bottom: 1.5px solid transparent; transition: all 0.2s; white-space: pre-wrap; }
+        .word:hover { color: var(--word-hover-color); background-color: var(--highlight-color); border-bottom-color: var(--word-hover-color); border-radius: 3px; }
+        
+        .tooltip { visibility: hidden; opacity: 0; position: absolute; bottom: 135%; left: 50%; transform: translateX(-50%); background-color: var(--tooltip-bg); color: var(--tooltip-text); text-align: center; border-radius: 6px; padding: 5px 10px; z-index: 1000; white-space: nowrap; font-family: 'Montserrat', sans-serif; font-size: 0.85rem; box-shadow: 0 4px 8px rgba(0,0,0,0.2); pointer-events: none; }
+        .tooltip::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -6px; border-width: 6px; border-style: solid; border-color: var(--tooltip-bg) transparent transparent transparent; }
+        .word:hover .tooltip { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(-5px); }
+
+        .highlight-found { background-color: var(--highlight-bg); border-radius: 3px; padding: 2px 0; border: 1px dashed var(--primary-color); }
+
+        /* QUIZ */
+        .quiz-section { margin-top: 50px; border-top: 3px solid var(--border-color); padding-top: 20px; }
+        .quiz-block { background: rgba(0,0,0,0.02); padding: 25px; border-radius: 12px; margin-bottom: 30px; border: 1px solid var(--border-color); }
+        .quiz-title { font-family: 'Montserrat', sans-serif; font-weight: 700; margin-bottom: 15px; color: var(--primary-color); text-transform: uppercase; font-size: 0.95rem; letter-spacing: 1px; }
+        .question-item { margin-bottom: 25px; border-bottom: 1px dashed var(--border-color); padding-bottom: 20px; }
+        .question-text { font-weight: 600; margin-bottom: 10px; color: var(--heading-color); font-size: 1.05rem; }
+        .options label { display: block; margin: 8px 0; cursor: pointer; padding: 12px; border-radius: 8px; transition: background 0.2s; font-size: 1rem; border: 1px solid transparent; background: rgba(255,255,255,0.6); }
+        .options label:hover { background: rgba(0,0,0,0.05); border-color: var(--border-color); }
+        .btn-check { padding: 10px 24px; background: var(--primary-color); color: white; border: none; border-radius: 50px; cursor: pointer; font-size: 0.9rem; margin-top: 15px; font-family: 'Montserrat', sans-serif; font-weight: 600; width: 100%; max-width: 200px; }
+        
+        .feedback { margin-top: 15px; font-size: 0.95rem; display: none; padding: 15px; border-radius: 8px; line-height: 1.6; border-left: 5px solid; }
+        .feedback.correct { background-color: var(--correct-bg); color: var(--correct-text); border-color: #16a34a; }
+        .feedback.wrong { background-color: var(--wrong-bg); color: var(--wrong-text); border-color: #dc2626; }
+
+        .floating-icon { position: fixed; top: -50px; z-index: 9999; pointer-events: none; opacity: 0.4; animation: fall linear forwards; }
+        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+
+        @media (max-width: 768px) {
+            .container { width: 95%; padding: 25px; margin-top: 10px; }
+            h1 { font-size: 1.5rem; }
+            .menu-btn span { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="sticky-menu">
+        <div class="timer-container">
+            <span class="timer-icon">⏳</span>
+            <span id="page-timer">00:00</span>
+        </div>
+        <div style="display: flex; gap: 8px;">
+            <button class="menu-btn" id="lang-btn">🇺🇿 <span>O'zbekcha</span></button>
+            <button class="menu-btn" id="theme-btn">🌙</button>
+        </div>
+    </div>
+
+    <div class="container">
+        
+        <div id="english-content">
+            <h1>High tech, high yields? The Kenyan farmers deploying AI to increase productivity</h1>
+            <img class="content-image" src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&q=60" alt="Farming AI">
+            
+            <p><span class="sentence">AI apps are increasingly popular among small-scale farmers seeking to improve the quality and quantity of their crop.</span></p>
+
+            <p><span class="sentence" id="ai-s1">In Kenya, coffee farmer Sammy Selim got some advice from a tool that uses artificial intelligence.</span> <span class="sentence" id="ai-s2">Virtual Agronomist asked some questions before telling him he needed three types of fertiliser in specific quantities to get a harvest of 7.9 tonnes of coffee.</span></p>
+
+            <p><span class="sentence">“My God!” Selim said when he received the report.</span> <span class="sentence">He had planned to use much less fertiliser than Virtual Agronomist was recommending.</span> <span class="sentence">“That would be a waste of money.”</span></p>
+
+            <p><span class="sentence">AI apps are becoming more and more popular among small-scale farmers wanting to improve the quality and quantity of their crop.</span></p>
+
+            <p><span class="sentence" id="ai-s3">Pests, diseases and a lack of technical knowhow mean farmers often lose their crops.</span> <span class="sentence" id="ai-s4">Selim started using Virtual Agronomist on his 0.4-hectare farm in 2022.</span> <span class="sentence" id="ai-s5">Using its recommendations, his farm produced 7.3 tonnes of coffee, his best harvest ever.</span> <span class="sentence">He is optimistic that the new recommendations will work too.</span> <span class="sentence">“Technology helps,” he said.</span></p>
+
+            <p><span class="sentence">Before he started to use Virtual Agronomist, Selim used “general farmer’s knowledge” to put fertiliser on his plants.</span> <span class="sentence">The farm’s productivity was low.</span> <span class="sentence">In one season, the farm produced 2.3 tonnes of coffee.</span></p>
+
+            <p><span class="sentence">The story is similar for farmers trying to determine what pests and diseases have attacked their crops.</span> <span class="sentence">Musau Mutisya said he used to identify pests and diseases himself, but he wasn’t always right.</span></p>
+
+            <p><span class="sentence" id="ai-s6">On a recent sunny morning on his 0.6-hectare farm, he pointed his phone’s camera at a maize plant using PlantVillage, an AI app that diagnoses pests and diseases.</span></p>
+
+            <p><span class="sentence">A voice assistant identified the pest and gave him advice on how to control it.</span> <span class="sentence">“We were just guessing in the past,” said Mutisya.</span></p>
+
+            <p><span class="sentence" id="ai-s7">Both PlantVillage and Virtual Agronomist use a “lead-farmer” model.</span> <span class="sentence">Farmers with smartphones use the tools not only on their own farms but also on neighbouring plots.</span> <span class="sentence" id="ai-s8">PlantVillage is free to use, and so is Virtual Agronomist for all crops apart from coffee.</span> <span class="sentence">It charges 300 Kenyan shillings (about 1.70 British pounds) for that advice.</span></p>
+
+            <p><span class="sentence">For farmers such as Boniface Nzivo, AI is a game changer.</span> <span class="sentence" id="ai-s9">He uses a system called FarmShield to check temperature, humidity and soil moisture and advise him when to water his cucumbers – all things that he used to have problems with.</span></p>
+
+            <p><span class="sentence">“I don’t waste time trying to work out how much water to use,” he said while inside a greenhouse for growing the plants, which need the correct water supply.</span> <span class="sentence">“It’s a great technology.”</span></p>
+
+            <div class="quiz-section">
+                <div class="quiz-block">
+                    <div class="quiz-title">Comprehension Check</div>
+                    
+                    <div class="question-item">
+                        <p class="question-text">1. What does AI stand for?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q1" value="a"> Agricultural Intelligence</label>
+                            <label><input type="radio" name="q1" value="b"> Artificial Intelligence</label>
+                        </div>
+                        <button class="btn-check" onclick="checkQ(this, 'b', 'ai-s1', '<strong>Correct!</strong> The text mentions <em>artificial intelligence</em>.')">Check</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-item">
+                        <p class="question-text">2. How many types of fertiliser did the app tell Selim to use?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q2" value="a"> Two types</label>
+                            <label><input type="radio" name="q2" value="b"> Three types</label>
+                        </div>
+                        <button class="btn-check" onclick="checkQ(this, 'b', 'ai-s2', '<strong>Correct!</strong> Text says: <em>telling him he needed three types of fertiliser</em>.')">Check</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-item">
+                        <p class="question-text">3. Why do farmers often lose their crops?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q3" value="a"> Pests, diseases and lack of knowhow</label>
+                            <label><input type="radio" name="q3" value="b"> Too much rain</label>
+                        </div>
+                        <button class="btn-check" onclick="checkQ(this, 'a', 'ai-s3', '<strong>Correct!</strong> Text says: <em>Pests, diseases and a lack of technical knowhow mean farmers often lose their crops.</em>')">Check</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-item">
+                        <p class="question-text">4. How much coffee did Selim produce after using the app?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q4" value="a"> 2.3 tonnes</label>
+                            <label><input type="radio" name="q4" value="b"> 7.3 tonnes</label>
+                        </div>
+                        <button class="btn-check" onclick="checkQ(this, 'b', 'ai-s5', '<strong>Correct!</strong> Text says: <em>his farm produced 7.3 tonnes of coffee</em>.')">Check</button>
+                        <div class="feedback"></div>
+                    </div>
+                </div>
+            </div>
+
+            <hr style="margin: 50px 0; border-top: 2px dashed var(--border-color);">
+
+            <h1>Hard-hitting warning labels should be on everyday food, say campaigners</h1>
+            <img class="content-image" src="https://images.unsplash.com/photo-1543505198-412e6205e461?w=800&q=60" alt="Food Labels">
+
+            <p><span class="sentence" id="wl-s1">Strong warning labels should be put on everyday foods, new taxes put on salty products and junk food sponsorship of sport should be banned to cut rising deaths from heart disease, health campaigners have said.</span></p>
+
+            <p><span class="sentence">These measures would reduce the number of people dying prematurely from heart attacks and strokes, they said.</span></p>
+
+            <p><span class="sentence" id="wl-s2">The British Heart Foundation (BHF) is also proposing other actions to tackle the UK’s increasingly bad diet, including bans on junk food firms advertising on billboards or radio.</span></p>
+
+            <p><span class="sentence">The charity is asking the government to make the food industry improve its products by removing hidden high levels of salt and sugar, which are bad for health.</span></p>
+
+            <p><span class="sentence" id="wl-s3">These steps could reduce the number of deaths from heart disease in England and save 11,000 lives a year by 2035, the BHF estimates.</span></p>
+
+            <p><span class="sentence">The BHF is also asking ministers to make food producers put warnings on cans, bottles and tins of their products in order to alert people to the health risks.</span></p>
+
+            <p><span class="sentence" id="wl-s4">And those labels need to be mandatory because simply asking food companies to voluntarily make their products healthier does not work, the charity added.</span></p>
+
+            <p><span class="sentence">The proposed ban on firms whose products are considered unhealthy sponsoring sports events would prohibit energy drinks Carabao from attaching its name to English football’s League Cup or McDonald’s from sponsoring the Football Association’s youth football development programme, for example.</span></p>
+
+            <p><span class="sentence">Bite Back, the campaigning arm of chef Jamie Oliver’s organisation, supported the BHF’s proposal.</span> <span class="sentence">“Big challenges require bold solutions and we need this government to introduce strict regulations that prohibit the big food companies’ unfair marketing strategies used to sell unhealthy products,” James Toop, its chief executive, said.</span></p>
+
+            <p><span class="sentence">“Food packaging is incredibly deceptive, so we also need to make sure businesses use clear labels and are not allowed to include misleading health and nutrition claims,” he added.</span></p>
+
+            <p><span class="sentence" id="wl-s5">The Department of Health and Social Care said: “Cardiovascular disease is one of this country’s biggest killers, and this government has already taken action to tackle it, recognising that prevention is better than cure.</span></p>
+
+            <p><span class="sentence">“As part of this, we have already recently introduced health checks in workplaces, to help catch ill-health earlier.”</span></p>
+
+            <div class="quiz-section">
+                <div class="quiz-block">
+                    <div class="quiz-title">True or False?</div>
+                    
+                    <div class="question-item">
+                        <p class="question-text">1. The BHF suggests banning junk food ads on billboards and radio.</p>
+                        <div class="options">
+                            <label><input type="radio" name="tq1" value="false"> False</label>
+                            <label><input type="radio" name="tq1" value="true"> True</label>
+                        </div>
+                        <button class="btn-check" onclick="checkQ(this, 'true', 'wl-s2', '<strong>Correct!</strong> Text says: <em>including bans on junk food firms advertising on billboards or radio</em>.')">Check</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-item">
+                        <p class="question-text">2. Asking companies to voluntarily change works well.</p>
+                        <div class="options">
+                            <label><input type="radio" name="tq2" value="false"> False</label>
+                            <label><input type="radio" name="tq2" value="true"> True</label>
+                        </div>
+                        <button class="btn-check" onclick="checkQ(this, 'false', 'wl-s4', '<strong>Correct! (False)</strong> Text says: <em>simply asking food companies to voluntarily make their products healthier does not work</em>.')">Check</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                     <div class="question-item">
+                        <p class="question-text">3. The government believes prevention is better than cure.</p>
+                        <div class="options">
+                            <label><input type="radio" name="tq3" value="false"> False</label>
+                            <label><input type="radio" name="tq3" value="true"> True</label>
+                        </div>
+                        <button class="btn-check" onclick="checkQ(this, 'true', 'wl-s5', '<strong>Correct!</strong> Text says: <em>recognising that prevention is better than cure</em>.')">Check</button>
+                        <div class="feedback"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="uzbek-content" style="display:none;">
+            <h1>Yuqori texnologiya, yuqori hosildorlikmi? Hosildorlikni oshirish uchun sun'iy intellektni qo'llayotgan keniyalik fermerlar</h1>
+            <img class="content-image" src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&q=60" alt="Farming AI">
+
+            <p>SI (Sun'iy Intellekt) ilovalari o'z ekinlarining sifati va miqdorini yaxshilashga intilayotgan kichik fermerlar orasida tobora ommalashib bormoqda.</p>
+
+            <p>Keniyada, qahva fermeri Semmi Selim sun'iy intellektdan foydalanadigan vositadan ba'zi maslahatlar oldi. Virtual Agronom unga 7,9 tonna qahva hosilini olish uchun uch turdagi o'g'itdan maxsus miqdorda kerakligini aytishdan oldin ba'zi savollarni so'radi.</p>
+
+            <p>"Xudoyim!" dedi Selim hisobotni olganida. U Virtual Agronom tavsiya qilayotganidan ko'ra ancha kamroq o'g'it ishlatishni rejalashtirgan edi. "Bu pulni isrof qilish bo'lar edi."</p>
+
+            <p>SI ilovalari o'z ekinlarining sifati va miqdorini yaxshilashni istagan kichik fermerlar orasida tobora ommalashib bormoqda.</p>
+
+            <p>Zararkunandalar, kasalliklar va texnik nou-xau (bilim) yetishmasligi fermerlarning ko'pincha o'z ekinlarini yo'qotishini anglatadi. Selim 2022-yilda o'zining 0,4 gektarlik fermasida Virtual Agronomdan foydalanishni boshladi. Uning tavsiyalaridan foydalanib, uning fermasi 7,3 tonna qahva ishlab chiqardi, bu uning shu paytgacha bo'lgan eng yaxshi hosili. U yangi tavsiyalar ham ishlashiga optimistik (ijobiy) qaraydi. "Texnologiya yordam beradi," dedi u.</p>
+
+            <p>Virtual Agronomdan foydalanishni boshlashdan oldin, Selim o'simliklariga o'g'it solish uchun "umumiy fermer bilimlaridan" foydalanardi. Fermaning unumdorligi past edi. Bir mavsumda, ferma 2,3 tonna qahva ishlab chiqardi.</p>
+
+            <p>O'z ekinlariga qanday zararkunandalar va kasalliklar hujum qilganini aniqlashga urinayotgan fermerlar uchun hikoya o'xshash. Musau Mutisya zararkunandalar va kasalliklarni o'zi aniqlashga odatlanganini, ammo u har doim ham haq bo'lmaganini aytdi.</p>
+
+            <p>Yaqinda quyoshli tongda o'zining 0,6 gektarlik fermasida, u telefonining kamerasini zararkunandalar va kasalliklarni tashxis qiluvchi SI ilovasi bo'lgan PlantVillage'dan foydalanib makkajo'xori o'simligiga qaratdi.</p>
+
+            <p>Ovozli yordamchi zararkunandani aniqladi va unga uni qanday nazorat qilish bo'yicha maslahat berdi. "Biz o'tmishda shunchaki taxmin qilardik," dedi Mutisya.</p>
+
+            <p>PlantVillage ham, Virtual Agronom ham "yetakchi-fermer" modelidan foydalanadi. Smartfonli fermerlar vositalardan nafaqat o'z fermalarida, balki qo'shni yer uchastkalarida ham foydalanadilar. PlantVillage'dan foydalanish bepul va qahvadan tashqari barcha ekinlar uchun Virtual Agronom ham shunday. U ushbu maslahat uchun 300 Keniya shillingi (taxminan 1,70 Britaniya funti) oladi.</p>
+
+            <p>Bonifas Nzivo kabi fermerlar uchun, SI o'yinni o'zgartiruvchi (katta o'zgarish yasovchi) vositadir. U harorat, namlik va tuproq namligini tekshirish va bodringlarini qachon sug'orish kerakligi haqida maslahat berish uchun FarmShield deb ataladigan tizimdan foydalanadi – bularning barchasi u ilgari muammolarga duch keladigan narsalar edi.</p>
+
+            <p>"Men qancha suv ishlatishni aniqlashga urinib vaqt sarflamayman," dedi u to'g'ri suv ta'minotiga muhtoj bo'lgan o'simliklarni o'stirish uchun issiqxona ichida bo'lganida. "Bu ajoyib texnologiya."</p>
+
+            <hr style="margin: 50px 0; border-top: 2px dashed var(--border-color);">
+
+            <h1>Ta'sirchan ogohlantiruvchi yorliqlar kundalik oziq-ovqatda bo'lishi kerak, deydi kampaniya olib boruvchilar</h1>
+            <img class="content-image" src="https://images.unsplash.com/photo-1543505198-412e6205e461?w=800&q=60" alt="Food Labels">
+
+            <p>Yurak kasalligidan ortib borayotgan o'limlarni kamaytirish uchun kundalik oziq-ovqatlarga kuchli ogohlantiruvchi yorliqlar qo'yilishi, sho'r mahsulotlarga yangi soliqlar solinishi va sportning nosog'lom oziq-ovqat homiyligi taqiqlanishi kerak, dedi sog'liqni saqlash kampaniyasi olib boruvchilar.</p>
+
+            <p>Bu choralar yurak xurujlari va insultlardan bevaqt o'layotgan odamlar sonini kamaytiradi, dedilar ular.</p>
+
+            <p>Britaniya Yurak Jamg'armasi (BHF) shuningdek, Buyuk Britaniyaning tobora yomonlashib borayotgan ovqatlanish tartibiga qarshi kurashish uchun boshqa harakatlarni, jumladan, nosog'lom oziq-ovqat firmalarining bilbordlar yoki radioda reklama qilishini taqiqlashni taklif qilmoqda.</p>
+
+            <p>Xayriya tashkiloti hukumatdan oziq-ovqat sanoatini sog'liq uchun zararli bo'lgan yashirin yuqori darajadagi tuz va shakarni olib tashlash orqali o'z mahsulotlarini yaxshilashga majbur qilishni so'ramoqda.</p>
+
+            <p>Ushbu qadamlar Angliyada yurak kasalligidan o'limlar sonini kamaytirishi va 2035-yilga kelib yiliga 11,000 hayotni saqlab qolishi mumkin, deb hisoblaydi BHF.</p>
+
+            <p>BHF shuningdek, vazirlardan odamlarni sog'liq uchun xavflardan ogohlantirish maqsadida oziq-ovqat ishlab chiqaruvchilarni o'z mahsulotlarining konserva bankalari, shishalari va qutilariga ogohlantirishlar qo'yishga majbur qilishni so'ramoqda.</p>
+
+            <p>Va bu yorliqlar majburiy bo'lishi kerak, chunki oziq-ovqat kompaniyalaridan o'z mahsulotlarini ixtiyoriy ravishda sog'lomroq qilishni shunchaki so'rash ish bermaydi, deb qo'shimcha qildi xayriya tashkiloti.</p>
+
+            <p>Mahsulotlari nosog'lom deb hisoblanadigan firmalarning sport tadbirlariga homiylik qilishini taklif qilingan taqiq, masalan, Carabao energetik ichimliklarining o'z nomini ingliz futbolining Liga Kubogiga qo'shishini yoki McDonald's ning Futbol Assotsiatsiyasining yoshlar futbolini rivojlantirish dasturiga homiylik qilishini taqiqlaydi.</p>
+
+            <p>Oshpaz Jeymi Oliver tashkilotining kampaniya qanoti bo'lgan Bite Back, BHF taklifini qo'llab-quvvatladi. "Katta muammolar jasur yechimlarni talab qiladi va bizga ushbu hukumat nosog'lom mahsulotlarni sotish uchun ishlatiladigan yirik oziq-ovqat kompaniyalarining adolatsiz marketing strategiyalarini taqiqlovchi qat'iy qoidalarni joriy etishi kerak," dedi Jeyms Tup, uning bosh ijrochi direktori.</p>
+
+            <p>"Oziq-ovqat qadoqlari aql bovar qilmaydigan darajada aldamchi, shuning uchun biz bizneslar aniq yorliqlardan foydalanishiga va chalg'ituvchi sog'liq va oziqlanish da'volarini kiritishga ruxsat berilmasligiga ishonch hosil qilishimiz kerak," deb qo'shimcha qildi u.</p>
+
+            <p>Sog'liqni saqlash va ijtimoiy yordam departamenti dedi: "Yurak-qon tomir kasalligi bu mamlakatning eng katta qotillaridan biridir va bu hukumat oldini olish davolashdan ko'ra yaxshiroq ekanligini tan olib, unga qarshi kurashish uchun allaqachon harakat qildi.</p>
+
+            <p>"Buning bir qismi sifatida, biz kasallikni ertaroq aniqlashga yordam berish uchun yaqinda ish joylarida tibbiy ko'riklarni joriy qildik."</p>
+
+        </div>
+
+    </div>
+
+    <script>
+        // --- TIMER ---
+        let seconds = localStorage.getItem('aiFoodTimer') ? parseInt(localStorage.getItem('aiFoodTimer')) : 0;
+        setInterval(() => {
+            seconds++;
+            localStorage.setItem('aiFoodTimer', seconds);
+            let m = Math.floor(seconds / 60).toString().padStart(2, '0');
+            let s = (seconds % 60).toString().padStart(2, '0');
+            document.getElementById('page-timer').textContent = `${m}:${s}`;
+        }, 1000);
+
+        // --- TO'LIQ LUG'AT (BIRIKMALAR VA SO'ZLAR) ---
+        const dict = {
+            // --- UZUN BIRIKMALAR VA IBORALAR (PHRASES) ---
+            // Bular birinchi bo'lib aniqlanadi
+            "high tech": "yuqori texnologiya",
+            "high yields": "yuqori hosildorlik",
+            "increase productivity": "unumdorlikni oshirish",
+            "small-scale farmers": "kichik fermerlar",
+            "seeking to": "intilayotgan/harakat qilayotgan",
+            "got some advice": "maslahat oldi",
+            "artificial intelligence": "sun'iy intellekt",
+            "telling him": "unga aytish",
+            "types of": "turlari",
+            "waste of money": "pulni isrof qilish",
+            "more and more": "tobora/borgan sari",
+            "lack of": "yetishmasligi",
+            "technical knowhow": "texnik bilim/nou-xau",
+            "lose their crops": "ekinlarini yo'qotish",
+            "best harvest ever": "shu paytgacha bo'lgan eng yaxshi hosil",
+            "work out": "hal qilish/aniqlash",
+            "used to": "odatlangan edi/qilardi (o'tmishda)",
+            "pointed ... at": "...ga qaratdi",
+            "not only ... but also": "nafaqat ... balki",
+            "apart from": "...dan tashqari",
+            "game changer": "o'yinni o'zgartiruvchi (katta o'zgarish yasovchi)",
+            "soil moisture": "tuproq namligi",
+            "hard-hitting": "ta'sirchan/kuchli",
+            "everyday food": "kundalik oziq-ovqat",
+            "junk food": "nosog'lom ovqat",
+            "heart disease": "yurak kasalligi",
+            "heart attacks": "yurak xurujlari",
+            "bad diet": "yomon ovqatlanish tartibi",
+            "food industry": "oziq-ovqat sanoati",
+            "high levels of": "yuqori darajadagi",
+            "bad for": "uchun zararli",
+            "in order to": "... maqsadida/uchun",
+            "alert people to": "odamlarni ...dan ogohlantirish",
+            "does not work": "ish bermaydi/foydasi yo'q",
+            "proposed ban": "taklif qilingan taqiq",
+            "attach its name to": "o'z nomini ...ga qo'shish (homiylik)",
+            "marketing strategies": "marketing strategiyalari",
+            "make sure": "ishonch hosil qilmoq",
+            "taken action": "harakat qilgan/chora ko'rgan",
+            "prevention is better than cure": "oldini olish davolashdan ko'ra yaxshiroq",
+            "climate change": "iqlim o'zgarishi",
+            "virtual agronomist": "Virtual Agronom (SI dasturi)",
+            "british heart foundation": "Britaniya Yurak Jamg'armasi",
+            "league cup": "Liga Kubogi",
+            "football association": "Futbol Assotsiatsiyasi",
+            "department of health": "Sog'liqni Saqlash Vazirligi",
+            "social care": "ijtimoiy yordam",
+
+            // --- YAKKA SO'ZLAR (SINGLE WORDS) ---
+            "deploying": "qo'llayotgan/ishlatayotgan",
+            "popular": "mashhur",
+            "among": "orasida",
+            "improve": "yaxshilamoq",
+            "quality": "sifat",
+            "quantity": "miqdor",
+            "crop": "ekin/hosil",
+            "coffee": "qahva",
+            "farmer": "fermer",
+            "advice": "maslahat",
+            "tool": "vosita",
+            "uses": "ishlatadi",
+            "questions": "savollar",
+            "before": "oldin",
+            "needed": "kerak edi",
+            "fertiliser": "o'g'it",
+            "specific": "maxsus/aniq",
+            "harvest": "hosil",
+            "tonnes": "tonna",
+            "received": "qabul qildi",
+            "report": "hisobot",
+            "planned": "rejalashtirgan",
+            "recommending": "tavsiya qilayotgan",
+            "pests": "zararkunandalar",
+            "diseases": "kasalliklar",
+            "mean": "anglatadi",
+            "often": "tez-tez",
+            "started": "boshladi",
+            "hectare": "gektar",
+            "recommendations": "tavsiyalar",
+            "produced": "ishlab chiqardi",
+            "optimistic": "optimistik/ijobiy",
+            "technology": "texnologiya",
+            "helps": "yordam beradi",
+            "general": "umumiy",
+            "knowledge": "bilim",
+            "plants": "o'simliklar",
+            "low": "past",
+            "season": "mavsum",
+            "story": "hikoya",
+            "similar": "o'xshash",
+            "trying": "urinayotgan",
+            "determine": "aniqlash",
+            "attacked": "hujum qilgan",
+            "identify": "aniqlash/tanish",
+            "himself": "o'zi",
+            "right": "to'g'ri/haq",
+            "recent": "yaqinda",
+            "sunny": "quyoshli",
+            "morning": "tong",
+            "camera": "kamera",
+            "maize": "makkajo'xori",
+            "diagnoses": "tashxis qo'yadi",
+            "voice": "ovoz",
+            "assistant": "yordamchi",
+            "control": "nazorat qilish",
+            "guessing": "taxmin qilish",
+            "past": "o'tmish",
+            "lead-farmer": "yetakchi fermer",
+            "model": "model/namuna",
+            "smartphones": "smartfonlar",
+            "neighbouring": "qo'shni",
+            "plots": "yer uchastkalari",
+            "free": "bepul",
+            "charges": "haq oladi",
+            "shillings": "shilling (pul birligi)",
+            "pounds": "funt (pul birligi)",
+            "system": "tizim",
+            "check": "tekshirish",
+            "temperature": "harorat",
+            "humidity": "namlik",
+            "advise": "maslahat berish",
+            "water": "suv/sug'orish",
+            "cucumbers": "bodringlar",
+            "problems": "muammolar",
+            "inside": "ichida",
+            "greenhouse": "issiqxona",
+            "growing": "o'stirish",
+            "correct": "to'g'ri",
+            "supply": "ta'minot",
+            "warning": "ogohlantirish",
+            "labels": "yorliqlar",
+            "everyday": "kundalik",
+            "campaigners": "kampaniya olib boruvchilar/faollar",
+            "strong": "kuchli",
+            "taxes": "soliqlar",
+            "salty": "sho'r",
+            "products": "mahsulotlar",
+            "sponsorship": "homiylik",
+            "sport": "sport",
+            "banned": "taqiqlangan",
+            "cut": "kesish/kamaytirish",
+            "rising": "o'sib borayotgan",
+            "deaths": "o'limlar",
+            "measures": "choralar",
+            "reduce": "kamaytirish",
+            "number": "son",
+            "dying": "o'layotgan",
+            "prematurely": "vaqtidan oldin",
+            "strokes": "insultlar",
+            "proposing": "taklif qilmoqda",
+            "actions": "harakatlar",
+            "tackle": "kurashish/yechish",
+            "increasingly": "tobora",
+            "including": "shu jumladan",
+            "bans": "taiqlar",
+            "firms": "firmalar",
+            "advertising": "reklama qilish",
+            "billboards": "bilbordlar/reklama taxtalari",
+            "radio": "radio",
+            "charity": "xayriya tashkiloti",
+            "asking": "so'ramoqda",
+            "government": "hukumat",
+            "make": "majbur qilish/qilish",
+            "industry": "sanoat",
+            "removing": "olib tashlash",
+            "hidden": "yashirin",
+            "sugar": "shakar",
+            "health": "sog'liq",
+            "steps": "qadamlar",
+            "england": "Angliya",
+            "save": "saqlab qolish",
+            "lives": "hayotlar",
+            "estimates": "taxmin qiladi",
+            "ministers": "vazirlar",
+            "producers": "ishlab chiqaruvchilar",
+            "cans": "konserva bankalari",
+            "bottles": "shishalar",
+            "tins": "qutilar",
+            "risks": "xavflar",
+            "mandatory": "majburiy",
+            "simply": "shunchaki",
+            "companies": "kompaniyalar",
+            "voluntarily": "ixtiyoriy ravishda",
+            "healthier": "sog'lomroq",
+            "added": "qo'shimcha qildi",
+            "considered": "hisoblangan",
+            "unhealthy": "nosog'lom",
+            "sponsoring": "homiylik qilish",
+            "events": "tadbirlar",
+            "prohibit": "taqiqlash",
+            "energy": "energiya",
+            "drinks": "ichimliklar",
+            "youth": "yoshlar",
+            "development": "rivojlanish",
+            "programme": "dastur",
+            "example": "misol",
+            "arm": "qanot/bo'lim",
+            "chef": "oshpaz",
+            "organisation": "tashkilot",
+            "supported": "qo'llab-quvvatladi",
+            "proposal": "taklif",
+            "big": "katta",
+            "challenges": "qiyinchiliklar",
+            "require": "talab qiladi",
+            "bold": "jasur/dadil",
+            "solutions": "yechimlar",
+            "introduce": "joriy etish",
+            "strict": "qat'iy",
+            "regulations": "qoidalar",
+            "unfair": "adolatsiz",
+            "sell": "sotish",
+            "chief": "bosh",
+            "executive": "ijrochi",
+            "packaging": "qadoqlash",
+            "incredibly": "aql bovar qilmas darajada",
+            "deceptive": "aldamchi",
+            "businesses": "bizneslar",
+            "clear": "aniq",
+            "allowed": "ruxsat berilgan",
+            "include": "kiritish",
+            "misleading": "chalg'ituvchi",
+            "nutrition": "oziqlanish",
+            "claims": "da'volar",
+            "cardiovascular": "yurak-qon tomir",
+            "country's": "mamlakatning",
+            "biggest": "eng katta",
+            "killers": "qotillar (o'lim sabablari)",
+            "recognising": "tan olib",
+            "cure": "davolash",
+            "part": "qism",
+            "recently": "yaqinda",
+            "checks": "tekshiruvlar",
+            "workplaces": "ish joylari",
+            "catch": "tutish/aniqlash",
+            "ill-health": "kasallik/betoblik",
+            "earlier": "ertaroq"
+        };
+
+        // --- YANGILANGAN MAKECLICKABLE FUNKSIYASI (BIRIKMALARNI ANIQLASH UCHUN) ---
+        function makeClickable() {
+            // 1. Lug'at kalitlarini uzunligi bo'yicha saralash (eng uzun birikmalar oldin keladi)
+            // Bu "high tech" ni "high" va "tech" deb alohida olmasligi uchun kerak.
+            const sortedKeys = Object.keys(dict).sort((a, b) => b.length - a.length);
+
+            document.querySelectorAll('.sentence').forEach(s => {
+                let text = s.innerText;
+                let html = text;
+
+                // 2. Avval uzun birikmalarni (phrases) topib, vaqtinchalik belgi bilan almashtiramiz
+                // Masalan: "waste of money" -> "###0###"
+                let placeholders = [];
+                
+                sortedKeys.forEach((key, index) => {
+                    // Birikma matnda bormi? (Case insensitive)
+                    // Regex: \b so'z chegarasi, gi - global + case insensitive
+                    let regex = new RegExp(`\\b${key}\\b`, 'gi');
+                    
+                    if (key.includes(" ") && text.match(regex)) { // Faqat ko'p so'zli birikmalar uchun
+                         html = html.replace(regex, (match) => {
+                            placeholders.push({ 
+                                original: match, 
+                                key: key,
+                                trans: dict[key]
+                            });
+                            return `___PHRASE${placeholders.length - 1}___`;
+                        });
+                    }
+                });
+
+                // 3. Qolgan yakka so'zlarni oddiy usulda o'rab chiqamiz
+                html = html.split(/(\s+|[.,!?;:“”"’()])/).map(w => {
+                    if (w.startsWith('___PHRASE')) return w; // Birikmalarga tegmaymiz
+
+                    let clean = w.toLowerCase().replace(/[^a-z]/g, '');
+                    let trans = dict[clean];
+                    
+                    // So'zning o'zagi (ing, s, ed qo'shimchalarisiz)
+                    if (!trans && clean.endsWith('s')) trans = dict[clean.slice(0, -1)];
+                    if (!trans && clean.endsWith('ing')) trans = dict[clean.slice(0, -3)];
+                    if (!trans && clean.endsWith('ed')) trans = dict[clean.slice(0, -2)];
+
+                    if (clean && trans) {
+                        return `<span class="word" onclick="speak('${w}')">${w}<span class="tooltip">${trans}</span></span>`;
+                    } else if (clean && w.trim().length > 0) {
+                        return `<span class="word" onclick="speak('${w}')">${w}</span>`;
+                    } else {
+                        return w;
+                    }
+                }).join('');
+
+                // 4. Vaqtinchalik belgilarni haqiqiy interaktiv birikmalarga aylantiramiz
+                placeholders.forEach((item, i) => {
+                    let phraseHtml = `<span class="word" onclick="speak('${item.original}')" style="border-bottom: 2px solid var(--primary-color);">${item.original}<span class="tooltip">${item.trans}</span></span>`;
+                    html = html.replace(`___PHRASE${i}___`, phraseHtml);
+                });
+
+                s.innerHTML = html;
+            });
+        }
+
+        function speak(w) { responsiveVoice.speak(w, "UK English Male"); }
+        
+        // --- QUIZ FUNCTIONS ---
+        function clearHighlights() {
+            document.querySelectorAll('.highlight-found').forEach(el => el.classList.remove('highlight-found'));
+        }
+
+        function checkQ(btn, correct, evidenceId, msg) {
+            let fb = btn.parentElement.querySelector('.feedback');
+            let sel = btn.parentElement.querySelector('input:checked')?.value;
+            fb.style.display = 'block';
+            clearHighlights();
+
+            if (sel === correct) {
+                fb.className = 'feedback correct';
+                fb.innerHTML = msg;
+                if(evidenceId) {
+                    let el = document.getElementById(evidenceId);
+                    if(el) {
+                        el.classList.add('highlight-found');
+                        el.scrollIntoView({behavior: 'smooth', block: 'center'});
+                    }
+                }
+            } else {
+                fb.className = 'feedback wrong';
+                fb.innerHTML = "Incorrect. Try again.";
+            }
+        }
+
+        // --- LANGUAGE TOGGLE WITH SCROLL PRESERVE ---
+        document.getElementById('lang-btn').onclick = () => {
+            let eng = document.getElementById('english-content');
+            let uzb = document.getElementById('uzbek-content');
+            let scrollPos = window.scrollY;
+
+            if (eng.style.display !== 'none') {
+                eng.style.display = 'none'; uzb.style.display = 'block';
+                document.getElementById('lang-btn').innerHTML = '🇬🇧 <span>English</span>';
+            } else {
+                eng.style.display = 'block'; uzb.style.display = 'none';
+                document.getElementById('lang-btn').innerHTML = '🇺🇿 <span>O\'zbekcha</span>';
+            }
+            window.scrollTo(0, scrollPos);
+        };
+
+        document.getElementById('theme-btn').onclick = () => document.body.classList.toggle('dark-mode');
+
+        // --- FLOATING ICONS ---
+        setInterval(() => {
+            let el = document.createElement('div');
+            el.className = 'floating-icon';
+            el.innerHTML = ['🌽','📱','🤖','☕','🥗','⚠️'][Math.floor(Math.random()*6)];
+            el.style.left = Math.random()*100+'vw';
+            el.style.animationDuration = Math.random()*5+5+'s';
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 10000);
+        }, 2000);
+
+        window.onload = makeClickable;
+    </script>
+
+</body>
+</html>
