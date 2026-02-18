@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Secrets of the Deep Ocean - Interactive Reader</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://code.responsivevoice.org/responsivevoice.js?key=ftro4Sxr"></script>
+    <style>
+        /* --- DIZAYN (GOLD/ORANGE) --- */
+        :root {
+            --primary-color: #d97706; --primary-hover: #b45309;
+            --bg-color: #fffbeb; --card-bg: #ffffff;
+            --text-color: #334155; --heading-color: #1e293b;
+            --tooltip-bg: #1e293b; --tooltip-text: #ffffff;
+            --border-color: #e2e8f0; --highlight-color: rgba(217, 119, 6, 0.15);
+            --word-hover-color: #d97706;
+            --highlight-bg: #fef08a; 
+            --correct-bg: #dcfce7; --correct-text: #14532d;
+            --wrong-bg: #fee2e2; --wrong-text: #991b1b;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        body.dark-mode {
+            --bg-color: #0f172a; --card-bg: #1e293b;
+            --text-color: #cbd5e1; --heading-color: #f1f5f9;
+            --tooltip-bg: #f1f5f9; --tooltip-text: #0f172a;
+            --border-color: #334155; --highlight-color: rgba(217, 119, 6, 0.2);
+            --word-hover-color: #fbbf24; --highlight-bg: #854d0e;
+        }
+
+        * { box-sizing: border-box; transition: background-color 0.3s ease, color 0.3s ease; }
+        
+        html { font-size: 16px; scroll-behavior: auto; }
+        body { font-family: 'Merriweather', serif; line-height: 1.9; margin: 0; padding-top: 80px; background-color: var(--bg-color); color: var(--text-color); overflow-x: hidden; }
+
+        /* HEADER */
+        #sticky-menu { position: fixed; top: 0; left: 0; width: 100%; height: 70px; background: var(--card-bg); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 0 20px; z-index: 10000; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .timer-container { display: flex; align-items: center; gap: 10px; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.2rem; color: var(--primary-color); }
+        .timer-icon { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        
+        .menu-btn { background: transparent; color: var(--text-color); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 50px; cursor: pointer; font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+        .menu-btn:hover { border-color: var(--primary-color); color: var(--primary-color); }
+
+        /* CONTAINER */
+        .container { width: 95%; max-width: 800px; margin: 20px auto 60px; background: var(--card-bg); padding: 40px 50px; border-radius: 16px; box-shadow: var(--shadow); position: relative; z-index: 10; }
+        .content-image { width: 100%; height: auto; max-height: 400px; object-fit: cover; border-radius: 12px; margin: 30px 0; background-color: var(--border-color); }
+
+        h1 { font-family: 'Montserrat', sans-serif; text-align: center; color: var(--primary-color); margin-bottom: 20px; font-weight: 700; font-size: 1.8rem; }
+        h2, h3 { font-family: 'Montserrat', sans-serif; font-weight: 700; color: var(--heading-color); margin-top: 40px; margin-bottom: 15px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; font-size: 1.3rem; }
+        
+        /* TEXT ALIGNMENT */
+        p { margin-bottom: 20px; font-size: 1.1rem; text-align: justify; text-justify: inter-word; }
+        
+        /* CLICKABLE WORDS */
+        .word { cursor: pointer; position: relative; display: inline-block; border-bottom: 1.5px solid transparent; transition: all 0.2s; white-space: pre-wrap; }
+        .word:hover { color: var(--word-hover-color); background-color: var(--highlight-color); border-bottom-color: var(--word-hover-color); border-radius: 3px; }
+        
+        .tooltip { visibility: hidden; opacity: 0; position: absolute; bottom: 135%; left: 50%; transform: translateX(-50%); background-color: var(--tooltip-bg); color: var(--tooltip-text); text-align: center; border-radius: 6px; padding: 5px 10px; z-index: 1000; white-space: nowrap; font-family: 'Montserrat', sans-serif; font-size: 0.85rem; box-shadow: 0 4px 8px rgba(0,0,0,0.2); pointer-events: none; }
+        .tooltip::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -6px; border-width: 6px; border-style: solid; border-color: var(--tooltip-bg) transparent transparent transparent; }
+        .word:hover .tooltip { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(-5px); }
+
+        .highlight-found { background-color: var(--highlight-bg); border-radius: 3px; padding: 2px 0; border: 1px dashed var(--primary-color); }
+
+        /* QUIZ */
+        .quiz-section { margin-top: 50px; border-top: 3px solid var(--border-color); padding-top: 20px; }
+        .quiz-block { background: rgba(0,0,0,0.02); padding: 25px; border-radius: 12px; margin-bottom: 30px; border: 1px solid var(--border-color); }
+        .quiz-title { font-family: 'Montserrat', sans-serif; font-weight: 700; margin-bottom: 15px; color: var(--primary-color); text-transform: uppercase; font-size: 0.95rem; letter-spacing: 1px; }
+        .question-item { margin-bottom: 25px; border-bottom: 1px dashed var(--border-color); padding-bottom: 20px; }
+        .question-item:last-child { border-bottom: none; }
+        .question-text { font-weight: 600; margin-bottom: 10px; color: var(--heading-color); font-size: 1.05rem; }
+        .options label { display: block; margin: 8px 0; cursor: pointer; padding: 12px; border-radius: 8px; transition: background 0.2s; font-size: 1rem; border: 1px solid transparent; background: rgba(255,255,255,0.6); }
+        .options label:hover { background: rgba(0,0,0,0.05); border-color: var(--border-color); }
+        .btn-check { padding: 10px 24px; background: var(--primary-color); color: white; border: none; border-radius: 50px; cursor: pointer; font-size: 0.9rem; margin-top: 15px; font-family: 'Montserrat', sans-serif; font-weight: 600; width: 100%; max-width: 200px; }
+        
+        .feedback { margin-top: 15px; font-size: 0.95rem; display: none; padding: 15px; border-radius: 8px; line-height: 1.6; border-left: 5px solid; }
+        .feedback.correct { background-color: var(--correct-bg); color: var(--correct-text); border-color: #16a34a; }
+        .feedback.wrong { background-color: var(--wrong-bg); color: var(--wrong-text); border-color: #dc2626; }
+
+        .floating-icon { position: fixed; top: -50px; z-index: 9999; pointer-events: none; opacity: 0.4; animation: fall linear forwards; }
+        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+
+        @media (max-width: 768px) {
+            .container { width: 95%; padding: 25px; margin-top: 10px; }
+            h1 { font-size: 1.5rem; }
+            .menu-btn span { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="sticky-menu">
+        <div class="timer-container">
+            <span class="timer-icon"></span>
+            <span id="page-timer">00:00</span>
+        </div>
+        <div style="display: flex; gap: 8px;">
+            <button class="menu-btn" id="lang-btn"> <span>O'zbekcha</span></button>
+            <button class="menu-btn" id="theme-btn"></button>
+        </div>
+    </div>
+
+    <div class="container">
+        
+        <div id="english-content">
+            <h1>The Secrets of the Deep Ocean</h1>
+            <img class="content-image" src="https://images.unsplash.com/photo-1551244072-5d12893278ab?w=800&q=60" alt="Deep Ocean">
+            
+            <p><span class="sentence">Have you ever wondered what lies beneath the surface of the ocean?</span> <span class="sentence">The deep ocean is one of the most mysterious places on Earth.</span> <span class="sentence">Covering more than 70% of the planet, the ocean holds secrets that scientists are still uncovering.</span> <span class="sentence">From glowing creatures to underwater mountains, the deep ocean is a fascinating world waiting to be explored.</span></p>
+
+            <h3>Life in the Depths</h3>
+            <p><span class="sentence">The deep ocean is home to some of the most unusual creatures on the planet.</span> <span class="sentence" id="q2-evid">Because sunlight cannot reach these depths, many animals have developed unique adaptations.</span> <span class="sentence" id="q1-evid">For example, some fish and jellyfish can produce their own light through a process called bioluminescence.</span> <span class="sentence">This light helps them attract prey or confuse predators.</span></p>
+
+            <p><span class="sentence">One of the most famous deep-sea creatures is the anglerfish.</span> <span class="sentence">It has a glowing lure on its head that it uses to attract smaller fish.</span> <span class="sentence">Other creatures, like the giant squid, can grow to incredible sizes, making them both fascinating and terrifying.</span> <span class="sentence">In addition to these, there are tiny yet resilient creatures like copepods and amphipods that thrive under extreme conditions, forming a critical part of the deep-sea food chain.</span></p>
+
+            <p><span class="sentence">Scientists have also discovered mysterious gelatinous animals, sometimes referred to as "deep-sea blobs," which remain largely unstudied.</span> <span class="sentence">These animals challenge our understanding of life in the extreme conditions of the ocean depths.</span> <span class="sentence">Moreover, some species in the deep sea are so rare that they have been seen only a few times, leaving researchers with more questions than answers.</span></p>
+
+            <h3>The Ocean Floor</h3>
+            <p><span class="sentence">Beneath the deep ocean lies the seabed, a landscape of valleys, mountains, and plains.</span> <span class="sentence">One of the most remarkable features is the mid-ocean ridge, a chain of underwater mountains that stretches around the globe.</span> <span class="sentence">This ridge is formed by tectonic plates pulling apart, creating new crust.</span> <span class="sentence">Some areas along this ridge host unique volcanic activity, leading to the formation of underwater lava flows.</span></p>
+
+            <p><span class="sentence" id="q5-evid">The ocean floor is also home to hydrothermal vents, which release hot, mineral-rich water.</span> <span class="sentence">These vents create an environment where unique ecosystems can thrive.</span> <span class="sentence">Despite the extreme heat and pressure, life forms like tube worms, crabs, and chemosynthetic bacteria have adapted to survive.</span> <span class="sentence">These bacteria form the base of the food chain, converting chemicals from the vents into energy in a process similar to photosynthesis.</span></p>
+
+            <p><span class="sentence">In addition to hydrothermal vents, scientists have discovered cold seeps—areas where methane and other hydrocarbons seep out of the seafloor.</span> <span class="sentence">These environments support distinct ecosystems that rely on methane-eating microbes.</span> <span class="sentence">The diversity of life in these extreme habitats demonstrates how adaptable organisms can be.</span></p>
+
+            <h3>Challenges of Exploration</h3>
+            <p><span class="sentence">Exploring the deep ocean is not easy.</span> <span class="sentence" id="q3-evid">The pressure at such depths is immense, and temperatures can drop to near freezing.</span> <span class="sentence">Specially designed submarines and robots are used to explore these areas.</span> <span class="sentence">In 2012, filmmaker James Cameron became one of the first people to reach the bottom of the Mariana Trench, the deepest part of the ocean.</span> <span class="sentence">His journey provided valuable data and insights into one of the least explored places on Earth.</span></p>
+
+            <p><span class="sentence">Despite technological advancements, scientists estimate that only 20% of the ocean has been explored.</span> <span class="sentence">The vast majority remains a mystery, largely due to the logistical and financial challenges of deep-sea exploration.</span> <span class="sentence">High-pressure environments require expensive equipment, and the isolation of these locations makes consistent research difficult.</span></p>
+
+            <p><span class="sentence">Advances in underwater drones and autonomous vehicles are gradually making exploration more feasible.</span> <span class="sentence">These machines can stay submerged for extended periods and cover vast areas without the need for human intervention.</span> <span class="sentence">However, the deep ocean still holds countless secrets, including unknown species, uncharted geological formations, and potentially new resources for medicine and technology.</span></p>
+
+            <h3>The Importance of the Deep Ocean</h3>
+            <p><span class="sentence">The deep ocean plays a critical role in maintaining the planet's health.</span> <span class="sentence">It acts as a massive carbon sink, absorbing large amounts of carbon dioxide from the atmosphere and helping regulate the Earth's climate.</span> <span class="sentence">The currents of the deep ocean also distribute heat around the globe, influencing weather patterns and ecosystems.</span></p>
+
+            <p><span class="sentence">Furthermore, the biodiversity of the deep ocean could hold the key to groundbreaking discoveries.</span> <span class="sentence">Many marine organisms produce unique chemical compounds that have potential applications in medicine, such as new antibiotics and cancer treatments.</span> <span class="sentence">The study of deep-sea ecosystems also helps scientists understand how life can survive in extreme environments, providing clues about the possibility of life on other planets.</span></p>
+
+            <p><span class="sentence">However, the deep ocean is under threat.</span> <span class="sentence">Human activities such as deep-sea mining, pollution, and overfishing are impacting these fragile ecosystems.</span> <span class="sentence">Protecting the deep ocean is crucial not only for its intrinsic value but also for the benefits it provides to humanity.</span></p>
+
+            <div class="quiz-section">
+                
+                <div class="quiz-block">
+                    <div class="quiz-title">Vocabulary Questions</div>
+                    
+                    <div class="question-item">
+                        <p class="question-text">1. What does "bioluminescence" mean?</p>
+                        <div class="options">
+                            <label><input type="radio" name="vq1" value="a"> a) a type of ocean plant</label>
+                            <label><input type="radio" name="vq1" value="b"> b) the production of light by living organisms</label>
+                            <label><input type="radio" name="vq1" value="c"> c) a form of deep-sea exploration</label>
+                        </div>
+                        <button class="btn-check" onclick="checkQ(this, 'b', 'q1-evid', '<strong>Correct!</strong> Matnda: <em>produce their own light through a process called bioluminescence</em> (biolyuminessensiya deb ataladigan jarayon orqali o\'z yorug\'ligini ishlab chiqarishi mumkin) deb aytilgan.')">Check</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-item">
+                        <p class="question-text">2. What does "adaptation" mean?</p>
+                        <div class="options">
+                            <label><input type="radio" name="vq2" value="a"> a) a change that helps living things survive in their environment</label>
+                            <label><input type="radio" name="vq2" value="b"> b) a type of underwater vehicle</label>
+                            <label><input type="radio" name="vq2" value="c"> c) a bright light in the ocean</label>
+                        </div>
+                        <button class="btn-check" onclick="checkQ(this, 'a', 'q2-evid', '<strong>Correct!</strong> Adaptation (moslashuv) yashab qolish uchun yordam beradigan o\'zgarishni anglatadi.')">Check</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-item">
+                        <p class="question-text">3. What does "immense" mean?</p>
+                        <div class="options">
+                            <label><input type="radio" name="vq3" value="a"> a) very large</label>
+                            <label><input type="radio" name="vq3" value="b"> b) very small</label>
+                            <label><input type="radio" name="vq3" value="c"> c) very dangerous</label>
+                        </div>
+                        <button class="btn-check" onclick="checkQ(this, 'a', 'q3-evid', '<strong>Correct!</strong> <em>Immense</em> so\'zi ulkan, juda katta ma\'nosini bildiradi.')">Check</button>
+                        <div class="feedback"></div>
+                    </div>
+                </div>
+
+                <div class="quiz-block">
+                    <div class="quiz-title">Collocation Questions</div>
+                    
+                    <div class="question-item">
+                        <p class="question-text">4. Deep-sea creatures have ________ adaptations to survive.</p>
+                        <div class="options">
+                            <label><input type="radio" name="cq1" value="a"> a) unique</label>
+                            <label><input type="radio" name="cq1" value="b"> b) simple</label>
+                            <label><input type="radio" name="cq1" value="c"> c) rare</label>
+                        </div>
+                        <button class="btn-check" onclick="checkQ(this, 'a', 'q2-evid', '<strong>Correct!</strong> Matnda: <em>many animals have developed unique adaptations</em>.')">Check</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-item">
+                        <p class="question-text">5. Hydrothermal vents release ________ water.</p>
+                        <div class="options">
+                            <label><input type="radio" name="cq2" value="a"> a) cold</label>
+                            <label><input type="radio" name="cq2" value="b"> b) mineral-rich</label>
+                            <label><input type="radio" name="cq2" value="c"> c) frozen</label>
+                        </div>
+                        <button class="btn-check" onclick="checkQ(this, 'b', 'q5-evid', '<strong>Correct!</strong> Matnda: <em>which release hot, mineral-rich water</em>.')">Check</button>
+                        <div class="feedback"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="uzbek-content" style="display:none;">
+            <h1>Chuqur Okean Sirlari</h1>
+            <img class="content-image" src="https://images.unsplash.com/photo-1551244072-5d12893278ab?w=800&q=60" alt="Deep Ocean">
+            
+            <p>Hech o'ylab ko'rganmisiz, okean yuzasi ostida nima yashiringan? Chuqur okean Yerdagi eng sirli joylardan biridir. Sayyoraning 70% dan ortig'ini egallagan okean olimlar hali ham ochayotgan sirlarni o'zida saqlaydi. Nur sochuvchi mavjudotlardan tortib suvosti tog'larigacha, chuqur okean kashf etilishini kutayotgan maftunkor dunyodir.</p>
+
+            <h3>Teranlikdagi Hayot</h3>
+            <p>Chuqur okean sayyoradagi eng g'ayrioddiy mavjudotlarning ba'zilari uchun vatandir. Quyosh nuri bu chuqurliklarga yetib bora olmagani uchun ko'plab hayvonlar noyob moslashuvchanlikni rivojlantirgan. Masalan, ba'zi baliqlar va meduzalar biolyuminessensiya deb ataladigan jarayon orqali o'z yorug'ligini ishlab chiqarishi mumkin. Bu yorug'lik ularga o'ljani jalb qilishga yoki yirtqichlarni chalg'itishga yordam beradi.</p>
+
+            <p>Eng mashhur chuqur dengiz mavjudotlaridan biri bu dengiz iblisidir (anglerfish). Uning boshida kichikroq baliqlarni jalb qilish uchun ishlatadigan nur sochuvchi xo'ragisi bor. Gigant kalmar kabi boshqa mavjudotlar aql bovar qilmaydigan o'lchamlarga qadar o'sishi mumkin, bu ularni ham maftunkor, ham daxshatli qiladi. Bularga qo'shimcha ravishda, chuqur dengiz oziq-ovqat zanjirining muhim qismini tashkil etuvchi, ekstremal sharoitlarda rivojlanadigan kopepodlar va amfipodlar kabi mayda, ammo chidamli mavjudotlar mavjud.</p>
+
+            <p>Olimlar, shuningdek, ba'zida "chuqur dengiz shilimshiqlari" deb ataladigan, asosan o'rganilmagan sirli jelatinsimon hayvonlarni kashf etishdi. Bu hayvonlar bizning okean tubidagi ekstremal sharoitlardagi hayot haqidagi tushunchamizni shubha ostiga qo'yadi. Qolaversa, chuqur dengizdagi ba'zi turlar shunchalik kamyobki, ular faqat bir necha marta ko'rilgan va bu tadqiqotchilarda javoblardan ko'ra ko'proq savollar qoldiradi.</p>
+
+            <h3>Okean Tubi</h3>
+            <p>Chuqur okean ostida vodiylar, tog'lar va tekisliklar landshafti bo'lgan dengiz tubi yotadi. Eng diqqatga sazovor xususiyatlardan biri bu butun shar bo'ylab cho'zilgan suvosti tog'lari zanjiri bo'lgan o'rta okean tizmasi. Bu tizma tektonik plitalarning bir-biridan tortilishi natijasida hosil bo'lib, yangi qobiqni yaratadi. Ushbu tizma bo'ylab ba'zi hududlar noyob vulqon faolligiga mezbonlik qiladi, bu esa suvosti lava oqimlarining paydo bo'lishiga olib keladi.</p>
+
+            <p>Okean tubida issiq, mineralga boy suv chiqaradigan gidrotermal tuynuklar ham joylashgan. Bu tuynuklar noyob ekotizimlar rivojlanishi mumkin bo'lgan muhitni yaratadi. Ekstremal issiqlik va bosimga qaramay, naychasimon qurtlar, qisqichbaqalar va xemosintetik bakteriyalar kabi hayot shakllari omon qolishga moslashgan. Bu bakteriyalar oziq-ovqat zanjirining asosini tashkil qilib, tuynuklardagi kimyoviy moddalarni fotosintezga o'xshash jarayonda energiyaga aylantiradi.</p>
+
+            <p>Gidrotermal tuynuklarga qo'shimcha ravishda, olimlar sovuq szntlar - metan va boshqa uglevodorodlar dengiz tubidan sizib chiqadigan hududlarni kashf etdilar. Ushbu muhitlar metan yeyuvchi mikroblarga tayanadigan o'ziga xos ekotizimlarni qo'llab-quvvatlaydi. Ushbu ekstremal yashash joylaridagi hayot xilma-xilligi organizmlarning qanchalik moslashuvchan bo'lishi mumkinligini namoyish etadi.</p>
+
+            <h3>Kashfiyot Qiyinchiliklari</h3>
+            <p>Chuqur okeanni o'rganish oson emas. Bunday chuqurlikdagi bosim ulkandir va harorat muzlash nuqtasigacha tushishi mumkin. Ushbu hududlarni o'rganish uchun maxsus ishlab chiqilgan suvosti kemalari va robotlardan foydalaniladi. 2012-yilda kinorejissyor Jeyms Kemeron okeanning eng chuqur qismi bo'lgan Mariana botig'ining tubiga yetib borgan birinchi odamlardan biriga aylandi. Uning sayohati Yerdagi eng kam o'rganilgan joylardan biri haqida qimmatli ma'lumotlar va tushunchalar berdi.</p>
+
+            <p>Texnologik yutuqlarga qaramay, olimlar okeanning faqat 20 foizi o'rganilganligini taxmin qilmoqdalar. Chuqur dengizni o'rganishning logistik va moliyaviy qiyinchiliklari tufayli ularning katta qismi sir bo'lib qolmoqda. Yuqori bosimli muhitlar qimmatbaho uskunalarni talab qiladi va bu joylarning yakkalanganligi izchil izlanishlarni qiyinlashtiradi.</p>
+
+            <p>Suvosti dronlari va avtonom transport vositalaridagi yutuqlar asta-sekin izlanishlarni yanada qulaylashtirmoqda. Ushbu mashinalar uzoq vaqt davomida suv ostida qolishi va inson aralashuvisiz ulkan hududlarni qamrab olishi mumkin. Biroq, chuqur okean hanuzgacha son-sanoqsiz sirlarni, jumladan noma'lum turlarni, xaritaga kiritilmagan geologik tuzilmalarni va tibbiyot hamda texnologiya uchun potentsial yangi resurslarni saqlamoqda.</p>
+
+            <h3>Chuqur Okeanning Ahamiyati</h3>
+            <p>Chuqur okean sayyora sog'lig'ini saqlashda muhim rol o'ynaydi. U atmosferadan katta miqdorda karbonat angidridni yutib, Yer iqlimini tartibga solishga yordam beruvchi ulkan uglerod yutuvchi vazifasini bajaradi. Chuqur okean oqimlari, shuningdek, ob-havo sharoitlari va ekotizimlarga ta'sir qilib, issiqlikni butun shar bo'ylab taqsimlaydi.</p>
+
+            <p>Bundan tashqari, chuqur okeanning biologik xilma-xilligi inqilobiy kashfiyotlar kalitini o'zida saqlashi mumkin. Ko'pgina dengiz organizmlari tibbiyotda, masalan, yangi antibiotiklar va saraton kasalligini davolashda potentsial qo'llanilishi mumkin bo'lgan noyob kimyoviy birikmalarni ishlab chiqaradi. Chuqur dengiz ekotizimlarini o'rganish, shuningdek, olimlarga ekstremal muhitda hayot qanday omon qolishini tushunishga yordam beradi va boshqa sayyoralarda hayot bo'lishi ehtimoli haqida maslahatlar beradi.</p>
+
+            <p>Biroq, chuqur okean xavf ostida. Chuqur dengizda konchilik, ifloslanish va haddan tashqari baliq ovlash kabi inson faoliyati ushbu nozik ekotizimlarga ta'sir qilmoqda. Chuqur okeanni himoya qilish nafaqat uning ichki qadri, balki insoniyatga keltiradigan manfaatlari uchun ham hal qiluvchi ahamiyatga ega.</p>
+        </div>
+
+    </div>
+
+    <script>
+        // --- TIMER ---
+        let seconds = localStorage.getItem('oceanTimer') ? parseInt(localStorage.getItem('oceanTimer')) : 0;
+        setInterval(() => {
+            seconds++;
+            localStorage.setItem('oceanTimer', seconds);
+            let m = Math.floor(seconds / 60).toString().padStart(2, '0');
+            let s = (seconds % 60).toString().padStart(2, '0');
+            document.getElementById('page-timer').textContent = `${m}:${s}`;
+        }, 1000);
+
+      
+        const dict = {
+    // === 1. UZUN BIRIKMALAR (PHRASES & COLLOCATIONS) ===
+    // Bu qism dastur tomonidan birinchi bo'lib o'qiladi, so'zlar bo'linib ketmasligi uchun.
+    "have you ever wondered": "hech o'ylab ko'rganmisiz",
+    "lies beneath": "ostida yashiringan/yotadi",
+    "surface of the ocean": "okean yuzasi",
+    "deep ocean": "chuqur okean",
+    "one of the most": "eng ...dan biri",
+    "mysterious places": "sirli joylar",
+    "on earth": "Yerdagi/Yer yuzidagi",
+    "more than": "dan ortiq",
+    "holds secrets": "sirlarni o'zida saqlaydi",
+    "still uncovering": "hali ham ochib borayotgan",
+    "glowing creatures": "nur sochuvchi mavjudotlar",
+    "underwater mountains": "suvosti tog'lari",
+    "fascinating world": "maftunkor dunyo",
+    "waiting to be explored": "kashf etilishini kutayotgan",
+    "is home to": "uchun vatandir/makondir",
+    "unusual creatures": "g'ayrioddiy mavjudotlar",
+    "sunlight cannot reach": "quyosh nuri yetib bora olmaydi",
+    "unique adaptations": "noyob moslashuvchanlik",
+    "produce their own light": "o'z yorug'ligini ishlab chiqarish",
+    "attract prey": "o'ljani jalb qilish",
+    "confuse predators": "yirtqichlarni chalg'itish",
+    "deep-sea creatures": "chuqur dengiz mavjudotlari",
+    "glowing lure": "nur sochuvchi xo'rak",
+    "smaller fish": "kichikroq baliqlar",
+    "giant squid": "gigant kalmar",
+    "incredible sizes": "aql bovar qilmaydigan o'lchamlar",
+    "in addition to these": "bularga qo'shimcha ravishda",
+    "thrive under": "ostida rivojlanish/yashash",
+    "extreme conditions": "ekstremal sharoitlar",
+    "critical part": "muhim qism",
+    "food chain": "oziq-ovqat zanjiri",
+    "gelatinous animals": "jelatinsimon hayvonlar",
+    "referred to as": "deb ataladigan",
+    "deep-sea blobs": "chuqur dengiz shilimshiqlari",
+    "remain largely unstudied": "asosan o'rganilmagan bo'lib qolmoqda",
+    "challenge our understanding": "tushunchamizni shubha ostiga qo'yadi",
+    "ocean depths": "okean tubi/chuqurliklari",
+    "so rare": "shunchalik kamyob",
+    "leaving researchers with": "tadqiqotchilarda ... qoldirib",
+    "more questions than answers": "javoblardan ko'ra ko'proq savollar",
+    "ocean floor": "okean tubi",
+    "remarkable features": "diqqatga sazovor xususiyatlar",
+    "mid-ocean ridge": "o'rta okean tizmasi",
+    "around the globe": "butun shar bo'ylab",
+    "tectonic plates": "tektonik plitalar",
+    "pulling apart": "bir-biridan tortilish",
+    "new crust": "yangi qobiq",
+    "volcanic activity": "vulqon faolligi",
+    "leading to": "olib keluvchi/sabab bo'luvchi",
+    "lava flows": "lava oqimlari",
+    "hydrothermal vents": "gidrotermal tuynuklar",
+    "mineral-rich water": "mineralga boy suv",
+    "unique ecosystems": "noyob ekotizimlar",
+    "extreme heat": "ekstremal issiqlik",
+    "life forms": "hayot shakllari",
+    "tube worms": "naychasimon qurtlar",
+    "chemosynthetic bacteria": "xemosintetik bakteriyalar",
+    "base of the": "asosini",
+    "converting chemicals": "kimyoviy moddalarni aylantirish",
+    "similar to": "o'xshash",
+    "in addition to": "qo'shimcha ravishda",
+    "cold seeps": "sovuq sizib chiqish joylari",
+    "seep out of": "dan sizib chiqmoq",
+    "distinct ecosystems": "o'ziga xos ekotizimlar",
+    "rely on": "tayanadigan",
+    "methane-eating microbes": "metan yeyuvchi mikroblar",
+    "diversity of life": "hayot xilma-xilligi",
+    "extreme habitats": "ekstremal yashash joylari",
+    "adaptable organisms": "moslashuvchan organizmlar",
+    "challenges of exploration": "kashfiyot qiyinchiliklari",
+    "not easy": "oson emas",
+    "such depths": "bunday chuqurliklar",
+    "near freezing": "muzlash nuqtasigacha",
+    "specially designed": "maxsus ishlab chiqilgan",
+    "first people": "birinchi odamlar",
+    "valuable data": "qimmatli ma'lumotlar",
+    "least explored": "eng kam o'rganilgan",
+    "technological advancements": "texnologik yutuqlar",
+    "vast majority": "katta qismi",
+    "due to": "tufayli",
+    "logistical and financial challenges": "logistik va moliyaviy qiyinchiliklar",
+    "deep-sea exploration": "chuqur dengizni o'rganish",
+    "high-pressure environments": "yuqori bosimli muhitlar",
+    "expensive equipment": "qimmatbaho uskunalar",
+    "consistent research": "izchil izlanishlar",
+    "underwater drones": "suvosti dronlari",
+    "autonomous vehicles": "avtonom transport vositalari",
+    "making exploration more feasible": "izlanishlarni yanada qulaylashtirmoqda",
+    "extended periods": "uzoq vaqt davomida",
+    "vast areas": "ulkan hududlar",
+    "without the need for": "ehtiyojisiz/aralashuvisiz",
+    "human intervention": "inson aralashuvi",
+    "countless secrets": "son-sanoqsiz sirlar",
+    "unknown species": "noma'lum turlar",
+    "uncharted geological formations": "xaritaga kiritilmagan geologik tuzilmalar",
+    "potentially new resources": "potentsial yangi resurslar",
+    "plays a critical role": "muhim rol o'ynaydi",
+    "maintaining the planet's health": "sayyora sog'lig'ini saqlashda",
+    "carbon sink": "uglerod yutuvchi",
+    "large amounts of": "katta miqdorda",
+    "carbon dioxide": "karbonat angidrid",
+    "helping regulate": "tartibga solishga yordam beruvchi",
+    "earth's climate": "Yer iqlimi",
+    "distribute heat": "issiqlikni taqsimlash",
+    "weather patterns": "ob-havo sharoitlari",
+    "hold the key to": "kalitini o'zida saqlashi mumkin",
+    "groundbreaking discoveries": "inqilobiy kashfiyotlar",
+    "marine organisms": "dengiz organizmlari",
+    "chemical compounds": "kimyoviy birikmalar",
+    "potential applications": "potentsial qo'llanishi",
+    "cancer treatments": "saraton kasalligini davolash",
+    "providing clues": "ko'rsatma/maslahatlar berish",
+    "other planets": "boshqa sayyoralar",
+    "under threat": "xavf ostida",
+    "human activities": "inson faoliyati",
+    "deep-sea mining": "chuqur dengizda konchilik",
+    "fragile ecosystems": "nozik ekotizimlar",
+    "crucial not only": "nafaqat ... uchun hal qiluvchi ahamiyatga ega",
+    "intrinsic value": "ichki qadri",
+    "benefits it provides": "keltiradigan manfaatlari",
+
+    // === 2. YAKKAXON SO'ZLAR (SINGLE WORDS) ===
+    "what": "nima", "ocean": "okean", "deep": "chuqur", "places": "joylar", 
+    "covering": "egallagan", "planet": "sayyora", "secrets": "sirlar", 
+    "scientists": "olimlar", "from": "dan", "world": "dunyo", "life": "hayot",
+    "some": "ba'zi", "because": "chunki", "many": "ko'plab", "developed": "rivojlantirgan", 
+    "example": "masalan", "fish": "baliq", "jellyfish": "meduza", "produce": "ishlab chiqarish",
+    "light": "yorug'lik", "through": "orqali", "process": "jarayon", "called": "ataladigan",
+    "bioluminescence": "biolyuminessensiya", "helps": "yordam beradi", "attract": "jalb qilish",
+    "prey": "o'lja", "confuse": "chalg'itish", "predators": "yirtqichlar", "famous": "mashhur",
+    "anglerfish": "dengiz iblisi (baliq)", "has": "bor/ega", "lure": "xo'rak", "head": "bosh",
+    "uses": "ishlatadi", "other": "boshqa", "squid": "kalmar", "grow": "o'sish",
+    "incredible": "aql bovar qilmas", "sizes": "o'lchamlar", "making": "qiladigan",
+    "terrifying": "daxshatli", "tiny": "mayda", "yet": "ammo/shunga qaramay", "resilient": "chidamli",
+    "copepods": "kopepodlar", "amphipods": "amfipodlar", "thrive": "yaxshi rivojlanmoq",
+    "forming": "tashkil qiluvchi", "chain": "zanjir", "discovered": "kashf etdi",
+    "mysterious": "sirli", "gelatinous": "jelatinsimon", "animals": "hayvonlar",
+    "sometimes": "ba'zida", "blobs": "shilimshiqlar", "remain": "qolmoqda",
+    "unstudied": "o'rganilmagan", "challenge": "shubha ostiga qo'yadi", "understanding": "tushuncha",
+    "moreover": "qolaversa/bundan tashqari", "species": "turlar", "rare": "kamyob",
+    "seen": "ko'rilgan", "only": "faqat", "few": "bir necha", "times": "marta",
+    "leaving": "qoldirib", "researchers": "tadqiqotchilar", "questions": "savollar",
+    "answers": "javoblar", "beneath": "ostida", "lies": "yotadi", "seabed": "dengiz tubi",
+    "landscape": "landshaft", "valleys": "vodiylar", "mountains": "tog'lar", "plains": "tekisliklar",
+    "remarkable": "diqqatga sazovor", "features": "xususiyatlar", "ridge": "tizma",
+    "stretches": "cho'ziladi", "globe": "shar", "formed": "hosil bo'lgan", "tectonic": "tektonik",
+    "plates": "plitalar", "pulling": "tortish", "apart": "alohida", "creating": "yaratuvchi",
+    "new": "yangi", "crust": "qobiq", "areas": "hududlar", "along": "bo'ylab", "host": "mezbonlik qiladi",
+    "volcanic": "vulqon", "activity": "faollik", "leading": "olib boruvchi", "formation": "shakllanish",
+    "lava": "lava", "flows": "oqimlar", "hydrothermal": "gidrotermal", "vents": "tuynuklar",
+    "release": "chiqaradi", "hot": "issiq", "water": "suv", "create": "yaratadi",
+    "environment": "muhit", "ecosystems": "ekotizimlar", "despite": "qaramay", "heat": "issiqlik",
+    "pressure": "bosim", "forms": "shakllar", "tube": "naychasimon", "worms": "qurtlar",
+    "crabs": "qisqichbaqalar", "chemosynthetic": "xemosintetik", "bacteria": "bakteriyalar",
+    "adapted": "moslashgan", "survive": "omon qolish", "base": "asos", "converting": "aylantiruvchi",
+    "chemicals": "kimyoviy moddalar", "energy": "energiya", "similar": "o'xshash",
+    "photosynthesis": "fotosintez", "cold": "sovuq", "seeps": "sizib chiqishlar",
+    "methane": "metan", "hydrocarbons": "uglevodorodlar", "seep": "sizib chiqmoq",
+    "out": "tashqariga", "seafloor": "dengiz tubi", "environments": "muhitlar",
+    "support": "qo'llab-quvvatlaydi", "distinct": "aniq/o'ziga xos", "rely": "tayanadi",
+    "microbes": "mikroblar", "diversity": "xilma-xillik", "habitats": "yashash joylari",
+    "demonstrates": "namoyish etadi", "how": "qanday", "adaptable": "moslashuvchan",
+    "organisms": "organizmlar", "challenges": "qiyinchiliklar", "exploration": "kashfiyot/izlanish",
+    "exploring": "o'rganish", "easy": "oson", "immense": "ulkan", "temperatures": "haroratlar",
+    "drop": "tushish", "near": "yaqin", "freezing": "muzlash", "specially": "maxsus",
+    "designed": "ishlab chiqilgan", "submarines": "suvosti kemalari", "robots": "robotlar",
+    "used": "ishlatiladi", "explore": "o'rganish", "filmmaker": "kinorejissyor",
+    "became": "bo'ldi", "first": "birinchi", "people": "odamlar", "bottom": "tubi",
+    "trench": "botiq", "deepest": "eng chuqur", "part": "qism", "journey": "sayohat",
+    "provided": "taqdim etdi", "valuable": "qimmatli", "data": "ma'lumotlar", "insights": "tushunchalar",
+    "least": "eng kam", "technological": "texnologik", "advancements": "yutuqlar",
+    "estimate": "taxmin qilish", "vast": "ulkan/keng", "majority": "katta qismi",
+    "mystery": "sir", "largely": "asosan", "logistical": "logistik", "financial": "moliyaviy",
+    "expensive": "qimmatbaho", "equipment": "uskunalar", "isolation": "yakkalanish",
+    "locations": "joylar", "makes": "qiladi", "consistent": "izchil", "research": "izlanish",
+    "difficult": "qiyin", "advances": "yutuqlar", "drones": "dronlar", "autonomous": "avtonom",
+    "vehicles": "transport vositalari", "gradually": "asta-sekin", "feasible": "amalga oshirsa bo'ladigan",
+    "machines": "mashinalar", "stay": "qolish", "submerged": "suv ostida", "extended": "cho'zilgan/uzoq",
+    "periods": "davrlar", "cover": "qamrab olish", "without": "siz (yo'qligi)", "need": "ehtiyoj",
+    "human": "inson", "intervention": "aralashuv", "however": "biroq", "countless": "son-sanoqsiz",
+    "including": "shu jumladan", "unknown": "noma'lum", "uncharted": "xaritaga kiritilmagan",
+    "geological": "geologik", "formations": "tuzilmalar", "potentially": "potentsial",
+    "resources": "resurslar", "medicine": "tibbiyot", "technology": "texnologiya",
+    "importance": "ahamiyat", "plays": "o'ynaydi", "role": "rol", "maintaining": "saqlash",
+    "health": "sog'liq", "acts": "vazifasini bajaradi", "massive": "ulkan", "carbon": "uglerod",
+    "sink": "yutuvchi/cho'ktiruvchi", "absorbing": "yutib olish", "amounts": "miqdorlar",
+    "dioxide": "angidrid", "atmosphere": "atmosfera", "helping": "yordam berish",
+    "regulate": "tartibga solish", "climate": "iqlim", "currents": "oqimlar",
+    "distribute": "taqsimlash", "influencing": "ta'sir ko'rsatish", "weather": "ob-havo",
+    "patterns": "sharoitlar/naqshlar", "furthermore": "bundan tashqari", "biodiversity": "biologik xilma-xillik",
+    "could": "mumkin", "key": "kalit", "groundbreaking": "inqilobiy", "discoveries": "kashfiyotlar",
+    "marine": "dengizga oid", "chemical": "kimyoviy", "compounds": "birikmalar",
+    "potential": "potentsial", "applications": "qo'llanilishi", "antibiotics": "antibiotiklar",
+    "cancer": "saraton", "treatments": "davolash usullari", "study": "o'rganish",
+    "understand": "tushunish", "providing": "ta'minlash", "clues": "maslahatlar",
+    "possibility": "ehtimollik", "planets": "sayyoralar", "under": "ostida",
+    "threat": "xavf", "activities": "faoliyatlar", "mining": "konchilik",
+    "pollution": "ifloslanish", "overfishing": "haddan tashqari baliq ovlash",
+    "impacting": "ta'sir qilmoqda", "fragile": "nozik", "protecting": "himoya qilish",
+    "crucial": "hal qiluvchi", "intrinsic": "ichki", "value": "qadr/qiymat",
+    "benefits": "manfaatlar", "provides": "taqdim etadi", "humanity": "insoniyat"
+};
+
+            
+     
+
+        // --- YAXSHILANGAN SO'Z VA BIRIKMALARNI ANIQLASH (PHRASE + WORD) ---
+        function makeClickable() {
+            const sortedKeys = Object.keys(dict).sort((a, b) => b.length - a.length);
+
+            document.querySelectorAll('.sentence').forEach(s => {
+                let text = s.innerText;
+                let html = text;
+
+                let placeholders = [];
+                
+                // 1. Avval uzun birikmalarni qidirish
+                sortedKeys.forEach((key, index) => {
+                    let regex = new RegExp(`\\b${key}\\b`, 'gi');
+                    if (key.includes(" ") && text.match(regex)) { 
+                         html = html.replace(regex, (match) => {
+                            placeholders.push({ 
+                                original: match, 
+                                key: key,
+                                trans: dict[key]
+                            });
+                            return `___PHRASE${placeholders.length - 1}___`;
+                        });
+                    }
+                });
+
+                // 2. Qolgan yakkaxon so'zlar
+                html = html.split(/(\s+|[.,!?;:“”"’()—])/).map(w => {
+                    if (w.startsWith('___PHRASE')) return w; 
+
+                    let clean = w.toLowerCase().replace(/[^a-z-]/g, '');
+                    let trans = dict[clean];
+                    
+                    if (!trans && clean.endsWith('s')) trans = dict[clean.slice(0, -1)];
+                    if (!trans && clean.endsWith('ing')) trans = dict[clean.slice(0, -3)];
+                    if (!trans && clean.endsWith('ed')) trans = dict[clean.slice(0, -2)];
+
+                    if (clean && trans) {
+                        return `<span class="word" onclick="speak('${w}')">${w}<span class="tooltip">${trans}</span></span>`;
+                    } else if (clean && w.trim().length > 0) {
+                        return `<span class="word" onclick="speak('${w}')">${w}</span>`;
+                    } else {
+                        return w;
+                    }
+                }).join('');
+
+                // 3. Birikmalarni qayta joylash
+                placeholders.forEach((item, i) => {
+                    let phraseHtml = `<span class="word" onclick="speak('${item.original}')" style="border-bottom: 2px solid var(--primary-color);">${item.original}<span class="tooltip">${item.trans}</span></span>`;
+                    html = html.replace(`___PHRASE${i}___`, phraseHtml);
+                });
+
+                s.innerHTML = html;
+            });
+        }
+
+        function speak(w) { responsiveVoice.speak(w, "UK English Male"); }
+        
+        // --- QUIZ LOGIC ---
+        function clearHighlights() {
+            document.querySelectorAll('.highlight-found').forEach(el => el.classList.remove('highlight-found'));
+        }
+
+        function checkQ(btn, correct, evidenceId, msg) {
+            let fb = btn.parentElement.querySelector('.feedback');
+            let sel = btn.parentElement.querySelector('input:checked')?.value;
+            fb.style.display = 'block';
+            clearHighlights();
+
+            if (sel === correct) {
+                fb.className = 'feedback correct';
+                fb.innerHTML = msg;
+                if(evidenceId) {
+                    let el = document.getElementById(evidenceId);
+                    if(el) {
+                        el.classList.add('highlight-found');
+                        el.scrollIntoView({behavior: 'smooth', block: 'center'});
+                    }
+                }
+            } else {
+                fb.className = 'feedback wrong';
+                fb.innerHTML = "Incorrect. Try again.";
+            }
+        }
+
+        // --- LANGUAGE TOGGLE ---
+        document.getElementById('lang-btn').onclick = () => {
+            let eng = document.getElementById('english-content');
+            let uzb = document.getElementById('uzbek-content');
+            let scrollPos = window.scrollY;
+
+            if (eng.style.display !== 'none') {
+                eng.style.display = 'none'; uzb.style.display = 'block';
+                document.getElementById('lang-btn').innerHTML = ' <span>English</span>';
+            } else {
+                eng.style.display = 'block'; uzb.style.display = 'none';
+                document.getElementById('lang-btn').innerHTML = ' <span>O\'zbekcha</span>';
+            }
+            window.scrollTo(0, scrollPos);
+        };
+
+        document.getElementById('theme-btn').onclick = () => document.body.classList.toggle('dark-mode');
+
+        // --- FLOATING ICONS ---
+        setInterval(() => {
+            let el = document.createElement('div');
+            el.className = 'floating-icon';
+            el.innerHTML = ['','','','','',''][Math.floor(Math.random()*6)];
+            el.style.left = Math.random()*100+'vw';
+            el.style.animationDuration = Math.random()*5+5+'s';
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 10000);
+        }, 2000);
+
+        window.onload = makeClickable;
+    </script>
+</body>
+</html>
