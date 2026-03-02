@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Discoveries & Nature - Interactive Reader</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://code.responsivevoice.org/responsivevoice.js?key=ftro4Sxr"></script>
+    <style>
+        /* --- DIZAYN --- */
+        :root {
+            --primary-color: #059669; --primary-hover: #047857;
+            --bg-color: #f8fafc; --card-bg: #ffffff;
+            --text-color: #334155; --heading-color: #0f172a;
+            --tooltip-bg: #1e293b; --tooltip-text: #ffffff;
+            --border-color: #e2e8f0; --highlight-color: rgba(5, 150, 105, 0.15);
+            --word-hover-color: #059669;
+            --highlight-bg: #a7f3d0; 
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        body.dark-mode {
+            --bg-color: #0f172a; --card-bg: #1e293b;
+            --text-color: #cbd5e1; --heading-color: #f8fafc;
+            --tooltip-bg: #f8fafc; --tooltip-text: #0f172a;
+            --border-color: #334155; --highlight-color: rgba(52, 211, 153, 0.2);
+            --word-hover-color: #34d399; --highlight-bg: #065f46;
+        }
+
+        * { box-sizing: border-box; transition: background-color 0.3s ease, color 0.3s ease; }
+        
+        html { font-size: 16px; scroll-behavior: auto; }
+        body { font-family: 'Merriweather', serif; line-height: 1.9; margin: 0; padding-top: 80px; background-color: var(--bg-color); color: var(--text-color); overflow-x: hidden; }
+
+        /* HEADER */
+        #sticky-menu { position: fixed; top: 0; left: 0; width: 100%; height: 70px; background: var(--card-bg); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 0 20px; z-index: 10000; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .timer-container { display: flex; align-items: center; gap: 10px; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.2rem; color: var(--primary-color); }
+        .timer-icon { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        
+        .menu-btn { background: transparent; color: var(--text-color); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 50px; cursor: pointer; font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+        .menu-btn:hover { border-color: var(--primary-color); color: var(--primary-color); }
+
+        /* CONTAINER */
+        .container { width: 95%; max-width: 800px; margin: 20px auto 60px; background: var(--card-bg); padding: 40px 50px; border-radius: 16px; box-shadow: var(--shadow); position: relative; z-index: 10; }
+        .content-image { width: 100%; height: auto; max-height: 400px; object-fit: cover; border-radius: 12px; margin: 30px 0; background-color: var(--border-color); }
+
+        h1 { font-family: 'Montserrat', sans-serif; text-align: center; color: var(--primary-color); margin-bottom: 20px; font-weight: 700; font-size: 1.8rem; }
+        
+        /* TEXT ALIGNMENT */
+        p { margin-bottom: 20px; font-size: 1.1rem; text-align: justify; text-justify: inter-word; }
+        
+        /* CLICKABLE WORDS */
+        .word { cursor: pointer; position: relative; display: inline-block; border-bottom: 1.5px solid transparent; transition: all 0.2s; white-space: pre-wrap; }
+        .word:hover { color: var(--word-hover-color); background-color: var(--highlight-color); border-bottom-color: var(--word-hover-color); border-radius: 3px; }
+        
+        .tooltip { visibility: hidden; opacity: 0; position: absolute; bottom: 135%; left: 50%; transform: translateX(-50%); background-color: var(--tooltip-bg); color: var(--tooltip-text); text-align: center; border-radius: 6px; padding: 5px 10px; z-index: 1000; white-space: nowrap; font-family: 'Montserrat', sans-serif; font-size: 0.85rem; box-shadow: 0 4px 8px rgba(0,0,0,0.2); pointer-events: none; }
+        .tooltip::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -6px; border-width: 6px; border-style: solid; border-color: var(--tooltip-bg) transparent transparent transparent; }
+        .word:hover .tooltip { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(-5px); }
+
+        .floating-icon { position: fixed; top: -50px; z-index: 9999; pointer-events: none; opacity: 0.4; animation: fall linear forwards; }
+        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+
+        @media (max-width: 768px) {
+            .container { width: 95%; padding: 25px; margin-top: 10px; }
+            h1 { font-size: 1.5rem; }
+            .menu-btn span { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="sticky-menu">
+        <div class="timer-container">
+            <span class="timer-icon"></span>
+            <span id="page-timer">00:00</span>
+        </div>
+        <div style="display: flex; gap: 8px;">
+            <button class="menu-btn" id="lang-btn"> <span>O'zbekcha</span></button>
+            <button class="menu-btn" id="theme-btn"></button>
+        </div>
+    </div>
+
+    <div class="container">
+        
+        <div id="english-content">
+            <h1>New York couple find safe containing $100k in lake</h1>
+            <img class="content-image" src="https://images.unsplash.com/photo-1607863680198-23d4b2565df0?w=800&q=60" alt="Safe and Money">
+            
+            <p><span class="sentence">James Kane and Barbie Agostini, a couple from New York City, were trying out a hobby called “magnet fishing” at a lake in Flushing Meadows Corona Park.</span> <span class="sentence">They threw a line with a strong magnet into the water on a Friday afternoon in May.</span> <span class="sentence">To their surprise, they pulled out a safe containing $100,000 cash.</span> <span class="sentence">Despite the money being damaged by the water, they were excited about their unexpected discovery.</span></p>
+
+            <p><span class="sentence">In an interview, James Kane explained that they started magnet fishing during the Covid-19 pandemic because it was a cheap way to go treasure-hunting.</span> <span class="sentence">Magnet fishing involves using a rope with a strong magnet to find metal objects in water.</span> <span class="sentence">Finding a safe filled with cash was beyond their expectations.</span></p>
+
+            <p><span class="sentence">The couple contacted the New York police department about their find and were told they could keep the money because there was no way to identify the original owner of the safe.</span> <span class="sentence">Barbie Agostini was amazed by their luck, saying she couldn’t believe it.</span></p>
+
+            <p><span class="sentence">This was the most extraordinary find for the couple, who had previously discovered old guns, World War II grenades, a motorcycle, foreign coins, and jewellery.</span></p>
+
+            <hr style="margin: 50px 0; border-top: 2px dashed var(--border-color);">
+
+            <h1>How Rain Can Make You Happier and Healthier</h1>
+            <img class="content-image" src="https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?w=800&q=60" alt="Rain on Leaves">
+            
+            <p><span class="sentence">Rainy days might seem gloomy, but they actually have surprising benefits for our well-being.</span> <span class="sentence">Scientists have found that rain can boost our happiness and mental health.</span></p>
+
+            <p><span class="sentence">In the UK, where rain is common, people experience an average of 159 rainy days each year.</span> <span class="sentence">Despite the tendency to stay indoors when it rains, there are compelling reasons to venture out into the rain.</span> <span class="sentence">Walking in the rain or after it has stopped can be beneficial for both our bodies and minds.</span> <span class="sentence">Scientists believe that negative ions play a role in this.</span> <span class="sentence">These ions, present in rain and other natural settings like waterfalls and the sea, could enhance our mood, reduce stress, and increase our energy levels.</span></p>
+
+            <p><span class="sentence">Additionally, the air becomes cleaner after rainfall, and the earthy scent called petrichor, created by bacteria in soil, can have a calming effect when inhaled.</span> <span class="sentence">Going outdoors in the rain offers various benefits, including relaxation, physical activity, and social interaction.</span></p>
+
+            <p><span class="sentence">Regardless of age, spending time in nature is important for our well-being.</span> <span class="sentence">So, next time it rains, don’t hesitate to put on your raincoat and enjoy the outdoors.</span></p>
+
+        </div>
+
+        <div id="uzbek-content" style="display:none;">
+            <h1>Nyu-Yorklik juftlik ko'lda ichida 100 ming dollar bo'lgan seyf topib oldi</h1>
+            <img class="content-image" src="https://images.unsplash.com/photo-1607863680198-23d4b2565df0?w=800&q=60" alt="Safe and Money">
+            
+            <p>Jeyms Keyn va Barbi Agostini, Nyu-York shahridan bo'lgan juftlik, Flushing Meadows Corona parkidagi ko'lda "magnitli baliq ovi" deb nomlangan xobbini sinab ko'rishayotgan edi. Ular may oyidagi juma kunining tushdan keyingi vaqtida suvga kuchli magnitli arqonni tashladilar. Ularning hayratiga, ular ichida 100 000 dollar naqd pul bo'lgan seyfni tortib olishdi. Pul suvdan zararlanganiga qaramay, ular o'zlarining kutilmagan kashfiyotlaridan hayajonda edilar.</p>
+
+            <p>Intervyuda, Jeyms Keyn Covid-19 pandemiyasi davrida magnitli baliq ovini boshlaganliklarini tushuntirdi, chunki bu xazina izlashga borishning arzon usuli edi. Magnitli baliq ovi suvda metall obyektlarni topish uchun kuchli magnitli arqondan foydalanishni o'z ichiga oladi. Naqd pul bilan to'ldirilgan seyfni topish ularning kutganlaridan ham ziyod edi.</p>
+
+            <p>Juftlik o'zlarining topilmalari haqida Nyu-York politsiya departamenti bilan bog'lanishdi va ularga pulni o'zlarida olib qolishlari mumkinligini aytishdi, chunki seyfning asl egasini aniqlashning iloji yo'q edi. Barbi Agostini ularning omadidan hayratda qolib, bunga ishona olmasligini aytdi.</p>
+
+            <p>Bu avvalroq eski qurollar, Ikkinchi Jahon urushi granatalari, mototsikl, xorijiy tangalar va zargarlik buyumlarini kashf etgan juftlik uchun eng g'ayrioddiy topilma bo'ldi.</p>
+
+            <hr style="margin: 50px 0; border-top: 2px dashed var(--border-color);">
+
+            <h1>Qanday qilib yomg'ir sizni baxtliroq va sog'lomroq qilishi mumkin</h1>
+            <img class="content-image" src="https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?w=800&q=60" alt="Rain on Leaves">
+            
+            <p>Yomg'irli kunlar g'amgin tuyulishi mumkin, ammo ular aslida bizning farovonligimiz uchun hayratlanarli foydalarga ega. Olimlar yomg'ir bizning baxtimizni va ruhiy salomatligimizni oshirishi mumkinligini aniqladilar.</p>
+
+            <p>Yomg'ir odatiy hol bo'lgan Buyuk Britaniyada, odamlar har yili o'rtacha 159 yomg'irli kunni boshdan kechirishadi. Yomg'ir yoqqanda bino ichida qolish moyilligiga qaramay, yomg'ir ostiga chiqish uchun jiddiy sabablar bor. Yomg'irda yoki u to'xtaganidan keyin sayr qilish ham tanamiz, ham ongimiz uchun foydali bo'lishi mumkin. Olimlar salbiy ionlar bunda rol o'ynaydi deb hisoblashadi. Yomg'irda va sharsharalar hamda dengiz kabi boshqa tabiiy muhitlarda mavjud bo'lgan bu ionlar kayfiyatimizni yaxshilashi, stressni kamaytirishi va energiya darajamizni oshirishi mumkin.</p>
+
+            <p>Bundan tashqari, havo yomg'irdan keyin tozaroq bo'ladi va tuproqdagi bakteriyalar tomonidan yaratilgan petrikor deb ataladigan tuproq hidi, nafas olganda tinchlantiruvchi ta'sirga ega bo'lishi mumkin. Yomg'irda ochiq havoga chiqish turli xil foydalarni, jumladan dam olish, jismoniy faollik va ijtimoiy o'zaro aloqani taklif qiladi.</p>
+
+            <p>Yoshdan qat'i nazar, tabiatda vaqt o'tkazish bizning farovonligimiz uchun muhimdir. Shunday qilib, keyingi marta yomg'ir yoqqanda, yomg'irpo'shingizni kiyishdan va ochiq havodan bahramand bo'lishdan tortinmang.</p>
+
+        </div>
+    </div>
+
+    <script>
+        // --- TIMER ---
+        let seconds = localStorage.getItem('discoveriesTimer') ? parseInt(localStorage.getItem('discoveriesTimer')) : 0;
+        setInterval(() => {
+            seconds++;
+            localStorage.setItem('discoveriesTimer', seconds);
+            let m = Math.floor(seconds / 60).toString().padStart(2, '0');
+            let s = (seconds % 60).toString().padStart(2, '0');
+            document.getElementById('page-timer').textContent = `${m}:${s}`;
+        }, 1000);
+
+        // --- TO'LIQ LUG'AT BAZASI (PHRASES VA YAKKAXON SO'ZLAR) ---
+const dict = {
+    // === 1. UZUN BIRIKMALAR VA IBORALAR (PHRASES & COLLOCATIONS) ===
+    "new york city": "Nyu-York shahri",
+    "trying out": "sinab ko'rishayotgan",
+    "magnet fishing": "magnitli baliq ovi",
+    "flushing meadows corona park": "Flushing Meadows Corona parki",
+    "friday afternoon": "juma kunining tushdan keyingi vaqti",
+    "threw a line": "arqonni tashladilar/tashlashdi",
+    "to their surprise": "ularning hayratiga",
+    "pulled out": "tortib olishdi",
+    "excited about": "dan hayajonda edilar",
+    "unexpected discovery": "kutilmagan kashfiyot",
+    "covid-19 pandemic": "Covid-19 pandemiyasi",
+    "cheap way": "arzon usul",
+    "treasure-hunting": "xazina izlash",
+    "metal objects": "metall obyektlar",
+    "beyond their expectations": "kutganlaridan ham ziyod",
+    "police department": "politsiya departamenti",
+    "no way to": "imkoni/iloji yo'q",
+    "identify the original owner": "asl egasini aniqlash",
+    "amazed by": "dan hayratda",
+    "couldn't believe it": "bunga ishona olmadi",
+    "extraordinary find": "g'ayrioddiy topilma",
+    "previously discovered": "avvalroq kashf etgan",
+    "world war ii": "Ikkinchi Jahon urushi",
+    "foreign coins": "xorijiy tangalar",
+    "rainy days": "yomg'irli kunlar",
+    "mental health": "ruhiy salomatlik",
+    "average of": "o'rtacha",
+    "tendency to": "ga moyillik",
+    "stay indoors": "bino ichida qolish",
+    "compelling reasons": "jiddiy sabablar/asosli sabablar",
+    "venture out": "tavakkal qilib tashqariga chiqish",
+    "walking in the rain": "yomg'ir ostida sayr qilish",
+    "beneficial for": "uchun foydali",
+    "play a role": "rol o'ynaydi",
+    "natural settings": "tabiiy muhitlar",
+    "energy levels": "energiya darajalari",
+    "earthy scent": "tuproq hidi",
+    "calming effect": "tinchlantiruvchi ta'sir",
+    "going outdoors": "ochiq havoga chiqish",
+    "physical activity": "jismoniy faollik",
+    "social interaction": "ijtimoiy o'zaro aloqa",
+    "regardless of age": "yoshdan qat'i nazar",
+    "spending time": "vaqt o'tkazish",
+    "in nature": "tabiatda",
+    "next time": "keyingi marta",
+    "put on": "kiyish",
+    "100k": "100 ming",
+
+    // === 2. YAKKAXON SO'ZLAR (SINGLE WORDS) ===
+    "couple": "juftlik", "find": "topmoq/topilma", "safe": "seyf", "containing": "o'z ichiga olgan/ichida bo'lgan", 
+    "lake": "ko'l", "james": "Jeyms", "kane": "Keyn", "barbie": "Barbi", "agostini": "Agostini", 
+    "from": "dan", "hobby": "xobbi", "called": "deb nomlangan/ataladigan", "strong": "kuchli", 
+    "magnet": "magnit", "water": "suv", "surprise": "hayrat", "despite": "qaramay", 
+    "money": "pul", "damaged": "zararlangan", "interview": "intervyu", "explained": "tushuntirdi", 
+    "started": "boshladi", "because": "chunki", "cheap": "arzon", "way": "usul/yo'l", 
+    "involves": "o'z ichiga oladi", "using": "foydalanish", "rope": "arqon", "filled": "to'ldirilgan", 
+    "cash": "naqd pul", "expectations": "kutilmalar", "contacted": "bog'lanishdi", "told": "aytilgan", 
+    "keep": "olib qolish", "identify": "aniqlash", "original": "asl", "owner": "ega", 
+    "amazed": "hayratda", "luck": "omad", "saying": "aytib/deb", "believe": "ishonish", 
+    "extraordinary": "g'ayrioddiy", "previously": "avvalroq", "discovered": "kashf etgan/qilingan", 
+    "old": "eski", "guns": "qurollar", "grenades": "granatalar", "motorcycle": "mototsikl", 
+    "foreign": "xorijiy", "coins": "tangalar", "jewellery": "zargarlik buyumlari",
+    "how": "qanday qilib", "rain": "yomg'ir", "make": "qilish", "happier": "baxtliroq", 
+    "healthier": "sog'lomroq", "might": "mumkin", "seem": "tuyulishi", "gloomy": "g'amgin/qorong'u", 
+    "actually": "aslida", "surprising": "hayratlanarli", "benefits": "foydalar", "well-being": "farovonlik/salomatlik", 
+    "scientists": "olimlar", "found": "aniqladilar", "boost": "oshirish/ko'tarish", "happiness": "baxt", 
+    "mental": "ruhiy", "health": "salomatlik", "where": "qayerda/qaysiki", "common": "odatiy/keng tarqalgan", 
+    "experience": "boshdan kechirish", "average": "o'rtacha", "each": "har", "year": "yil", 
+    "tendency": "moyillik", "stay": "qolish", "indoors": "bino ichida", "compelling": "jiddiy/ishonchli", 
+    "reasons": "sabablar", "venture": "tavakkal qilish/chiqish", "walking": "sayr qilish", "after": "keyin", 
+    "stopped": "to'xtagan", "beneficial": "foydali", "both": "har ikkisi/ham", "bodies": "tanalar", 
+    "minds": "onglar/aqllar", "believe": "hisoblashadi/ishonishadi", "negative": "salbiy", "ions": "ionlar", 
+    "play": "o'ynaydi", "role": "rol", "present": "mavjud", "other": "boshqa", "natural": "tabiiy", 
+    "settings": "muhitlar", "like": "kabi", "waterfalls": "sharsharalar", "sea": "dengiz", 
+    "enhance": "yaxshilash", "mood": "kayfiyat", "reduce": "kamaytirish", "stress": "stress/zo'riqish", 
+    "increase": "oshirish", "energy": "energiya", "levels": "darajalar", "additionally": "bundan tashqari", 
+    "air": "havo", "becomes": "bo'ladi", "cleaner": "tozaroq", "rainfall": "yomg'ir yog'ishi", 
+    "earthy": "tuproqqa xos", "scent": "hid", "petrichor": "petrikor (yomg'ir hidi)", "created": "yaratilgan", 
+    "bacteria": "bakteriyalar", "soil": "tuproq", "calming": "tinchlantiruvchi", "effect": "ta'sir", 
+    "inhaled": "nafas olganda", "going": "borish/chiqish", "outdoors": "ochiq havo", "offers": "taklif qiladi", 
+    "various": "turli xil", "including": "jumladan", "relaxation": "dam olish", "physical": "jismoniy", 
+    "activity": "faollik", "social": "ijtimoiy", "interaction": "o'zaro aloqa", "regardless": "qat'i nazar", 
+    "age": "yosh", "spending": "o'tkazish", "time": "vaqt", "nature": "tabiat", 
+    "important": "muhim", "next": "keyingi", "hesitate": "ikkilanish/tortinish", "enjoy": "bahramand bo'lish",
+    "new": "yangi", "york": "york", "city": "shahar", "out": "tashqariga", "into": "ichiga", "the": "bu/shu",
+    "they": "ular", "we": "biz", "you": "siz", "he": "u(o'g'il bola)", "she": "u(qiz bola)", "it": "u(narsa)",
+    "to": "ga", "for": "uchun", "of": "ning", "on": "da", "at": "da", "with": "bilan", "and": "va",
+    "but": "ammo", "or": "yoki", "that": "shuni/o'sha", "this": "bu", "these": "bular", "those": "ular",
+    "is": "dir", "are": "dirlar", "was": "edi", "were": "edilar", "be": "bo'lmoq", "have": "bor/ega",
+    "had": "bor edi", "has": "bor(ega)", "can": "mumkin", "could": "mumkin edi", "will": "bo'ladi",
+    "would": "bo'lardi", "should": "kerak", "do": "qilmoq", "does": "qiladi", "did": "qildi", "not": "emas",
+    "what": "nima", "when": "qachon", "where": "qayerda", "who": "kim", "why": "nega", "which": "qaysi",
+    "all": "barcha", "any": "har qanday", "some": "ba'zi", "many": "ko'p", "much": "ko'p", "more": "ko'proq",
+    "most": "eng", "other": "boshqa", "another": "yana bir", "such": "shunday", "only": "faqat", "own": "o'z",
+    "same": "bir xil", "so": "shunday qilib/juda", "than": "dan", "too": "ham/juda", "very": "juda", 
+    "well": "yaxshi", "even": "hatto", "now": "hozir", "then": "keyin", "there": "u yerda/bor", 
+    "here": "bu yerda", "up": "tepaga", "down": "pastga", "in": "ichida", "out": "tashqarida", 
+    "about": "haqida", "over": "ustidan", "under": "ostida", "again": "yana", "never": "hech qachon"
+};
+
+
+        // --- CLICKABLE WORDS ---
+        function makeClickable() {
+            const sortedKeys = Object.keys(dict).sort((a, b) => b.length - a.length);
+
+            document.querySelectorAll('.sentence').forEach(s => {
+                let text = s.innerText;
+                let html = text;
+                let placeholders = [];
+                
+                // 1. Phrasal verbs va Collocations (Uzun birikmalar)
+                sortedKeys.forEach((key, index) => {
+                    let regex = new RegExp(`\\b${key}\\b`, 'gi');
+                    if (key.includes(" ") && text.match(regex)) { 
+                         html = html.replace(regex, (match) => {
+                            placeholders.push({ 
+                                original: match, 
+                                key: key,
+                                trans: dict[key]
+                            });
+                            return `___PHRASE${placeholders.length - 1}___`;
+                        });
+                    }
+                });
+
+                // 2. Yakkaxon so'zlar
+                html = html.split(/(\s+|[.,!?;:“”"’()—])/).map(w => {
+                    if (w.startsWith('___PHRASE')) return w; 
+
+                    let clean = w.toLowerCase().replace(/[^a-z-]/g, '');
+                    let trans = dict[clean];
+                    
+                    if (!trans && clean.endsWith('s')) trans = dict[clean.slice(0, -1)];
+                    if (!trans && clean.endsWith('ing')) trans = dict[clean.slice(0, -3)];
+                    if (!trans && clean.endsWith('ed')) trans = dict[clean.slice(0, -2)];
+
+                    if (clean && trans) {
+                        return `<span class="word" onclick="speak('${w}')">${w}<span class="tooltip">${trans}</span></span>`;
+                    } else if (clean && w.trim().length > 0) {
+                        return `<span class="word" onclick="speak('${w}')">${w}</span>`;
+                    } else {
+                        return w;
+                    }
+                }).join('');
+
+                // 3. Birikmalarni qayta joylash
+                placeholders.forEach((item, i) => {
+                    let phraseHtml = `<span class="word" onclick="speak('${item.original}')" style="border-bottom: 2px solid var(--primary-color);">${item.original}<span class="tooltip">${item.trans}</span></span>`;
+                    html = html.replace(`___PHRASE${i}___`, phraseHtml);
+                });
+
+                s.innerHTML = html;
+            });
+        }
+
+        function speak(w) { responsiveVoice.speak(w, "UK English Male"); }
+
+        // --- LANGUAGE TOGGLE ---
+        document.getElementById('lang-btn').onclick = () => {
+            let eng = document.getElementById('english-content');
+            let uzb = document.getElementById('uzbek-content');
+            let scrollPos = window.scrollY;
+
+            if (eng.style.display !== 'none') {
+                eng.style.display = 'none'; uzb.style.display = 'block';
+                document.getElementById('lang-btn').innerHTML = ' <span>English</span>';
+            } else {
+                eng.style.display = 'block'; uzb.style.display = 'none';
+                document.getElementById('lang-btn').innerHTML = ' <span>O\'zbekcha</span>';
+            }
+            window.scrollTo(0, scrollPos);
+        };
+
+        document.getElementById('theme-btn').onclick = () => document.body.classList.toggle('dark-mode');
+
+        // --- FLOATING ICONS ---
+        setInterval(() => {
+            let el = document.createElement('div');
+            el.className = 'floating-icon';
+            el.innerHTML = ['','','','','',''][Math.floor(Math.random()*6)];
+            el.style.left = Math.random()*100+'vw';
+            el.style.animationDuration = Math.random()*5+5+'s';
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 10000);
+        }, 2000);
+
+        window.onload = makeClickable;
+    </script>
+</body>
+</html>
